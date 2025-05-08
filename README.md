@@ -1,6 +1,9 @@
-# habitus
+# Habitus
 
 Una app mobile enfocada en hábitos saludables para aprobar la materia _Desarrollo de aplicaciones para dispositivos_
+Instituto de Formación Superior N° 11 - Carrera: Desarrollo de Software
+
+Melgarejo | Nahuel | Purpura | Wasserman 
 
 ## instrucciones
 
