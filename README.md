@@ -13,13 +13,21 @@ Melgarejo | Nahuel | Purpura | Wasserman
 4. Abrir en el explorador la url http://localhost:8100
 
 
-### Login
+### Login(sin enrutamiento)
 
 - Se reccomienda crearla como Page por que:
     - Una page tiene navegación propia: Se usa para pantallas independientes, como Login, Registro, o Dashboard.
     - Se carga dinámicamente: Ionic organiza las páginas para que puedan ser navegadas sin estar siempre activas, lo que optimiza el rendimiento.
     - Incluye su propio módulo (login.module.ts): Esto ayuda a organizar mejor la estructura de la app.
-
+1. Instalar Firebase
+```console
+npm install firebase @angular/fire
+```
+2. Configurar credenciales firebase
+-copie pegue las credenciales.. peligroso.. hay que usar variables de entorno(segun leí)
+3. Importar Firebase a appmodule.ts
+*para que este disponible al iniciar y en toda la app
+4. Crear Page Login
 ```Typescript
 ionic generate page pages/login
 ```
@@ -27,3 +35,12 @@ ionic generate page pages/login
 - login.page.html → Diseño de la interfaz.
 - login.page.scss → Estilos.
 - login.module.ts → Configuración del módulo
+
+5. Crear servicio de Autenticación en carpeta services
+* si no existe services lo crea
+
+```
+ionic generate service services/auth
+```
+6. prueba login valido-> usuario: faltoganas@gmail.com - contraseña: faltoganas
+
