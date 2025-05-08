@@ -11,3 +11,19 @@ Melgarejo | Nahuel | Purpura | Wasserman
 2. Ejecutar npm i (hay que tener instalado npm)
 3. Ejecutar "ionic serve" (hay que tener instalado ionic cli)
 4. Abrir en el explorador la url http://localhost:8100
+
+
+### Login
+
+- Se reccomienda crearla como Page por que:
+    - Una page tiene navegación propia: Se usa para pantallas independientes, como Login, Registro, o Dashboard.
+    - Se carga dinámicamente: Ionic organiza las páginas para que puedan ser navegadas sin estar siempre activas, lo que optimiza el rendimiento.
+    - Incluye su propio módulo (login.module.ts): Esto ayuda a organizar mejor la estructura de la app.
+
+```Typescript
+ionic generate page pages/login
+```
+- login.page.ts → Lógica del componente.
+- login.page.html → Diseño de la interfaz.
+- login.page.scss → Estilos.
+- login.module.ts → Configuración del módulo
