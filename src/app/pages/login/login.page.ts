@@ -19,17 +19,28 @@ export class LoginPage {
     private authService: AuthService, 
     private toastCtrl: ToastController
   ) {}
-
+  
+  /**
+   *Intenta logear con usuario contraseña validos, lanza mensaje de exito o error con toast
+   *
+   * @memberof LoginPage
+   */
   async login() {
     try {
       await this.authService.login(this.email, this.password);
+      //solo se ejecutaran estas lineas si await se ejecuta exitosamente
       this.isLoggedIn = true;
       this.showToast('Login exitoso');
     } catch (error:any) {
       this.showToast('Error: ' + error.message);
     }
   }
-
+  /**
+   *Muestra temporalmente el mensaje ingresado por parametro
+   *
+   * @param {string} message
+   * @memberof LoginPage
+   */
   async showToast(message: string) {
     const toast = await this.toastCtrl.create({
       message,
@@ -38,6 +49,5 @@ export class LoginPage {
     });
     toast.present();
   }
-
 
 }
