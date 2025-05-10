@@ -3,9 +3,6 @@
 
 src/environments/environment.ts
 
-#notas
-desarrollo.md
-
 *~
 *.sw[mnpcod]
 .tmp
