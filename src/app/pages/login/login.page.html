@@ -1,6 +1,6 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>Login</ion-title>
+    <ion-title>Login Habitus APP</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -21,15 +21,12 @@
 
     <ion-button expand="full" (click)="login()">Iniciar Sesión</ion-button>
   </ng-container>
-
+  <!--mostrar cuando el usuario esta logueado-->
   <ng-container *ngIf="isLoggedIn">
     <ion-card>
       <ion-card-header>
-        <ion-card-title>Bienvenido</ion-card-title>
+          <ion-card-title  *ngIf="currentUser">Bienvenido {{currentUser.email}} a Habitus APP💓 </ion-card-title>
       </ion-card-header>
-      <ion-card-content>
-        Ahora puedes acceder a las tabs manualmente.
-      </ion-card-content>
     </ion-card>
   </ng-container>
 </ion-content>

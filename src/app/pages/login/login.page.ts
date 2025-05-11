@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
 import { ToastController, LoadingController } from '@ionic/angular';
 import { ValidationUtils } from 'src/app/utils/validation';
+import { User } from '@angular/fire/auth';
 
 
 @Component({
@@ -18,6 +19,7 @@ export class LoginPage {
   passwordError = '';//captura error de contraseña
   isLoggedIn = false; // logueado por defecto false
   loading : HTMLIonLoadingElement | null = null ;
+  currentUser: User | null = null;
 
   constructor(
     private authService: AuthService, 
@@ -46,16 +48,26 @@ export class LoginPage {
 
       try {
 
-        await this.authService.login(this.email, this.password);
+        let userCredentials = await this.authService.login(this.email, this.password);
         //solo se ejecutaran estas lineas si await se ejecuta exitosamente
-        //siguiente paso capturar el usuario logueado para persistir la sesion
-        //dar posibilidad de logout
+        
+        //para ver en consola
+        console.log(userCredentials);
+      
+        //capturar el objeto usuario logueado 
+        //para en login.page.html mostrar email en bienvenida
+        this.currentUser = userCredentials.user;
+        
+        //para ver en consola
+        console.log(this.currentUser);
+        
         this.isLoggedIn = true;
+
         this.showToast('Login exitoso');
 
       } catch (error: any) {
 
-        this.showToast('Error: ' + error.message);
+        this.manageErrorFirebase(error);
 
       }finally{
 
@@ -96,7 +108,7 @@ export class LoginPage {
 
     } else if (!ValidationUtils.isValidEmail(this.email)) {
 
-      this.emailError = 'El email no es válido.';
+      this.emailError = 'El email no es válido. Ejemplo: habitus@gmail.com';
 
       isValid = false;
     }
@@ -116,6 +128,29 @@ export class LoginPage {
     }
 
     return isValid;
+  }
+  
+  /**
+   *segun el tipo de objeto error recibido desde firebase
+   *muestra por alerta el error correspondiente
+   * @param {*} error
+   * @memberof LoginPage
+   */
+  manageErrorFirebase(error: any) {
+    // para ver en la consola
+    console.error("Error de Firebase:", error); 
+
+    switch (error.code) {
+      //inicio sesión
+      case 'auth/invalid-credential':
+        this.showToast('Usuario o contraseña incorrecto. Inténtalo de nuevo.');
+        break;
+      //registro
+      
+      default:
+        //si no es ninguno de los anteriores
+        this.showToast('Error al iniciar sesión: ' + error.message); 
+    }
   }
 
 }
