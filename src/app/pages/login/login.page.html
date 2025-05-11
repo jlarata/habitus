@@ -7,6 +7,7 @@
 <ion-content class="ion-padding">
   <!--mostrar solo si el usuario no esta logueado-->
   <ng-container *ngIf="!isLoggedIn">
+    <!--aplica estilo error definido si hay emailError-->
     <ion-item [class.error]="emailError">
       <ion-label position="floating">Email</ion-label>
       <ion-input type="email" [(ngModel)]="email"></ion-input>
@@ -27,6 +28,9 @@
       <ion-card-header>
           <ion-card-title  *ngIf="currentUser">Bienvenido {{currentUser.email}} a Habitus APP💓 </ion-card-title>
       </ion-card-header>
+      <ion-card-content>
+        <ion-button expand="full" (click)="logout()">Cerrar Sesión</ion-button>
+      </ion-card-content>
     </ion-card>
   </ng-container>
 </ion-content>

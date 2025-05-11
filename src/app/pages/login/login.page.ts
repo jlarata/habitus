@@ -93,7 +93,15 @@ export class LoginPage {
     toast.present();
   }
 
-  isValidForm():boolean{
+  
+/**
+ *Valida los campos email y contraseña, segun error muestra mensaje a tra vez de 
+  <p class="error-text" *ngIf="emailError">{{ emailError }}</p> en login.page.html
+ *
+ * @return {*}  {boolean}
+ * @memberof LoginPage
+ */
+isValidForm():boolean{
 
     //variable interna para detectar errores
     let isValid = true;
@@ -150,6 +158,24 @@ export class LoginPage {
       default:
         //si no es ninguno de los anteriores
         this.showToast('Error al iniciar sesión: ' + error.message); 
+    }
+  }
+  /**
+   *Cierra sesion de usuario actual
+   *
+   * @memberof LoginPage
+   */
+  async logout(){
+    try {
+      await this.authService.logout();
+      //logeado false
+      this.isLoggedIn = false; 
+      //limpiar variable que contiene al usuario actual
+      this.currentUser = null;
+      this.showToast('Sesión Finalizada. Hasta pronto!');
+
+    } catch (error: any) {
+      this.showToast('Error al cerrar sesión: ' + error.message);
     }
   }
 
