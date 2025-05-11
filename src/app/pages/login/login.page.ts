@@ -94,14 +94,14 @@ export class LoginPage {
   }
 
   
-/**
- *Valida los campos email y contraseña, segun error muestra mensaje a tra vez de 
-  <p class="error-text" *ngIf="emailError">{{ emailError }}</p> en login.page.html
- *
- * @return {*}  {boolean}
- * @memberof LoginPage
- */
-isValidForm():boolean{
+  /**
+  *Valida los campos email y contraseña, segun error muestra mensaje a traves de 
+  *<p class="error-text" *ngIf="emailError">{{ emailError }}</p> en login.page.html
+  *
+  * @return {*}  {boolean}
+  * @memberof LoginPage
+  */
+  isValidForm():boolean{
 
     //variable interna para detectar errores
     let isValid = true;
@@ -160,6 +160,7 @@ isValidForm():boolean{
         this.showToast('Error al iniciar sesión: ' + error.message); 
     }
   }
+  
   /**
    *Cierra sesion de usuario actual
    *
