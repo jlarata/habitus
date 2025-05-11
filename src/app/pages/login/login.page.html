@@ -5,16 +5,19 @@
 </ion-header>
 
 <ion-content class="ion-padding">
+  <!--mostrar solo si el usuario no esta logueado-->
   <ng-container *ngIf="!isLoggedIn">
-    <ion-item>
+    <ion-item [class.error]="emailError">
       <ion-label position="floating">Email</ion-label>
       <ion-input type="email" [(ngModel)]="email"></ion-input>
     </ion-item>
+    <p class="error-text" *ngIf="emailError">{{ emailError }}</p>
 
-    <ion-item>
+    <ion-item [class.error]="passwordError">
       <ion-label position="floating">Password</ion-label>
       <ion-input type="password" [(ngModel)]="password"></ion-input>
     </ion-item>
+    <p class="error-text" *ngIf="passwordError">{{ passwordError }}</p>
 
     <ion-button expand="full" (click)="login()">Iniciar Sesión</ion-button>
   </ng-container>
