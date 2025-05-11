@@ -178,6 +178,25 @@ isValidForm():boolean{
       this.showToast('Error al cerrar sesión: ' + error.message);
     }
   }
+  
+  /**
+   * Se eecuta primero cuado se inicializa componente. 
+   * Verifica si hay usuario activo y cambia esta de logeo.
+   *
+   * - Si hay un usuario activo, lo asigna a `currentUser` y marca `isLoggedIn = true`.
+   * - Si no hay sesión iniciada, muestra form de inicio de sesion.
+   *
+   * @memberof LoginPage
+  */
+  ngOnInit() {
+    //no hace falta async/await por que no devuelve promesa
+    this.authService.getUser().subscribe(user => {
+      if (user) {
+        this.currentUser = user;
+        this.isLoggedIn = true;
+      }
+    });
+  }
 
 }
 
