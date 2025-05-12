@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
 import { ToastController, LoadingController } from '@ionic/angular';
 import { ValidationUtils } from 'src/app/utils/validation';
-import { User } from '@angular/fire/auth';
 
 
 @Component({
@@ -19,7 +18,7 @@ export class LoginPage {
   passwordError = '';//captura error de contraseña
   isLoggedIn = false; // logueado por defecto false
   loading : HTMLIonLoadingElement | null = null ;
-  currentUser: User | null = null;
+  currentUser: any | null = null;
 
   constructor(
     private authService: AuthService, 

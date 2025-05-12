@@ -3,7 +3,9 @@ import { Injectable } from '@angular/core';
  // proporciona métodos para la autenticación con Firebase. existe una version mas modular
  //solo compatible con standalone
 import { AngularFireAuth } from '@angular/fire/compat/auth';
-import { Observable } from 'rxjs';
+import { Observable} from 'rxjs';
+import { AngularFirestore} from '@angular/fire/compat/firestore';
+
 import { UserProfile } from '../models/userProfile.model';
 
 /**
@@ -18,7 +20,10 @@ import { UserProfile } from '../models/userProfile.model';
 
 export class AuthService {
   
-  constructor(private afAuth: AngularFireAuth) {}
+  constructor(
+    private afAuth: AngularFireAuth,
+    private firestore:AngularFirestore
+  ) {}
   /**
    *Envio de credeciales proporcionadas a firebase para inicio de sesión
    *
@@ -51,9 +56,34 @@ export class AuthService {
   logout():Promise<any> {
     return this.afAuth.signOut();
   }
-
-  register(email:string, password:string){
+  
+  /**
+   *Registro por email y contraseña, solo si no hay cuenta asociada al email
+   *
+   * @param {string} email
+   * @param {string} password
+   * @return {*} firebase.auth.UserCredential
+   * @memberof AuthService
+   */
+  register(email:string, password:string):Promise<any>{
     return this.afAuth.createUserWithEmailAndPassword(email, password)
+  }
+  
+  /**
+   *Escribe un documento con datos adicionales del usuario 
+   *en el documento 'user', lo asocia al usuario por el uid
+   *si no existe el documento lo crea
+   * @param {UserProfile} userData
+   * @param {string} uid
+   * @return {*}  {Promise<void>}
+   * @memberof AuthService
+   */
+  saveAditionalDataUser(userData:UserProfile, uid:string):Promise<void>{
+    //le indicamos colleccion y user id para asociar la info
+    console.log('Enviando a Firestore:', userData, 'con uid:', uid);
+    return this.firestore.collection('users').doc(uid).set(userData)
+    //retornamos la promesa
+  
   }
 
 }

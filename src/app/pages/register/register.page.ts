@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ToastController, LoadingController } from '@ionic/angular';
 import { ValidationUtils } from 'src/app/utils/validation';
-import { User, UserProfile } from '@angular/fire/auth';
 import { AuthService } from 'src/app/services/auth.service';
+import { UserProfile } from '../../models/userProfile.model';
 
 @Component({
   selector: 'app-register',
@@ -58,19 +58,31 @@ export class RegisterPage  {
       
       //Mostrar loading antes de llamar a Firebase
       this.loading = await this.loadingCtrl.create({
-        message: 'Iniciando sesión...',
+        message: 'Iniciando Registro...',
       });
 
       await this.loading.present();
 
       try {
-        await this.authService.register(this.email, this.password);
+        
+        const userCredential = await this.authService.register(this.email, this.password);
+        const uid = userCredential.user.uid;
+
+        //asignamos uid generado por firebase para el nuevo user
+        userData.uid = uid;
+        await this.authService.saveAditionalDataUser(userData, uid);
         this.showToast('Registro exitoso.');
+
       } catch (error:any) {
+
+        console.log(error.message);
         this.showToast('Error en el registro: ' + error.message);
+
       }finally{
+
         //Ocultar loading después de completar el login
         await this.loading.dismiss();
+
       }
       
     }
@@ -146,7 +158,10 @@ export class RegisterPage  {
         this.showToast('Usuario o contraseña incorrecto. Inténtalo de nuevo.');
         break;
       //registro
-      
+      case 'auth/email-already-in-use':
+        this.showToast('Ya existe un usuario asociado con este email.');
+        break;
+
       default:
         //si no es ninguno de los anteriores
         this.showToast('Error al iniciar sesión: ' + error.message); 
