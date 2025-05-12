@@ -52,4 +52,8 @@ export class AuthService {
     return this.afAuth.signOut();
   }
 
+  register(email:string, password:string){
+    return this.afAuth.createUserWithEmailAndPassword(email, password)
+  }
+
 }

@@ -21,6 +21,7 @@
     <p class="error-text" *ngIf="passwordError">{{ passwordError }}</p>
 
     <ion-button expand="full" (click)="login()">Iniciar Sesión</ion-button>
+    <ion-button expand="full" routerLink="/register">Crear cuenta nueva</ion-button>
   </ng-container>
   <!--mostrar cuando el usuario esta logueado-->
   <ng-container *ngIf="isLoggedIn">
