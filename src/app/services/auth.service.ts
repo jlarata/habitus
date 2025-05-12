@@ -1,8 +1,10 @@
 import { Injectable } from '@angular/core';
  //el servicio AngularFireAuth del módulo @angular/fire/compat/auth, que 
- // proporciona métodos para la autenticación con Firebase.
+ // proporciona métodos para la autenticación con Firebase. existe una version mas modular
+ //solo compatible con standalone
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { Observable } from 'rxjs';
+import { UserProfile } from '../models/userProfile.model';
 
 /**
  *
@@ -37,10 +39,10 @@ export class AuthService {
    * @returns Un Observable con el objeto User si usuario autenticado,
    * o null si no autenticado.
   */
-  getUser(): Observable<any | null> { 
+   getUser(): Observable<any | null> {
     return this.afAuth.authState;
   }
-  
+
   /**
    *Desloguea usuario atcual 
    * @return {Promise<any>} promesa

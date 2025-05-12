@@ -191,6 +191,7 @@ export class LoginPage {
   */
   ngOnInit() {
     //no hace falta async/await por que no devuelve promesa
+    //nos suscribimos al observable getUser y detectar si nuestro usuario sigue logueado
     this.authService.getUser().subscribe(user => {
       if (user) {
         this.currentUser = user;
