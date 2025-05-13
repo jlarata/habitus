@@ -17,12 +17,12 @@ export class RegisterPage  {
   dateBirth = '';
   weight = '';
   height="";
+  nameError = '';//captura error de nombre
   email = '';
   password = '';
   repeatPassword = '';
   emailError = '';//captura error de email
   passwordError = '';//captura error de contraseña
-  nameError = '';//captura error de nombre
   loading : HTMLIonLoadingElement | null = null ;
 
 
@@ -43,19 +43,6 @@ export class RegisterPage  {
     }
     
     if (this.isValidForm()) {
-      const birth = new Date(this.dateBirth);
-      const age = new Date().getFullYear() - birth.getFullYear();
-
-      const userData: UserProfile = {
-        uid: '',
-        name: this.name,
-        lastName: this.lastName,
-        email: this.email,
-        dateBirth: this.dateBirth,
-        biologicalSex: '', 
-        age: age
-      };
-      
       //Mostrar loading antes de llamar a Firebase
       this.loading = await this.loadingCtrl.create({
         message: 'Iniciando Registro...',
@@ -64,19 +51,25 @@ export class RegisterPage  {
       await this.loading.present();
 
       try {
-        
+        //crear usuario
         const userCredential = await this.authService.register(this.email, this.password);
         const uid = userCredential.user.uid;
+        ///no funciona////
+        //loguear usuario
+        //solo se permite escribir en collecciones si usuario esta autenticado
+        //reglas definidas x defecto en firebase
+        //await this.authService.login(this.email, this.password);
 
-        //asignamos uid generado por firebase para el nuevo user
-        userData.uid = uid;
-        await this.authService.saveAditionalDataUser(userData, uid);
+        //guardamos datos adicionales 
+        //this.saveUserData(uid);
+        ///no funciona////
+        
         this.showToast('Registro exitoso.');
 
       } catch (error:any) {
 
         console.log(error.message);
-        this.showToast('Error en el registro: ' + error.message);
+        this.manageErrorFirebase(error);
 
       }finally{
 
@@ -165,6 +158,29 @@ export class RegisterPage  {
       default:
         //si no es ninguno de los anteriores
         this.showToast('Error al iniciar sesión: ' + error.message); 
+    }
+  }
+
+  async saveUserData(uid: string) {
+    const birth = new Date(this.dateBirth);
+    const age = new Date().getFullYear() - birth.getFullYear();
+
+    const userData: UserProfile = {
+      uid,
+      name: this.name,
+      lastName: this.lastName,
+      email: this.email,
+      dateBirth: this.dateBirth,
+      biologicalSex: '',
+      age: age
+    };
+
+    try {
+      await this.authService.saveAditionalDataUser(userData, uid);
+      this.showToast('Datos guardados exitosamente.');
+    } catch (error: any) {
+      this.showToast('Error al guardar los datos de perfil.');
+      console.error('Error en Firestore:', error);
     }
   }
 

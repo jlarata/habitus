@@ -1,11 +1,16 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
+    <ion-buttons slot="start">
+        <ion-back-button defaultHref="/" color="tertiary"></ion-back-button>
+    </ion-buttons>
     <ion-title>Registro Habitus APP</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-   <ion-item [class.error]="nameError">
+  <!-- No funciona enviar datos a firebase asi que lo comento-->
+   <!--
+  <ion-item [class.error]="nameError">
     <ion-label position="floating">Nombre</ion-label>
     <ion-input type="text" [(ngModel)]="name"></ion-input>
   </ion-item>
@@ -29,7 +34,7 @@
     <ion-label position="floating">Altura en cm</ion-label>
     <ion-input type="number" [(ngModel)]="height"></ion-input>
   </ion-item>
-
+  -->
   <ion-item [class.error]="emailError">
     <ion-label position="floating">Email</ion-label>
     <ion-input type="email" [(ngModel)]="email"></ion-input>
@@ -47,6 +52,7 @@
     <ion-input type="password" [(ngModel)]="repeatPassword"></ion-input>
   </ion-item>
 
-  <ion-button expand="full" (click)="register()">Registrarse</ion-button>
+  <ion-button expand="block" (click)="register()">Registrarse</ion-button>
+  <ion-button expand="block" routerLink="/login">Iniciar Sesión</ion-button>
 
 </ion-content>

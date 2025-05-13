@@ -20,8 +20,8 @@
     </ion-item>
     <p class="error-text" *ngIf="passwordError">{{ passwordError }}</p>
 
-    <ion-button expand="full" (click)="login()">Iniciar Sesión</ion-button>
-    <ion-button expand="full" routerLink="/register">Crear cuenta nueva</ion-button>
+    <ion-button expand="block" (click)="login()">Iniciar Sesión</ion-button>
+    <ion-button expand="block" routerLink="/register">Crear cuenta nueva</ion-button>
   </ng-container>
   <!--mostrar cuando el usuario esta logueado-->
   <ng-container *ngIf="isLoggedIn">
@@ -30,7 +30,7 @@
           <ion-card-title  *ngIf="currentUser">Bienvenido {{currentUser.email}} a Habitus APP💓 </ion-card-title>
       </ion-card-header>
       <ion-card-content>
-        <ion-button expand="full" (click)="logout()">Cerrar Sesión</ion-button>
+        <ion-button expand="block" (click)="logout()">Cerrar Sesión</ion-button>
       </ion-card-content>
     </ion-card>
   </ng-container>
