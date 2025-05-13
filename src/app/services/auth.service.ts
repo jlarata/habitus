@@ -86,4 +86,13 @@ export class AuthService {
   
   }
 
+  /**
+   * Envía un correo electrónico para restablecer la contraseña al usuario.
+   * @param email 
+   * @returns promesa o error
+   */
+  resetPassword(email: string): Promise<void> {
+    return this.afAuth.sendPasswordResetEmail(email);
+  }
+  
 }

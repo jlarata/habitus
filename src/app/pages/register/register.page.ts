@@ -3,6 +3,7 @@ import { ToastController, LoadingController } from '@ionic/angular';
 import { ValidationUtils } from 'src/app/utils/validation';
 import { AuthService } from 'src/app/services/auth.service';
 import { UserProfile } from '../../models/userProfile.model';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-register',
@@ -29,7 +30,8 @@ export class RegisterPage  {
   constructor(
     private authService: AuthService, 
     private toastCtrl: ToastController,
-    private loadingCtrl: LoadingController
+    private loadingCtrl: LoadingController,
+    private router: Router
   ) {}
 
   async register() {
@@ -65,7 +67,8 @@ export class RegisterPage  {
         ///no funciona////
         
         this.showToast('Registro exitoso.');
-
+        //llevar a login
+         this.router.navigate(['/login']);
       } catch (error:any) {
 
         console.log(error.message);
@@ -183,5 +186,8 @@ export class RegisterPage  {
       console.error('Error en Firestore:', error);
     }
   }
+
+  
+
 
 }

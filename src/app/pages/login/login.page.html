@@ -22,6 +22,9 @@
 
     <ion-button expand="block" (click)="login()">Iniciar Sesión</ion-button>
     <ion-button expand="block" routerLink="/register">Crear cuenta nueva</ion-button>
+    <p class="forgot-password" (click)="resetPassword()">
+      Olvidé mi contraseña
+    </p>
   </ng-container>
   <!--mostrar cuando el usuario esta logueado-->
   <ng-container *ngIf="isLoggedIn">
