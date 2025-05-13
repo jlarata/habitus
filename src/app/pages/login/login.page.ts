@@ -242,7 +242,7 @@ export class LoginPage {
               this.showToast(
                 'Se envió un correo electrónico para restablecer tu contraseña.'
               );
-              this.email= ''; // Limpia el campo después del envío exitoso
+              this.email= ''; // Limpiar el campo después del eenvio
               return true;
             } catch (error: any) {
               this.showToast(
