@@ -5,7 +5,6 @@ import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { Observable} from 'rxjs';
 import { AngularFirestore} from '@angular/fire/compat/firestore';
-
 import { UserProfile } from '../models/userProfile.model';
 
 /**
@@ -35,7 +34,7 @@ export class AuthService {
   login(email: string, password: string):Promise<any> {
     // el método signInWithEmailAndPassword del servicio AngularFireAuth, 
     // envia solicitud a firebase con email y contraseña
-    // esto devuelve una promesa --> lo manejamos con asyn await en login.page.ts
+    // esto devuelve una promesa --> lo manejamos con async await en login.page.ts
     return this.afAuth.signInWithEmailAndPassword(email, password);
   }
 
