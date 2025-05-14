@@ -9,7 +9,7 @@ import { Router } from '@angular/router';
   selector: 'app-login',
   templateUrl: './login.page.html',
   styleUrls: ['./login.page.scss'],
-  standalone:false
+  standalone: false
 })
 export class LoginPage {
 
@@ -18,7 +18,7 @@ export class LoginPage {
   emailError = '';//captura error de email
   passwordError = '';//captura error de contraseña
   isLoggedIn = false; // logueado por defecto false
-  loading : HTMLIonLoadingElement | null = null ;
+  loading: HTMLIonLoadingElement | null = null;
   currentUser: any | null = null;
 
   constructor(
@@ -27,8 +27,31 @@ export class LoginPage {
     private loadingCtrl: LoadingController,
     private alertCtrl: AlertController,
     private router: Router
-  ) {}
+  ) { }
 
+
+  /**
+ * Se eecuta primero cuado se inicializa componente. 
+ * Verifica si hay usuario activo y cambia esta de logeo.
+ *
+ * - Si hay un usuario activo, lo asigna a `currentUser` y marca `isLoggedIn = true`.
+ * - Si no hay sesión iniciada, muestra form de inicio de sesion.
+ *
+ * @memberof LoginPage
+*/
+  ngOnInit() {
+    //no hace falta async/await por que no devuelve promesa
+    //nos suscribimos al observable getUser y detectar si nuestro usuario sigue logueado
+    this.authService.getUser().subscribe(user => {
+      if (user) {
+        this.currentUser = user;
+        this.isLoggedIn = true;
+
+        //console.log('hola, '+this.currentUser.multiFactor.user.email)
+
+      }
+    });
+  }
 
   /**
    *Intenta logear con usuario contraseña validos, lanza mensaje de exito o error con toast
@@ -77,13 +100,28 @@ export class LoginPage {
 
         this.manageErrorFirebase(error);
 
-      }finally{
+      } finally {
 
         //Ocultar loading después de completar el login
         await this.loading.dismiss();
 
+        //Este cartelon de bienvenida se factoriza como una nueva page o un nuevo componente
+        //y en ese componente se le pone una función en ngoninit que haga esto otro:
+        setTimeout(() => {
+          this.router.navigateByUrl('/tabs');
+        }, 2500); // ⏱ 2.5 segundos
+
+
       }
     }
+  }
+/**
+ * por ahora lo armo como funcion acá para poder ser llamado por botón, para testing
+ */
+  redirigeATabs() {
+    setTimeout(() => {
+      this.router.navigateByUrl('/tabs');
+    }, 2500); // ⏱ 2.5 segundos
   }
 
   /**
@@ -101,7 +139,7 @@ export class LoginPage {
     toast.present();
   }
 
-  
+
   /**
   *Valida los campos email y contraseña, segun error muestra mensaje a traves de 
   *<p class="error-text" *ngIf="emailError">{{ emailError }}</p> en login.page.html
@@ -109,7 +147,7 @@ export class LoginPage {
   * @return {*}  {boolean}
   * @memberof LoginPage
   */
-  isValidForm():boolean{
+  isValidForm(): boolean {
 
     //variable interna para detectar errores
     let isValid = true;
@@ -145,7 +183,7 @@ export class LoginPage {
 
     return isValid;
   }
-  
+
   /**
    *segun el tipo de objeto error recibido desde firebase
    *muestra por alerta el error correspondiente
@@ -154,7 +192,7 @@ export class LoginPage {
    */
   manageErrorFirebase(error: any) {
     // para ver en la consola
-    console.error("Error de Firebase:", error); 
+    console.error("Error de Firebase:", error);
 
     switch (error.code) {
       //inicio sesión
@@ -165,20 +203,20 @@ export class LoginPage {
       ////esta en register.ts
       default:
         //si no es ninguno de los anteriores
-        this.showToast('Error al iniciar sesión: ' + error.message); 
+        this.showToast('Error al iniciar sesión: ' + error.message);
     }
   }
-  
+
   /**
    *Cierra sesion de usuario actual
    *
    * @memberof LoginPage
    */
-  async logout(){
+  async logout() {
     try {
       await this.authService.logout();
       //logeado false
-      this.isLoggedIn = false; 
+      this.isLoggedIn = false;
       //limpiar variable que contiene al usuario actual
       this.currentUser = null;
       this.showToast('Sesión Finalizada. Hasta pronto!');
@@ -186,26 +224,6 @@ export class LoginPage {
     } catch (error: any) {
       this.showToast('Error al cerrar sesión: ' + error.message);
     }
-  }
-  
-  /**
-   * Se eecuta primero cuado se inicializa componente. 
-   * Verifica si hay usuario activo y cambia esta de logeo.
-   *
-   * - Si hay un usuario activo, lo asigna a `currentUser` y marca `isLoggedIn = true`.
-   * - Si no hay sesión iniciada, muestra form de inicio de sesion.
-   *
-   * @memberof LoginPage
-  */
-  ngOnInit() {
-    //no hace falta async/await por que no devuelve promesa
-    //nos suscribimos al observable getUser y detectar si nuestro usuario sigue logueado
-    this.authService.getUser().subscribe(user => {
-      if (user) {
-        this.currentUser = user;
-        this.isLoggedIn = true;
-      }
-    });
   }
 
   async resetPassword() {
@@ -240,7 +258,7 @@ export class LoginPage {
               this.showToast('Por favor, ingresa un correo electrónico válido.');
               return false;
             }
-          
+
             const loading = await this.loadingCtrl.create({
               message: 'Enviando correo de recuperación...',
               cssClass: 'custom-loading'
@@ -251,7 +269,7 @@ export class LoginPage {
               this.showToast(
                 'Se envió un correo electrónico para restablecer tu contraseña.'
               );
-              this.email= ''; // Limpiar el campo después del eenvio
+              this.email = ''; // Limpiar el campo después del eenvio
               return true;
             } catch (error: any) {
               this.showToast(
