@@ -48,6 +48,7 @@ export class RegisterPage  {
       //Mostrar loading antes de llamar a Firebase
       this.loading = await this.loadingCtrl.create({
         message: 'Iniciando Registro...',
+        cssClass: 'custom-loading'
       });
 
       await this.loading.present();

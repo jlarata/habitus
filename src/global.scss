@@ -35,3 +35,44 @@
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
 @import "@ionic/angular/css/palettes/dark.system.css";
+
+//estilos alert recuperacion de contraseña
+.alert-wrapper {
+  background-color: white !important;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.alert-title {
+  color: #7B1FA2 !important;
+  font-weight: bold;
+}
+
+.alert-message {
+  color: #8733ac !important;
+}
+
+.alert-button {
+  border-radius: 8px;
+  font-weight: bold;
+}
+
+.alert-button-cancel {
+  color: #E91E63 !important; /* Color del botón cancelar */
+}
+
+.alert-button-confirm {
+  background-color: #E91E63 !important; /* Color del botón enviar */
+  color: white !important;
+}
+
+.alert-input {
+  color: #E91E63 !important; /* Asegura que el texto sea visible */
+}
+
+////estilo loading
+.custom-loading {
+  --spinner-color: #E91E63; /* Color del spinner */
+  --background: rgba(243, 229, 245, 0.9); /* Fondo semitransparente */
+  color: #3a0053; /* Color del texto */
+}
