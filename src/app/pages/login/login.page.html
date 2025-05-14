@@ -45,11 +45,10 @@
     </div>
   </ng-container>
 
-
   <ng-container *ngIf="isLoggedIn">
     <ion-card>
       <ion-card-header>
-        <ion-card-title>Bienvenido</ion-card-title>
+          <ion-card-title  *ngIf="currentUser">Bienvenido {{currentUser.email}} a Habitus APP💓 </ion-card-title>
       </ion-card-header>
       <ion-card-content>
         Ahora puedes acceder a las tabs manualmente.
