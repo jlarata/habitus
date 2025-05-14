@@ -1,15 +1,21 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-buttons slot="start">
-        <ion-back-button defaultHref="/" color="tertiary"></ion-back-button>
-    </ion-buttons>
-    <ion-title>Registro Habitus APP</ion-title>
+
+    <ion-title class="title-container">
+      <div class="logo-wrapper">
+        <img src="assets/img/icon.png" class="heart-logo" />
+        <span class="app-name">Registro</span>
+      </div>
+    </ion-title>
+
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
   <!-- No funciona enviar datos a firebase asi que lo comento-->
-   <!--
+
+  <!--
+
   <ion-item [class.error]="nameError">
     <ion-label position="floating">Nombre</ion-label>
     <ion-input type="text" [(ngModel)]="name"></ion-input>
@@ -35,24 +41,29 @@
     <ion-input type="number" [(ngModel)]="height"></ion-input>
   </ion-item>
   -->
-  <ion-item [class.error]="emailError">
-    <ion-label position="floating">Email</ion-label>
-    <ion-input type="email" [(ngModel)]="email"></ion-input>
-  </ion-item>
-  <p class="error-text" *ngIf="emailError">{{ emailError }}</p>
+  <div class="center-container">
+    <div class="page">
+      <div class="form-wrapper">
+        <ion-item [class.error]="emailError">
+          <ion-label position="floating">Email</ion-label>
+          <ion-input type="email" [(ngModel)]="email"></ion-input>
+        </ion-item>
+        <p class="error-text" *ngIf="emailError">{{ emailError }}</p>
 
-  <ion-item [class.error]="passwordError">
-    <ion-label position="floating">Contraseña</ion-label>
-    <ion-input type="password" [(ngModel)]="password"></ion-input>
-  </ion-item>
-  <p class="error-text" *ngIf="passwordError">{{ passwordError }}</p>
+        <ion-item [class.error]="passwordError">
+          <ion-label position="floating">Contraseña</ion-label>
+          <ion-input type="password" [(ngModel)]="password"></ion-input>
+        </ion-item>
+        <p class="error-text" *ngIf="passwordError">{{ passwordError }}</p>
 
-  <ion-item>
-    <ion-label position="floating">Repetir Contraseña</ion-label>
-    <ion-input type="password" [(ngModel)]="repeatPassword"></ion-input>
-  </ion-item>
+        <ion-item>
+          <ion-label position="floating">Repetir Contraseña</ion-label>
+          <ion-input type="password" [(ngModel)]="repeatPassword"></ion-input>
+        </ion-item>
 
-  <ion-button expand="block" (click)="register()">Registrarse</ion-button>
-  <ion-button expand="block" routerLink="/login">Iniciar Sesión / Olvidé mi contraseña</ion-button>
-
+        <ion-button expand="block" (click)="register()">Registrarse</ion-button>
+        <ion-button expand="block" routerLink="/login">Iniciar Sesión / Olvidé mi contraseña</ion-button>
+      </div>
+    </div>
+  </div>
 </ion-content>

@@ -1,15 +1,142 @@
-.error {
-  border: 1px solid red !important;
+:host {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #F3E5F5;
+  color: #7B1FA2;
+  font-family: sans-serif;
+  align-items: center;
+  justify-content: center;
+}
+
+ion-content {
+  --background: #F3E5F5; // Color de fondo global de la app
+}
+
+ion-header,
+ion-toolbar {
+  --background: #E1BEE7;
+  --color: #7B1FA2;
+  border-bottom: 1px solid #CE93D8;
+  border-radius: 8px 8px 0 0;
+}
+
+ion-title.title-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.logo-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.heart-logo {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+}
+
+.app-name {
+  font-weight: bold;
+  font-size: 1.2em;
+  color: #7B1FA2;
+}
+
+.page {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  width: 90%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.content {
+  padding: 20px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.login-title {
+  color: #9C27B0;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.custom-input {
+  --background: white;
+  --border-color: #CE93D8;
+  --highlight-color-focused: #7B1FA2;
+  --color: #7B1FA2;
+  border-radius: 8px;
+  border: 1px solid #CE93D8;
+  margin-bottom: 16px;
+}
+
+ion-input {
+  color: #7B1FA2;
+}
+
+.login-button {
+  --background: #E91E63;
+  --color: white;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 0.9em;
+  margin: 16px 0;
+}
+
+.habitus-acerca-button {
+  --background: white;
+  --color: #7B1FA2;
+  border: 1px solid #CE93D8;
+  border-radius: 8px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.habitus-icon {
+  background-color: #E91E63;
+  color: white;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1em;
+  margin-right: 10px;
+}
+
+.signup-link {
+  color: #7B1FA2;
+  text-align: center;
+
+  a {
+    color: #E91E63;
+    font-weight: bold;
+    text-decoration: none;
+  }
 }
 
 .error-text {
-  color: red;
-  font-size: 14px;
+  color: #E91E63;
+  font-size: 0.9em;
+  margin-top: -10px;
+  margin-bottom: 10px;
 }
 
-.forgot-password {
-    text-align: center;
-    color: var(--ion-color-primary);
-    cursor: pointer;
-    text-decoration: underline;
-}
+
+
