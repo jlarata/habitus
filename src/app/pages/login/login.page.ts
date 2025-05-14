@@ -1,8 +1,7 @@
 import { Component } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
-import { ToastController, LoadingController } from '@ionic/angular';
+import { ToastController, LoadingController, AlertController } from '@ionic/angular';
 import { ValidationUtils } from 'src/app/utils/validation';
-import { User } from '@angular/fire/auth';
 
 
 @Component({
@@ -19,12 +18,13 @@ export class LoginPage {
   passwordError = '';//captura error de contraseña
   isLoggedIn = false; // logueado por defecto false
   loading : HTMLIonLoadingElement | null = null ;
-  currentUser: User | null = null;
+  currentUser: any | null = null;
 
   constructor(
     private authService: AuthService, 
     private toastCtrl: ToastController,
-    private loadingCtrl: LoadingController
+    private loadingCtrl: LoadingController,
+    private alertCtrl: AlertController
   ) {}
   
   /**
@@ -191,12 +191,72 @@ export class LoginPage {
   */
   ngOnInit() {
     //no hace falta async/await por que no devuelve promesa
+    //nos suscribimos al observable getUser y detectar si nuestro usuario sigue logueado
     this.authService.getUser().subscribe(user => {
       if (user) {
         this.currentUser = user;
         this.isLoggedIn = true;
       }
     });
+  }
+
+  async resetPassword() {
+    const alert = await this.alertCtrl.create({
+      header: 'Olvidé mi Contraseña',
+      message: 'Ingresa tu correo electrónico:',
+      inputs: [
+        {
+          name: 'email',
+          type: 'email',
+          placeholder: 'Tu correo electrónico',
+        },
+      ],
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+            console.log('Cancelado');
+          },
+        },
+        {
+          text: 'Enviar',
+          handler: async (alertData) => {
+            this.email = alertData.email;
+            if (!this.email) {
+              this.showToast('Por favor, ingresa tu correo electrónico.');
+              return false;//para que no me cierre el cuadro de dialogo
+            }
+            if (!ValidationUtils.isValidEmail(this.email)) {
+              this.showToast('Por favor, ingresa un correo electrónico válido.');
+              return false;
+            }
+          
+            const loading = await this.loadingCtrl.create({
+              message: 'Enviando correo de recuperación...',
+            });
+            await loading.present();
+            try {
+              await this.authService.resetPassword(this.email);
+              this.showToast(
+                'Se envió un correo electrónico para restablecer tu contraseña.'
+              );
+              this.email= ''; // Limpiar el campo después del eenvio
+              return true;
+            } catch (error: any) {
+              this.showToast(
+                'Error al enviar correo de recuperación: ' + error.message
+              );
+              return false;
+            } finally {
+              await loading.dismiss();
+            }
+          },
+        },
+      ],
+    });
+    await alert.present();
   }
 
 }
