@@ -5,8 +5,6 @@ import { ValidationUtils } from 'src/app/utils/validation';
 import { Router } from '@angular/router';
 
 
-
-
 @Component({
   selector: 'app-login',
   templateUrl: './login.page.html',
@@ -70,6 +68,7 @@ export class LoginPage {
       //Mostrar loading antes de llamar a Firebase
       this.loading = await this.loadingCtrl.create({
         message: 'Iniciando sesión...',
+        cssClass: 'custom-loading'
       });
 
       await this.loading.present();
@@ -92,6 +91,10 @@ export class LoginPage {
         this.isLoggedIn = true;
 
         this.showToast('Login exitoso');
+
+        //limpiar campos
+        this.email = '';
+        this.password = '';
 
       } catch (error: any) {
 
@@ -197,7 +200,7 @@ export class LoginPage {
         this.showToast('Usuario o contraseña incorrecto. Inténtalo de nuevo.');
         break;
       //registro
-
+      ////esta en register.ts
       default:
         //si no es ninguno de los anteriores
         this.showToast('Error al iniciar sesión: ' + error.message);
@@ -225,10 +228,12 @@ export class LoginPage {
 
   async resetPassword() {
     const alert = await this.alertCtrl.create({
-      header: 'Olvidé mi Contraseña',
+      header: 'Recuperacíon de contraseña',
+      cssClass: 'alert-wrapper', // clase estilo alert
       message: 'Ingresa tu correo electrónico:',
       inputs: [
         {
+          cssClass: 'alert-input',
           name: 'email',
           type: 'email',
           placeholder: 'Tu correo electrónico',
@@ -238,13 +243,11 @@ export class LoginPage {
         {
           text: 'Cancelar',
           role: 'cancel',
-          cssClass: 'secondary',
-          handler: () => {
-            console.log('Cancelado');
-          },
+          cssClass: 'secondaryalert-button alert-button-cancel',
         },
         {
           text: 'Enviar',
+          cssClass: 'alert-button alert-button-confirm',//estilo boton enviar
           handler: async (alertData) => {
             this.email = alertData.email;
             if (!this.email) {
@@ -258,6 +261,7 @@ export class LoginPage {
 
             const loading = await this.loadingCtrl.create({
               message: 'Enviando correo de recuperación...',
+              cssClass: 'custom-loading'
             });
             await loading.present();
             try {
@@ -281,9 +285,6 @@ export class LoginPage {
     });
     await alert.present();
   }
-
-
-
 
 }
 
