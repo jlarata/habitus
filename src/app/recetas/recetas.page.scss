@@ -1,0 +1,39 @@
+.title {
+    margin: 2%;
+}
+
+.recipeContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 2vh;
+    margin: 2%;
+}
+
+.recipeCard {
+    display: flex;
+    flex-direction: row;
+    border: solid 1px black;
+    border-radius: 5px;
+}
+
+.titleAndPhoto {
+    display: flex;
+    flex-direction: column;
+    //border-right: solid 1px black;
+    margin-left: 2%;
+    margin-bottom: 2%;
+    width: 35%;
+    align-items: end;
+}
+
+.titleAndPhoto h2 {
+    align-self: center;
+}
+
+.titleAndPhoto img {
+    max-width: 280px;
+}
+
+.ingredients {
+    margin-left: 2%;
+}
