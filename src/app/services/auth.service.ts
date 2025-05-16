@@ -1,11 +1,14 @@
 import { Injectable } from '@angular/core';
- //el servicio AngularFireAuth del módulo @angular/fire/compat/auth, que 
- // proporciona métodos para la autenticación con Firebase. existe una version mas modular
- //solo compatible con standalone
+//el servicio AngularFireAuth del módulo @angular/fire/compat/auth, que 
+// proporciona métodos para la autenticación con Firebase. existe una version mas modular
+//solo compatible con standalone
 import { AngularFireAuth } from '@angular/fire/compat/auth';
-import { Observable} from 'rxjs';
-import { AngularFirestore} from '@angular/fire/compat/firestore';
+import { Observable } from 'rxjs';
+import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { UserProfile } from '../models/userProfile.model';
+import { environment } from '../../environments/environment'
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+
 
 /**
  *
@@ -18,11 +21,15 @@ import { UserProfile } from '../models/userProfile.model';
 })
 
 export class AuthService {
-  
+
+  headers = new HttpHeaders()
+    .set('Content-Type', 'application/json')
+
   constructor(
     private afAuth: AngularFireAuth,
-    private firestore:AngularFirestore
-  ) {}
+    private firestore: AngularFirestore,
+    public http: HttpClient,
+  ) { }
   /**
    *Envio de credeciales proporcionadas a firebase para inicio de sesión
    *
@@ -31,7 +38,7 @@ export class AuthService {
    * @return {Promise<any>} promesa
    * @memberof AuthService
   */
-  login(email: string, password: string):Promise<any> {
+  login(email: string, password: string): Promise<any> {
     // el método signInWithEmailAndPassword del servicio AngularFireAuth, 
     // envia solicitud a firebase con email y contraseña
     // esto devuelve una promesa --> lo manejamos con async await en login.page.ts
@@ -43,7 +50,7 @@ export class AuthService {
    * @returns Un Observable con el objeto User si usuario autenticado,
    * o null si no autenticado.
   */
-   getUser(): Observable<any | null> {
+  getUser(): Observable<any | null> {
     return this.afAuth.authState;
   }
 
@@ -52,10 +59,10 @@ export class AuthService {
    * @return {Promise<any>} promesa
    * @memberof AuthService
    */
-  logout():Promise<any> {
+  logout(): Promise<any> {
     return this.afAuth.signOut();
   }
-  
+
   /**
    *Registro por email y contraseña, solo si no hay cuenta asociada al email
    *
@@ -64,10 +71,10 @@ export class AuthService {
    * @return {*} firebase.auth.UserCredential
    * @memberof AuthService
    */
-  register(email:string, password:string):Promise<any>{
+  register(email: string, password: string): Promise<any> {
     return this.afAuth.createUserWithEmailAndPassword(email, password)
   }
-  
+
   /**
    *Escribe un documento con datos adicionales del usuario 
    *en el documento 'user', lo asocia al usuario por el uid
@@ -77,12 +84,12 @@ export class AuthService {
    * @return {*}  {Promise<void>}
    * @memberof AuthService
    */
-  saveAditionalDataUser(userData:UserProfile, uid:string):Promise<void>{
+  saveAditionalDataUser(userData: UserProfile, uid: string): Promise<void> {
     //le indicamos colleccion y user id para asociar la info
     console.log('Enviando a Firestore:', userData, 'con uid:', uid);
     return this.firestore.collection('users').doc(uid).set(userData)
     //retornamos la promesa
-  
+
   }
 
   /**
@@ -90,8 +97,23 @@ export class AuthService {
    * @param email 
    * @returns promesa o error
    */
-  resetPassword(email: string): Promise<void> {
+  public resetPassword(email: string): Promise<void>
+  {/*
+    TODO ESTO ES la versión manual del método que quise crear. no funciona. Si nos queda tiempo lo revisamos.
+    const url = 'https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=' + `${environment.firebase.apiKey}`+'&requestType=PASSWORD_RESET&email='+email;
+    console.log(url)
+    const request = this.http.post(url, null,
+      {headers : this.headers},
+      /
+        body:
+        {
+          'requestType': 'PASSWORD_RESET',
+          'email': email
+        }
+
+      }
+    )*/
     return this.afAuth.sendPasswordResetEmail(email);
   }
-  
+
 }
