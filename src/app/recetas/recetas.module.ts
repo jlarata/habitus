@@ -2,9 +2,9 @@ import { IonicModule } from '@ionic/angular';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { RecetasPage } from './recetaspage';
 import { ExploreContainerComponentModule } from '../explore-container/explore-container.module';
-import { componenteRecetasPage } from './componente-recetas.page';
-import { ComponenteRecetasPageRoutingModule } from './componente-recetas-routing.module';
+import { RecetasPageRoutingModule } from './recetas-routing.module';
 
 @NgModule({
   imports: [
@@ -12,8 +12,8 @@ import { ComponenteRecetasPageRoutingModule } from './componente-recetas-routing
     CommonModule,
     FormsModule,
     ExploreContainerComponentModule,
-    ComponenteRecetasPageRoutingModule
+    RecetasPageRoutingModule
   ],
-  declarations: [componenteRecetasPage]
+  declarations: [RecetasPage]
 })
-export class ComponenteRecetasPageModule { }
+export class RecetasPageModule {}
