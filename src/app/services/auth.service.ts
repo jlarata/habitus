@@ -105,11 +105,13 @@ export class AuthService {
     const url = 'https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=' + `${environment.firebase.apiKey}`;
     console.log(url)
 
+    //cuerpo de la peticion
     const body = {
       requestType: "PASSWORD_RESET",
       email: email
     };
-
+    
+    //peticion con url, cuerpo, headers
     const request = this.http.post(url, body, { headers: this.headers });
 
     return request;
