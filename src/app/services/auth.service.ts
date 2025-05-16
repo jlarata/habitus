@@ -97,23 +97,29 @@ export class AuthService {
    * @param email 
    * @returns promesa o error
    */
-  public resetPassword(email: string): Promise<void>
-  {/*
-    TODO ESTO ES la versión manual del método que quise crear. no funciona. Si nos queda tiempo lo revisamos.
-    const url = 'https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=' + `${environment.firebase.apiKey}`+'&requestType=PASSWORD_RESET&email='+email;
-    console.log(url)
-    const request = this.http.post(url, null,
-      {headers : this.headers},
-      /
-        body:
-        {
-          'requestType': 'PASSWORD_RESET',
-          'email': email
-        }
 
-      }
-    )*/
-    return this.afAuth.sendPasswordResetEmail(email);
+  ///con http
+  public resetPassword(email: string) {
+    //TODO ESTO ES la versión manual del método que quise crear. no funciona. Si nos queda tiempo lo revisamos.
+
+    const url = 'https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=' + `${environment.firebase.apiKey}`;
+    console.log(url)
+
+    const body = {
+      requestType: "PASSWORD_RESET",
+      email: email
+    };
+
+    const request = this.http.post(url, body, { headers: this.headers });
+
+    return request;
+    
   }
+
+  //con metodo de firebase
+  /*public resetPassword(email: string): Promise<void>
+  {
+    return this.afAuth.sendPasswordResetEmail(email);
+  }*/
 
 }
