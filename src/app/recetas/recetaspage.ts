@@ -21,7 +21,8 @@ queryDeRecetas? : QueryDeRecetas;
   private ionViewDidLoad() {
     this.spoonacular.obtenerRecetas()
     .subscribe(
-      (data) => {this.queryDeRecetas = data, console.log(this.queryDeRecetas.results)},
+      (data) => {this.queryDeRecetas = data//, console.log(this.queryDeRecetas.results)
+      },
       (error) => {console.log(error);}
     )
    
