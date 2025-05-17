@@ -4,7 +4,7 @@
   min-height: 100vh;
   background-color: #F3E5F5;
   color: #7B1FA2;
-  font-family: sans-serif;
+  font-family: sans-serif !important;
   align-items: center;
   justify-content: center;
 }
@@ -124,11 +124,15 @@ ion-input {
   color: #7B1FA2;
   text-align: center;
 
-  a {
+  a, ion-button {
     color: #E91E63;
     font-weight: bold;
     text-decoration: none;
   }
+}
+
+.signup-link ion-button {
+  font-family: sans-serif !important;
 }
 
 .error-text {

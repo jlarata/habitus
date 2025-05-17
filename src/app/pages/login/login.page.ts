@@ -31,23 +31,25 @@ export class LoginPage {
 
 
   /**
- * Se eecuta primero cuado se inicializa componente. 
- * Verifica si hay usuario activo y cambia esta de logeo.
- *
- * - Si hay un usuario activo, lo asigna a `currentUser` y marca `isLoggedIn = true`.
- * - Si no hay sesión iniciada, muestra form de inicio de sesion.
- *
- * @memberof LoginPage
-*/
+   * Se eecuta primero cuado se inicializa componente. 
+   * Verifica si hay usuario activo y cambia estado de logeo.
+   *
+   * - Si hay un usuario activo, lo asigna a `currentUser` y marca `isLoggedIn = true`.
+   * - Si no hay sesión iniciada, muestra form de inicio de sesion.
+   *
+   * @memberof LoginPage
+  */
   ngOnInit() {
     //no hace falta async/await por que no devuelve promesa
     //nos suscribimos al observable getUser y detectar si nuestro usuario sigue logueado
-    this.authService.getUser().subscribe(user => {
+    this.authService.getAuthState().subscribe(user => {
       if (user) {
         this.currentUser = user;
         this.isLoggedIn = true;
 
         //console.log('hola, '+this.currentUser.multiFactor.user.email)
+        // si user autenticado llevar a tabs
+        this.router.navigate(['/tabs']);
 
       }
     });
@@ -115,9 +117,9 @@ export class LoginPage {
       }
     }
   }
-/**
- * por ahora lo armo como funcion acá para poder ser llamado por botón, para testing
- */
+  /**
+   * por ahora lo armo como funcion acá para poder ser llamado por botón, para testing
+  */
   redirigeATabs() {
     setTimeout(() => {
       this.router.navigateByUrl('/tabs');
@@ -215,6 +217,7 @@ export class LoginPage {
   async logout() {
     try {
       await this.authService.logout();
+      this.router.navigate(['/login']);
       //logeado false
       this.isLoggedIn = false;
       //limpiar variable que contiene al usuario actual

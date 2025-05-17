@@ -3,11 +3,11 @@ import { Injectable } from '@angular/core';
 // proporciona métodos para la autenticación con Firebase. existe una version mas modular
 //solo compatible con standalone
 import { AngularFireAuth } from '@angular/fire/compat/auth';
-import { Observable } from 'rxjs';
-import { AngularFirestore } from '@angular/fire/compat/firestore';
-import { UserProfile } from '../models/userProfile.model';
+import { BehaviorSubject, Observable } from 'rxjs';//libreria js para implementar rectividad a traves de datos en flujo continuo (Streams).
 import { environment } from '../../environments/environment'
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import firebase from 'firebase/compat/app';
+
 
 
 /**
@@ -21,15 +21,46 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 })
 
 export class AuthService {
-
+  //header para http
   headers = new HttpHeaders()
-    .set('Content-Type', 'application/json')
+    .set('Content-Type', 'application/json');
+
+  //guarda el estado del usuario y lo actualiza en tiempo real
+  private userSubject = new BehaviorSubject<firebase.User | null>(null);
+
+  //hace posible acceder al  el user sin poder modificarlo
+  private user$: Observable<firebase.User | null> = this.userSubject.asObservable();
+  
 
   constructor(
     private afAuth: AngularFireAuth,
-    private firestore: AngularFirestore,
-    public http: HttpClient,
-  ) { }
+    public http: HttpClient
+  ) { 
+
+    this.initializeAuthState();
+
+  }
+
+  /**
+ * Iniciala suscripción al estado de autenticación.
+ * Actualiza `userSubject` cuando el usuario inicia o cierra sesión.
+ */
+  private initializeAuthState(): void {
+    try {
+
+      this.afAuth.authState.subscribe((user: firebase.User | null) => {
+      this.userSubject.next(user);
+    
+    });
+      
+    } catch (error) {
+
+      console.error('Error al obtener el estado de autenticación:', error)
+      
+    }
+    
+  }
+
   /**
    *Envio de credeciales proporcionadas a firebase para inicio de sesión
    *
@@ -39,23 +70,23 @@ export class AuthService {
    * @memberof AuthService
   */
   login(email: string, password: string): Promise<any> {
-    // el método signInWithEmailAndPassword del servicio AngularFireAuth, 
-    // envia solicitud a firebase con email y contraseña
-    // esto devuelve una promesa --> lo manejamos con async await en login.page.ts
+    
     return this.afAuth.signInWithEmailAndPassword(email, password);
   }
 
   /**
-   * Obtiene el estado de autenticación del usuario.
-   * @returns Un Observable con el objeto User si usuario autenticado,
-   * o null si no autenticado.
+   *devuelve observable del usuario autenticado o null si no hay sesión activa.
+   * @returns {Observable<User | null>} 
   */
-  getUser(): Observable<any | null> {
-    return this.afAuth.authState;
+  getAuthState(): Observable<firebase.User | null> {
+    // en Angular y RxJS, colocar $ al final de una variable 
+    // observable es buena practica para recordar que se debe suscribirse
+    //para ver el valor de la misma
+    return this.user$;
   }
 
   /**
-   *Desloguea usuario atcual 
+   *Desloguea usuario acual 
    * @return {Promise<any>} promesa
    * @memberof AuthService
    */
@@ -65,7 +96,7 @@ export class AuthService {
 
   /**
    *Registro por email y contraseña, solo si no hay cuenta asociada al email
-   *
+   *ademas de registrar, inicia sesión y guarda token en indexDB
    * @param {string} email
    * @param {string} password
    * @return {*} firebase.auth.UserCredential
@@ -76,44 +107,39 @@ export class AuthService {
   }
 
   /**
-   *Escribe un documento con datos adicionales del usuario 
-   *en el documento 'user', lo asocia al usuario por el uid
-   *si no existe el documento lo crea
-   * @param {UserProfile} userData
-   * @param {string} uid
-   * @return {*}  {Promise<void>}
-   * @memberof AuthService
-   */
-  saveAditionalDataUser(userData: UserProfile, uid: string): Promise<void> {
-    //le indicamos colleccion y user id para asociar la info
-    console.log('Enviando a Firestore:', userData, 'con uid:', uid);
-    return this.firestore.collection('users').doc(uid).set(userData)
-    //retornamos la promesa
+   * Envía un correo electrónico para restablecer la contraseña al usuario.
+   * @param email 
+   * @returns observable en http
+  */
+  ///con http
+  public resetPassword(email: string) {
+    //TODO ESTO ES la versión manual del método que quise crear. no funciona. Si nos queda tiempo lo revisamos.
 
+    const url = 'https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=' + `${environment.firebase.apiKey}`;
+    console.log(url)
+
+    //cuerpo de la peticion
+    const body = {
+      requestType: "PASSWORD_RESET",
+      email: email
+    };
+    
+    //peticion con url, cuerpo, headers
+    const request = this.http.post(url, body, { headers: this.headers });
+
+    return request;
+    
   }
 
+  //con metodo de firebase
   /**
    * Envía un correo electrónico para restablecer la contraseña al usuario.
    * @param email 
    * @returns promesa o error
-   */
-  public resetPassword(email: string): Promise<void>
-  {/*
-    TODO ESTO ES la versión manual del método que quise crear. no funciona. Si nos queda tiempo lo revisamos.
-    const url = 'https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=' + `${environment.firebase.apiKey}`+'&requestType=PASSWORD_RESET&email='+email;
-    console.log(url)
-    const request = this.http.post(url, null,
-      {headers : this.headers},
-      /
-        body:
-        {
-          'requestType': 'PASSWORD_RESET',
-          'email': email
-        }
-
-      }
-    )*/
+  */
+  /*public resetPassword(email: string): Promise<void>
+  {
     return this.afAuth.sendPasswordResetEmail(email);
-  }
+  }*/
 
 }

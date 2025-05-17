@@ -7,10 +7,8 @@ import { environment } from '../environments/environment';
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
 import { HttpClientModule } from '@angular/common/http';
 import { SpoonacularService } from './services/spoonacular.service';
-
 
 @NgModule({
   declarations: [AppComponent],
@@ -22,10 +20,15 @@ import { SpoonacularService } from './services/spoonacular.service';
     AngularFireModule.initializeApp(environment.firebase),
     //modulo de autenticación
     AngularFireAuthModule,
-    AngularFirestoreModule,
-    HttpClientModule    
+    HttpClientModule
   ],
-  providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }, SpoonacularService],
+  providers: [
+    { 
+    provide: RouteReuseStrategy, 
+    useClass: IonicRouteStrategy 
+    },
+    SpoonacularService
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}
