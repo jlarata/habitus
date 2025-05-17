@@ -8,6 +8,8 @@ import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HttpClientModule } from '@angular/common/http';
+import { SpoonacularService } from './services/spoonacular.service';
+
 @NgModule({
   declarations: [AppComponent],
   imports: [
@@ -19,12 +21,14 @@ import { HttpClientModule } from '@angular/common/http';
     //modulo de autenticación
     AngularFireAuthModule,
     HttpClientModule
-    
   ],
-  providers: [{ 
+  providers: [
+    { 
     provide: RouteReuseStrategy, 
     useClass: IonicRouteStrategy 
-  }],
+    },
+    SpoonacularService
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}
