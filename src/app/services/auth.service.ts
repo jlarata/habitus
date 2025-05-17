@@ -3,11 +3,11 @@ import { Injectable } from '@angular/core';
 // proporciona métodos para la autenticación con Firebase. existe una version mas modular
 //solo compatible con standalone
 import { AngularFireAuth } from '@angular/fire/compat/auth';
-import { Observable } from 'rxjs';
-import { AngularFirestore } from '@angular/fire/compat/firestore';
-import { UserProfile } from '../models/userProfile.model';
+import { BehaviorSubject, Observable } from 'rxjs';//libreria js para implementar rectividad a traves de datos en flujo continuo (Streams).
 import { environment } from '../../environments/environment'
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { User } from 'firebase/auth';//importamos interfaz User desde Firebase Authentication.
+
 
 
 /**
@@ -21,13 +21,16 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 })
 
 export class AuthService {
-
+  //header para http
   headers = new HttpHeaders()
-    .set('Content-Type', 'application/json')
+    .set('Content-Type', 'application/json');
+  
+  private userSubject = new BehaviorSubject<User | null>(null);
+  public user$: Observable<User | null> = this.userSubject.asObservable();
+  
 
   constructor(
     private afAuth: AngularFireAuth,
-    private firestore: AngularFirestore,
     public http: HttpClient,
   ) { }
   /**
@@ -46,13 +49,25 @@ export class AuthService {
     return this.afAuth.signInWithEmailAndPassword(email, password);
   }
 
-  /**
+  /** ver si lo dejo por que solo verifica que este autenticado en firebase
    * Obtiene el estado de autenticación del usuario.
    * @returns Un Observable con el objeto User si usuario autenticado,
    * o null si no autenticado.
   */
   getUser(): Observable<any | null> {
     return this.afAuth.authState;
+  }
+
+  /**
+   * Obtiene el estado de autenticación del usuario en Firebase.
+   *devuelve observable del usuario autenticado o null si no hay sesión activa.
+   * @returns {Observable<User | null>} 
+  */
+  getAuthState(): Observable<User | null> {
+    // en Angular y RxJS, colocar $ al final de una variable 
+    // observable es buena practica para recordar que se debe suscribirse
+    //para ver el valor de la misma
+    return this.user$;
   }
 
   /**
@@ -75,24 +90,6 @@ export class AuthService {
   register(email: string, password: string): Promise<any> {
     return this.afAuth.createUserWithEmailAndPassword(email, password)
   }
-
-  /**
-   *Escribe un documento con datos adicionales del usuario 
-   *en el documento 'user', lo asocia al usuario por el uid
-   *si no existe el documento lo crea
-   * @param {UserProfile} userData
-   * @param {string} uid
-   * @return {*}  {Promise<void>}
-   * @memberof AuthService
-   */
-  //no funciona
-  /*saveAditionalDataUser(userData: UserProfile, uid: string): Promise<void> {
-    //le indicamos colleccion y user id para asociar la info
-    console.log('Enviando a Firestore:', userData, 'con uid:', uid);
-    return this.firestore.collection('users').doc(uid).set(userData)
-    //retornamos la promesa
-
-  }*/
 
   /**
    * Envía un correo electrónico para restablecer la contraseña al usuario.

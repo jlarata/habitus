@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { ToastController, LoadingController } from '@ionic/angular';
 import { ValidationUtils } from 'src/app/utils/validation';
 import { AuthService } from 'src/app/services/auth.service';
-import { UserProfile } from '../../models/userProfile.model';
 import { Router } from '@angular/router';
 
 @Component({
