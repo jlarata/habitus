@@ -41,6 +41,7 @@ export class AuthService {
   login(email: string, password: string): Promise<any> {
     // el método signInWithEmailAndPassword del servicio AngularFireAuth, 
     // envia solicitud a firebase con email y contraseña
+    //logea y guarda en indexDB el token del usuario
     // esto devuelve una promesa --> lo manejamos con async await en login.page.ts
     return this.afAuth.signInWithEmailAndPassword(email, password);
   }
@@ -55,7 +56,7 @@ export class AuthService {
   }
 
   /**
-   *Desloguea usuario atcual 
+   *Desloguea usuario acual 
    * @return {Promise<any>} promesa
    * @memberof AuthService
    */
@@ -65,7 +66,7 @@ export class AuthService {
 
   /**
    *Registro por email y contraseña, solo si no hay cuenta asociada al email
-   *
+   *ademas de registrar, inicia sesión y guarda token en indexDB
    * @param {string} email
    * @param {string} password
    * @return {*} firebase.auth.UserCredential
@@ -84,20 +85,20 @@ export class AuthService {
    * @return {*}  {Promise<void>}
    * @memberof AuthService
    */
-  saveAditionalDataUser(userData: UserProfile, uid: string): Promise<void> {
+  //no funciona
+  /*saveAditionalDataUser(userData: UserProfile, uid: string): Promise<void> {
     //le indicamos colleccion y user id para asociar la info
     console.log('Enviando a Firestore:', userData, 'con uid:', uid);
     return this.firestore.collection('users').doc(uid).set(userData)
     //retornamos la promesa
 
-  }
+  }*/
 
   /**
    * Envía un correo electrónico para restablecer la contraseña al usuario.
    * @param email 
-   * @returns promesa o error
-   */
-
+   * @returns observable en http
+  */
   ///con http
   public resetPassword(email: string) {
     //TODO ESTO ES la versión manual del método que quise crear. no funciona. Si nos queda tiempo lo revisamos.
@@ -119,6 +120,11 @@ export class AuthService {
   }
 
   //con metodo de firebase
+  /**
+   * Envía un correo electrónico para restablecer la contraseña al usuario.
+   * @param email 
+   * @returns promesa o error
+  */
   /*public resetPassword(email: string): Promise<void>
   {
     return this.afAuth.sendPasswordResetEmail(email);
