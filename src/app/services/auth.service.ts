@@ -6,7 +6,7 @@ import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { BehaviorSubject, Observable } from 'rxjs';//libreria js para implementar rectividad a traves de datos en flujo continuo (Streams).
 import { environment } from '../../environments/environment'
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { User } from 'firebase/auth';//importamos interfaz User desde Firebase Authentication.
+import firebase from 'firebase/compat/app';
 
 
 
@@ -24,15 +24,43 @@ export class AuthService {
   //header para http
   headers = new HttpHeaders()
     .set('Content-Type', 'application/json');
-  
-  private userSubject = new BehaviorSubject<User | null>(null);
-  public user$: Observable<User | null> = this.userSubject.asObservable();
+
+  //guarda el estado del usuario y lo actualiza en tiempo real
+  private userSubject = new BehaviorSubject<firebase.User | null>(null);
+
+  //hace posible acceder al  el user sin poder modificarlo
+  private user$: Observable<firebase.User | null> = this.userSubject.asObservable();
   
 
   constructor(
     private afAuth: AngularFireAuth,
-    public http: HttpClient,
-  ) { }
+    public http: HttpClient
+  ) { 
+
+    this.initializeAuthState();
+
+  }
+
+  /**
+ * Iniciala suscripción al estado de autenticación.
+ * Actualiza `userSubject` cuando el usuario inicia o cierra sesión.
+ */
+  private initializeAuthState(): void {
+    try {
+
+      this.afAuth.authState.subscribe((user: firebase.User | null) => {
+      this.userSubject.next(user);
+    
+    });
+      
+    } catch (error) {
+
+      console.error('Error al obtener el estado de autenticación:', error)
+      
+    }
+    
+  }
+
   /**
    *Envio de credeciales proporcionadas a firebase para inicio de sesión
    *
@@ -42,28 +70,15 @@ export class AuthService {
    * @memberof AuthService
   */
   login(email: string, password: string): Promise<any> {
-    // el método signInWithEmailAndPassword del servicio AngularFireAuth, 
-    // envia solicitud a firebase con email y contraseña
-    //logea y guarda en indexDB el token del usuario
-    // esto devuelve una promesa --> lo manejamos con async await en login.page.ts
+    
     return this.afAuth.signInWithEmailAndPassword(email, password);
   }
 
-  /** ver si lo dejo por que solo verifica que este autenticado en firebase
-   * Obtiene el estado de autenticación del usuario.
-   * @returns Un Observable con el objeto User si usuario autenticado,
-   * o null si no autenticado.
-  */
-  getUser(): Observable<any | null> {
-    return this.afAuth.authState;
-  }
-
   /**
-   * Obtiene el estado de autenticación del usuario en Firebase.
    *devuelve observable del usuario autenticado o null si no hay sesión activa.
    * @returns {Observable<User | null>} 
   */
-  getAuthState(): Observable<User | null> {
+  getAuthState(): Observable<firebase.User | null> {
     // en Angular y RxJS, colocar $ al final de una variable 
     // observable es buena practica para recordar que se debe suscribirse
     //para ver el valor de la misma
