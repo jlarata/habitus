@@ -12,27 +12,14 @@ import { QueryDeRecetas } from '../models/recetas';
 export class RecetasPage {
 
   queryDeRecetas?: QueryDeRecetas;
-  onButtonClicked(message: string) {
-    console.log(message)
+
+  onButtonClicked(queryDeRecetas: QueryDeRecetas) {
+    this.queryDeRecetas = queryDeRecetas
+    //console.log(queryDeRecetas)
   }
 
-  constructor(public spoonacular: SpoonacularService) { }
-  ngOnInit() {
-    //le saco lo automático al método / this.ionViewDidLoad()
-  }
+  constructor(public spoonacular: SpoonacularService) {}
 
-
-  //private ionViewDidLoad() {
-  private buscarRecetas() {
-    this.spoonacular.obtenerRecetas()
-      .subscribe(
-        (data) => {
-          this.queryDeRecetas = data//, console.log(this.queryDeRecetas.results)
-        },
-        (error) => { console.log(error); }
-      )
-
-  }
 }
 
 

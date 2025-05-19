@@ -11,15 +11,16 @@ import { QueryDeRecetas } from '../../models/recetas';
 })
 export class BuscadorPage {
 
-@Output() buttonClicked = new EventEmitter<string>();
+queryDeRecetas? : QueryDeRecetas;
+@Output() buttonClicked = new EventEmitter<QueryDeRecetas>();
+  
 
 handleClick() {
+  this.buscarRecetas();
   console.log("el hijo sabe que se presionó el botón")
-  this.buttonClicked.emit('el padre sabe que se presionó el botón')
+  //this.buttonClicked.emit(this.queryDeRecetas)
 }
 
-queryDeRecetas? : QueryDeRecetas;
-  
   constructor(public spoonacular : SpoonacularService) {}
   ngOnInit() {
     //le saco lo automático al método / this.ionViewDidLoad()
@@ -27,14 +28,17 @@ queryDeRecetas? : QueryDeRecetas;
 
 
   //private ionViewDidLoad() {
-  private buscarRecetas() {
+  buscarRecetas = () => {
     this.spoonacular.obtenerRecetas()
     .subscribe(
-      (data) => {this.queryDeRecetas = data//, console.log(this.queryDeRecetas.results)
+      (data) => {
+        this.queryDeRecetas = data,
+        console.log(this.queryDeRecetas.results),
+        this.buttonClicked.emit(this.queryDeRecetas)
       },
       (error) => {console.log(error);}
+      
     )
-   
   }
 }
 
