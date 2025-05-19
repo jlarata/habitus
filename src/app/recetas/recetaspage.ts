@@ -9,13 +9,17 @@ import { QueryDeRecetas } from '../models/recetas';
   styleUrls: ['recetas.page.scss'],
   standalone: false,
 })
+
 export class RecetasPage {
 
   queryDeRecetas?: QueryDeRecetas;
-
+  
   onButtonClicked(queryDeRecetas: QueryDeRecetas) {
     this.queryDeRecetas = queryDeRecetas
-    //console.log(queryDeRecetas)
+  }
+
+  public blanquearRecetas() {
+    this.queryDeRecetas = undefined;
   }
 
   constructor(public spoonacular: SpoonacularService) {}

@@ -11,14 +11,14 @@ import { QueryDeRecetas } from '../../models/recetas';
 })
 export class BuscadorPage {
 
+public isChecked = true;
 queryDeRecetas? : QueryDeRecetas;
 @Output() buttonClicked = new EventEmitter<QueryDeRecetas>();
   
 
 handleClick() {
+  
   this.buscarRecetas();
-  console.log("el hijo sabe que se presionó el botón")
-  //this.buttonClicked.emit(this.queryDeRecetas)
 }
 
   constructor(public spoonacular : SpoonacularService) {}
@@ -29,16 +29,28 @@ handleClick() {
 
   //private ionViewDidLoad() {
   buscarRecetas = () => {
-    this.spoonacular.obtenerRecetas()
-    .subscribe(
+    //this.spoonacular.obtenerRecetas()
+    if (this.isChecked) {
+      this.spoonacular.obtenerRecetasConInformacion(true)
+      .subscribe(
       (data) => {
         this.queryDeRecetas = data,
         console.log(this.queryDeRecetas.results),
         this.buttonClicked.emit(this.queryDeRecetas)
       },
-      (error) => {console.log(error);}
-      
+      (error) => {console.log(error);} 
     )
+    } else {
+      this.spoonacular.obtenerRecetasConInformacion()
+      .subscribe(
+      (data) => {
+        this.queryDeRecetas = data,
+        console.log(this.queryDeRecetas.results),
+        this.buttonClicked.emit(this.queryDeRecetas)
+      },
+      (error) => {console.log(error);} 
+    )
+    };   
   }
 }
 

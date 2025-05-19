@@ -35,8 +35,17 @@ export class SpoonacularService {
  * @function obtenerRecetasConInformacion
  * @returns el mismo objeto que obtenerRecetas() pero ahora los objetos del array results incluyen data como vegetarian, glutenfree, healthScore, summary
  */
-  public obtenerRecetasConInformacion() {
-    const url = 'https://api.spoonacular.com/recipes/complexSearch?apiKey='+environment.spoonacular.apiKey+'&fillIngredients=true&addRecipeInformation=true&offset=1'
+  public obtenerRecetasConInformacion(vegetarian? : boolean) {
+    
+    let url = 'https://api.spoonacular.com/recipes/complexSearch?apiKey='+environment.spoonacular.apiKey+'&fillIngredients=true&addRecipeInformation=true&offset=1'
+
+    if (vegetarian && vegetarian == true)
+    {
+      url = 'https://api.spoonacular.com/recipes/complexSearch?apiKey='+environment.spoonacular.apiKey+'&fillIngredients=true&diet=vegetarian&addRecipeInformation=true'
+    } else {
+      url = 'https://api.spoonacular.com/recipes/complexSearch?apiKey='+environment.spoonacular.apiKey+'&fillIngredients=true&addRecipeInformation=true&offset=1'
+    }
+    
     //console.log(url)
     return this.http.get(url
       ,

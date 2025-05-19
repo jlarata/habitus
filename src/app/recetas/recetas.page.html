@@ -1,12 +1,10 @@
 <ion-content>
   <div class="title">
-    <h2>Diez recetas. Faltó ganas!</h2>
+    <h2>Recetas. Faltó ganas!</h2>
   </div>
-
-  <app-buscador (buttonClicked)="onButtonClicked($event)"></app-buscador>
+  <ion-button *ngIf="queryDeRecetas" (click)="blanquearRecetas()">borrar búsqueda</ion-button>
 
   <div class="recipeContainer">
-
     <div class="recipeCard" *ngFor="let receta of queryDeRecetas?.results">
       <div class="titleAndPhoto">
         <h2>{{receta.title}}
@@ -22,5 +20,10 @@
     </div>
 
   </div>
+
+  <ion-button *ngIf="queryDeRecetas" (click)="blanquearRecetas()">borrar búsqueda</ion-button>
+  <app-buscador *ngIf="!queryDeRecetas" (buttonClicked)="onButtonClicked($event)"></app-buscador>
+
+  
 
 </ion-content>
