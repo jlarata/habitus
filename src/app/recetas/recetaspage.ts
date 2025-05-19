@@ -9,23 +9,21 @@ import { QueryDeRecetas } from '../models/recetas';
   styleUrls: ['recetas.page.scss'],
   standalone: false,
 })
+
 export class RecetasPage {
 
-queryDeRecetas? : QueryDeRecetas;
+  queryDeRecetas?: QueryDeRecetas;
   
-  constructor(public spoonacular : SpoonacularService) {}
-  ngOnInit() {
-    this.ionViewDidLoad()
+  onButtonClicked(queryDeRecetas: QueryDeRecetas) {
+    this.queryDeRecetas = queryDeRecetas
   }
 
-  private ionViewDidLoad() {
-    this.spoonacular.obtenerRecetas()
-    .subscribe(
-      (data) => {this.queryDeRecetas = data, console.log(this.queryDeRecetas.results)},
-      (error) => {console.log(error);}
-    )
-   
+  public blanquearRecetas() {
+    this.queryDeRecetas = undefined;
   }
+
+  constructor(public spoonacular: SpoonacularService) {}
+
 }
 
 

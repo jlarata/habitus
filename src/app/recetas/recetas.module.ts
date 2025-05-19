@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { RecetasPage } from './recetaspage';
 import { ExploreContainerComponentModule } from '../explore-container/explore-container.module';
 import { RecetasPageRoutingModule } from './recetas-routing.module';
+import { BuscadorPage } from './buscador/buscadorpage';
 
 @NgModule({
   imports: [
@@ -12,8 +13,8 @@ import { RecetasPageRoutingModule } from './recetas-routing.module';
     CommonModule,
     FormsModule,
     ExploreContainerComponentModule,
-    RecetasPageRoutingModule
+    RecetasPageRoutingModule,
   ],
-  declarations: [RecetasPage]
+  declarations: [RecetasPage, BuscadorPage]
 })
 export class RecetasPageModule {}
