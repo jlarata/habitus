@@ -3,6 +3,8 @@
     <h2>Diez recetas. Faltó ganas!</h2>
   </div>
 
+  <app-buscador (buttonClicked)="onButtonClicked($event)"></app-buscador>
+
   <div class="recipeContainer">
 
     <div class="recipeCard" *ngFor="let receta of queryDeRecetas?.results">
