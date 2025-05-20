@@ -15,9 +15,6 @@ export class SpoonacularService {
   
   constructor(public http: HttpClient) { }
 
-  public saludar() {
-    return "holi"
-  }
 /**
  * @function obtenerRecetas
  * @param 
@@ -35,15 +32,24 @@ export class SpoonacularService {
  * @function obtenerRecetasConInformacion
  * @returns el mismo objeto que obtenerRecetas() pero ahora los objetos del array results incluyen data como vegetarian, glutenfree, healthScore, summary
  */
-  public obtenerRecetasConInformacion(vegetarian? : boolean) {
+  public obtenerRecetasConInformacion(vegetarian? : boolean, glutenFree? : boolean) {
     
     let url = 'https://api.spoonacular.com/recipes/complexSearch?apiKey='+environment.spoonacular.apiKey+'&fillIngredients=true&addRecipeInformation=true&offset=1'
 
     if (vegetarian && vegetarian == true)
     {
-      url = 'https://api.spoonacular.com/recipes/complexSearch?apiKey='+environment.spoonacular.apiKey+'&fillIngredients=true&diet=vegetarian&addRecipeInformation=true'
+      if (glutenFree && glutenFree == true) {
+        url = 'https://api.spoonacular.com/recipes/complexSearch?apiKey='+environment.spoonacular.apiKey+'&fillIngredients=true&diet=vegetarian&intolerances=gluten&addRecipeInformation=true'
+      } else {
+        url = 'https://api.spoonacular.com/recipes/complexSearch?apiKey='+environment.spoonacular.apiKey+'&fillIngredients=true&diet=vegetarian&addRecipeInformation=true'
+      }
     } else {
-      url = 'https://api.spoonacular.com/recipes/complexSearch?apiKey='+environment.spoonacular.apiKey+'&fillIngredients=true&addRecipeInformation=true&offset=1'
+      if (glutenFree && glutenFree == true) {
+        url = 'https://api.spoonacular.com/recipes/complexSearch?apiKey='+environment.spoonacular.apiKey+'&fillIngredients=true&intolerances=gluten&addRecipeInformation=true&offset=1'
+      } else {
+        url = 'https://api.spoonacular.com/recipes/complexSearch?apiKey='+environment.spoonacular.apiKey+'&fillIngredients=true&addRecipeInformation=true&offset=1'
+      }
+      
     }
     
     //console.log(url)
