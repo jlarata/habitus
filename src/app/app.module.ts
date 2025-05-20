@@ -9,9 +9,10 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HttpClientModule } from '@angular/common/http';
 import { SpoonacularService } from './services/spoonacular.service';
+import { ToolbarComponent } from './toolbar/toolbar.component';
 
 @NgModule({
-  declarations: [AppComponent],
+  declarations: [AppComponent, ToolbarComponent],
   imports: [
     BrowserModule, 
     IonicModule.forRoot(), 
@@ -20,7 +21,7 @@ import { SpoonacularService } from './services/spoonacular.service';
     AngularFireModule.initializeApp(environment.firebase),
     //modulo de autenticación
     AngularFireAuthModule,
-    HttpClientModule
+    HttpClientModule,
   ],
   providers: [
     { 
