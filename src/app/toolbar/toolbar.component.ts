@@ -56,6 +56,7 @@ export class ToolbarComponent  implements OnInit {
     //no hace falta async/await por que no devuelve promesa
     //nos suscribimos al observable getUser y detectar 
     // si nuestro usuario está logueado
+    //si logueado muestra toolbar en un ngif en <ion-toolbar> del html
     this.authService.getAuthState().subscribe(user => {
       if (user) {
         this.currentUser = user;
@@ -75,7 +76,7 @@ export class ToolbarComponent  implements OnInit {
           },
           {
             text: 'Cerrar sesión',
-            cssClass: 'alert-button alert-button-confirm',//estilo boton enviar
+            cssClass: 'alert-button alert-button-confirm',//estilo boton 
             handler: async () => {
               await this.logout();
             },
