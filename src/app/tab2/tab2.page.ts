@@ -10,6 +10,8 @@ import { ToastController } from '@ionic/angular';
   standalone: false,
 })
 export class Tab2Page {
+  /* VER tab2.page.html
+  
   currentUser: any | null = null;
 
   constructor(
@@ -24,7 +26,7 @@ export class Tab2Page {
    *Cierra sesion de usuario actual
    *
    * @memberof LoginPage
-   */
+   * /
   async logout() {
     try {
       await this.authService.logout();
@@ -41,7 +43,7 @@ export class Tab2Page {
    *
    * @param {string} message
    * @memberof LoginPage
-   */
+   * /
   async showToast(message: string) {
     const toast = await this.toastCtrl.create({
       message,
@@ -49,6 +51,8 @@ export class Tab2Page {
       position: 'top'
     });
     toast.present();
-  }
+  } */
+  constructor() {
 
+  }
 }

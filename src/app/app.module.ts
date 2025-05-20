@@ -22,6 +22,7 @@ import { ToolbarComponent } from './toolbar/toolbar.component';
     //modulo de autenticación
     AngularFireAuthModule,
     HttpClientModule,
+    
   ],
   providers: [
     { 
@@ -30,6 +31,6 @@ import { ToolbarComponent } from './toolbar/toolbar.component';
     },
     SpoonacularService
   ],
-  bootstrap: [AppComponent],
+  bootstrap: [AppComponent]
 })
 export class AppModule {}
