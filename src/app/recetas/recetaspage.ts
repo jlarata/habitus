@@ -16,6 +16,7 @@ export class RecetasPage {
   
   onButtonClicked(queryDeRecetas: QueryDeRecetas) {
     this.queryDeRecetas = queryDeRecetas
+    console.log(queryDeRecetas.totalResults+' resultados encontrados')
   }
 
   public blanquearRecetas() {
