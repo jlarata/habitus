@@ -1,8 +1,12 @@
-  <ion-toolbar>
+<ion-toolbar>
     <ion-title class="title-container">
       <div class="logo-wrapper">
         <img src="assets/img/icon.png" alt="Logo Habitus" class="heart-logo" />
         <span class="app-name">Habitus</span>
       </div>
     </ion-title>
+    <ion-buttons slot="end">
+      <ion-button><ion-icon name="person-outline"></ion-icon></ion-button>
+      <ion-button (click)="logout()"><ion-icon name="power-outline"></ion-icon></ion-button>   
+    </ion-buttons>
   </ion-toolbar>

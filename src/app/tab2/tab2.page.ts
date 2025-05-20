@@ -22,7 +22,6 @@ interface EventDay {
   standalone: false,
 })
 
-
 export class Tab2Page implements AfterViewInit {
   today: Date = new Date(); // fecha actual
   activeDay: number = this.today.getDate(); // dia seleccionado
