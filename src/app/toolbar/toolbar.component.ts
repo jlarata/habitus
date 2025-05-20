@@ -10,6 +10,7 @@ import { ToastController, AlertController } from '@ionic/angular';
   standalone: false
 })
 export class ToolbarComponent  implements OnInit {
+
   currentUser: any | null = null;
 
   constructor(
@@ -17,9 +18,7 @@ export class ToolbarComponent  implements OnInit {
     private router: Router,
     private toastCtrl: ToastController,
     private alertCtrl: AlertController
-  ) {
-      this.currentUser = authService.getAuthState();
-    }
+  ) {}
 
   //metodos e iportaciones temporales para desloguearse y probar guard
   /**
@@ -53,7 +52,16 @@ export class ToolbarComponent  implements OnInit {
     toast.present();
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    //no hace falta async/await por que no devuelve promesa
+    //nos suscribimos al observable getUser y detectar 
+    // si nuestro usuario está logueado
+    this.authService.getAuthState().subscribe(user => {
+      if (user) {
+        this.currentUser = user;
+      }
+    });
+  }
 
   async showConfirmationLogOut() {
       const alert = await this.alertCtrl.create({
