@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../services/auth.service';
 import { Router } from '@angular/router';
-import { ToastController } from '@ionic/angular';
+import { ToastController, AlertController } from '@ionic/angular';
 
 @Component({
   selector: 'app-toolbar',
@@ -15,7 +15,9 @@ export class ToolbarComponent  implements OnInit {
   constructor(
     private authService: AuthService,
     private router: Router,
-    private toastCtrl: ToastController) {
+    private toastCtrl: ToastController,
+    private alertCtrl: AlertController
+  ) {
       this.currentUser = authService.getAuthState();
     }
 
@@ -52,5 +54,28 @@ export class ToolbarComponent  implements OnInit {
   }
 
   ngOnInit() {}
+
+  async showConfirmationLogOut() {
+      const alert = await this.alertCtrl.create({
+        cssClass: 'alert-wrapper', // clase estilo alert
+        message: '¿Está seguro que desea cerrar sesión?',
+        buttons: [
+          {
+            text: 'Cancelar',
+            role: 'cancel',
+            cssClass: 'secondaryalert-button alert-button-cancel',
+          },
+          {
+            text: 'Cerrar sesión',
+            cssClass: 'alert-button alert-button-confirm',//estilo boton enviar
+            handler: async () => {
+              await this.logout();
+            },
+          },
+        ],
+      });
+      
+    await alert.present();
+  }
 
 }
