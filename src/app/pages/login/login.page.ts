@@ -107,25 +107,10 @@ export class LoginPage {
         //Ocultar loading después de completar el login
         await this.loading.dismiss();
 
-        //Este cartelon de bienvenida se factoriza como una nueva page o un nuevo componente
-        //y en ese componente se le pone una función en ngoninit que haga esto otro:
-        setTimeout(() => {
-          this.router.navigateByUrl('/tabs');
-        }, 2500); // ⏱ 2.5 segundos
-
-
       }
     }
   }
-  /**
-   * por ahora lo armo como funcion acá para poder ser llamado por botón, para testing
-  */
-  redirigeATabs() {
-    setTimeout(() => {
-      this.router.navigateByUrl('/tabs');
-    }, 2500); // ⏱ 2.5 segundos
-  }
-
+  
   /**
    *Muestra temporalmente el mensaje ingresado por parametro
    *

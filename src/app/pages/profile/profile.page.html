@@ -1,18 +1,63 @@
-<ion-header [translucent]="true">
+<!--<ion-header [translucent]="true">
+  </ion-header>-->
   <ion-toolbar>
     <ion-title>profile</ion-title>
   </ion-toolbar>
-</ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">profile</ion-title>
-    </ion-toolbar>
-  </ion-header>
-
+<ion-content class="page">
   <div class="profile-container">
-    <p>Mi perfil</p>
-    <ion-button expand="block">Editar Perfil</ion-button>
+    <ion-avatar class="avatar-container">
+      <ion-icon name="person-outline" class="avatar-icon"></ion-icon>
+    </ion-avatar>
+
+    <ion-item class="custom-input">
+      <ion-label>Email</ion-label>
+      <ion-input readonly value="usuario@example.com"></ion-input>
+    </ion-item>
+
+    <ion-item class="custom-input">
+      <ion-label>Nombre</ion-label>
+      <ion-input [(ngModel)]="userData.name"></ion-input>
+    </ion-item>
+
+    <ion-item class="custom-input">
+      <ion-label>Apellido</ion-label>
+      <ion-input [(ngModel)]="userData.lastName"></ion-input>
+    </ion-item>
+
+    <ion-item class="custom-input">
+      <ion-label>Fecha de nacimiento</ion-label>
+      <ion-input type="text" placeholder="DD/MM/YY" [(ngModel)]="userData.dateBirth" (ionBlur)="validateDate()"></ion-input>
+    </ion-item>
+    <p class="error-text" *ngIf="dateError">{{ dateError }}</p>
+
+    <ion-item class="custom-input">
+      <ion-label>Peso (kg)</ion-label>
+      <ion-input type="number" [(ngModel)]="userData.weight"></ion-input>
+    </ion-item>
+
+    <ion-item class="custom-input">
+      <ion-label>Altura (cm)</ion-label>
+      <ion-input type="number" [(ngModel)]="userData.heigth"></ion-input>
+    </ion-item>
+
+    <ion-item class="custom-input">
+      <ion-label>Sexo</ion-label>
+      <ion-select [(ngModel)]="userData.biologicalSex">
+        <ion-select-option value="Masculino">Masculino</ion-select-option>
+        <ion-select-option value="Femenino">Femenino</ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <ion-item class="custom-input">
+      <ion-label>Actividad Física</ion-label>
+      <ion-select [(ngModel)]="userData.levelActivity">
+        <ion-select-option value="baja">Baja</ion-select-option>
+        <ion-select-option value="media">Media</ion-select-option>
+        <ion-select-option value="alta">Alta</ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <ion-button class="save-button" expand="block" (click)="guardarPerfil()">Guardar Cambios</ion-button>
   </div>
 </ion-content>
