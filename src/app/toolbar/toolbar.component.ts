@@ -29,6 +29,7 @@ export class ToolbarComponent  implements OnInit {
   async logout() {
     try {
       await this.authService.logout();
+      this.currentUser = null;
       this.router.navigateByUrl('/login');
       this.showToast('Sesión Finalizada. Hasta pronto!');
 

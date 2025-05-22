@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { initializeApp } from 'firebase/app';
-import { collection, Firestore, getDocs, getFirestore } from 'firebase/firestore'
+import { doc, setDoc,addDoc, collection, Firestore, getDocs, getFirestore } from 'firebase/firestore'
 import { environment } from 'src/environments/environment';
 
 const app = initializeApp(environment.firebase)
@@ -31,6 +31,41 @@ export class UsersService {
             console.log(`${doc.id} => ${doc.data()}`);
         }); */
     }
+
+    public async crearDataUsuario(email:string, uid:any) {
+        try {
+            const nuevoUsuario = {
+                mail: email,
+                hace_actividad_fisica_regular: false,
+                UID: uid, //la alternativa es que al crear el usuario 
+                //le hagas un get para saber la ID,
+                calendar_event: [], //esto tiene q ser un array de 
+                //eventuales objetos
+                celiaco: false,
+                edad: 0, //acá podemos implementar un
+                // "fecha de nacimiento" como quieran
+                fechaNacimiento: "15/05/00",
+                peso: 0,
+                recetas_favoritas: [],
+                vegano: false,
+                vegetariano: false
+            };
+            //pone id random a la colleccion
+            //const docRef = await addDoc(collection(db, "users"),nuevoUsuario);
+
+            //enviamos el email para id de coleccion
+            const docRef = await setDoc(doc(db, "users", email), nuevoUsuario);
+
+            console.log("Usuario agregado exitosamente. "+  docRef);
+
+        } catch (error) {
+
+            console.error("Error guardado datos usuario: " + error)
+            
+        }
+    }
+
+
 
 
 }

@@ -3,6 +3,7 @@ import { ToastController, LoadingController } from '@ionic/angular';
 import { ValidationUtils } from 'src/app/utils/validation';
 import { AuthService } from 'src/app/services/auth.service';
 import { Router } from '@angular/router';
+import { UsersService } from 'src/app/services/users.service';
 
 @Component({
   selector: 'app-register',
@@ -22,7 +23,8 @@ export class RegisterPage  {
     private authService: AuthService, 
     private toastCtrl: ToastController,
     private loadingCtrl: LoadingController,
-    private router: Router
+    private router: Router,
+    private userService:UsersService
   ) {}
 
   async register() {
@@ -47,7 +49,16 @@ export class RegisterPage  {
       try {
         //crear usuario
         const userCredential = await this.authService.register(this.email, this.password);
-            
+        ///obtener uid 
+        let uid = userCredential.user.uid;
+        let email = userCredential.user.email;
+        //log prueba
+        console.log("UID:", uid);
+        console.log("Email:", email);
+        
+        ///descomentar para probar envio data a firebase 
+        ///this.userService.crearDataUsuario(email,uid);
+
         this.showToast('Registro exitoso.');
 
         //llevar a login
