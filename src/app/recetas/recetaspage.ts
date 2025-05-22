@@ -31,7 +31,17 @@ export class RecetasPage {
   ) {}
 
   ngOnInit() {
-  this.usersService.obtenerUsuarios();
+  // esto era para probar nomás this.usersService.obtenerUsuarios();
+  }
+  
+  buscarPorId = (id: number) => {
+    this.spoonacular.obtenerRecetaPasoAPasoPorID(id.toString())
+    .subscribe(
+        (data) => {
+          console.log(data)
+        },
+        (error) => { console.log(error); }
+      )
   }
 
 }

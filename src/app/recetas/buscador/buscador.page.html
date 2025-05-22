@@ -1,10 +1,20 @@
-<!-- <ion-content> -->
-
+<ion-content>
+  <ion-buttons style="
+  display:flex;
+  flex-direction:column;
+  gap:2px;
+  ">
   <ion-checkbox  [(ngModel)]="vegetarianIsChecked">Solo Vegetarianas</ion-checkbox>
 
   <ion-checkbox  [(ngModel)]="glutenFreeIsChecked">Solo Gluten Free</ion-checkbox>
 
-  <div class="botones">
+  <ion-checkbox  [(ngModel)]="veganIsChecked">Solo Vegan!</ion-checkbox>
+
+  </ion-buttons>
+
+  <div>
     <ion-button (click)="handleClick()">¡Buscar recetas!</ion-button>
   </div>
-<!-- </ion-content> -->
+
+  
+</ion-content> 
