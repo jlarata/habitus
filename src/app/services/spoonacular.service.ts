@@ -32,27 +32,23 @@ export class SpoonacularService {
  * @function obtenerRecetasConInformacion
  * @returns el mismo objeto que obtenerRecetas() pero ahora los objetos del array results incluyen data como vegetarian, glutenfree, healthScore, summary
  */
-  public obtenerRecetasConInformacion(vegetarian? : boolean, glutenFree? : boolean) {
-    
-    let url = 'https://api.spoonacular.com/recipes/complexSearch?apiKey='+environment.spoonacular.apiKey+'&fillIngredients=true&addRecipeInformation=true&offset=1'
+  public obtenerRecetasConInformacion(vegetarian? : boolean, glutenFree? : boolean, vegan? : boolean) {
+    let veg = "";
+    let cel = "";
+    let vveg = "";
 
-    if (vegetarian && vegetarian == true)
-    {
-      if (glutenFree && glutenFree == true) {
-        url = 'https://api.spoonacular.com/recipes/complexSearch?apiKey='+environment.spoonacular.apiKey+'&fillIngredients=true&diet=vegetarian&intolerances=gluten&addRecipeInformation=true'
-      } else {
-        url = 'https://api.spoonacular.com/recipes/complexSearch?apiKey='+environment.spoonacular.apiKey+'&fillIngredients=true&diet=vegetarian&addRecipeInformation=true'
-      }
-    } else {
-      if (glutenFree && glutenFree == true) {
-        url = 'https://api.spoonacular.com/recipes/complexSearch?apiKey='+environment.spoonacular.apiKey+'&fillIngredients=true&intolerances=gluten&addRecipeInformation=true&offset=1'
-      } else {
-        url = 'https://api.spoonacular.com/recipes/complexSearch?apiKey='+environment.spoonacular.apiKey+'&fillIngredients=true&addRecipeInformation=true&offset=1'
-      }
-      
+    if (vegetarian && vegetarian == true) {
+      veg = "&diet=vegetarian"
+    }
+    if (glutenFree && glutenFree == true) {
+      cel="&intolerances=gluten"
+    }
+    if (vegan && vegan == true) {
+      veg = "&diet=vegan"
     }
     
-    //console.log(url)
+    let url = 'https://api.spoonacular.com/recipes/complexSearch?apiKey='+environment.spoonacular.apiKey+'&fillIngredients=true&addRecipeInformation=true'+veg+cel+vveg
+
     return this.http.get(url
       ,
       { headers: this.headers }
