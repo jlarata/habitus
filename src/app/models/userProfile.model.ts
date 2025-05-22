@@ -3,9 +3,10 @@
  *
  * @export
  * @interface UserProfile
- */
+*/
 export interface UserProfile {
     uid: string;      // ID único del usuario (proporcionado por Firebase)
+    image?:string;   //por si queremos poner foto perfil
     email: string;    // Correo electrónico
     name: string;   // Nombre
     lastName?: string; // Apellido (opcional)
@@ -14,4 +15,5 @@ export interface UserProfile {
     weight?: number;    // Peso en kg (opcional)
     heigth?: number;  // Altura en cm (opcional)
     age?:number; //calculado desde la fecha de nacimiento
+    levelActivity:string; //bajo, medio, alto
 }

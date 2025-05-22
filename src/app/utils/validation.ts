@@ -42,5 +42,19 @@ export class ValidationUtils {
     // o si después de eliminar los espacios en blanco, la cadena está vacía.
     return !value || value.trim().length === 0;
   }
+  
+  /**
+   *Valida si la fecha tiene el formato DD/MM/YY
+   *con regex
+   * @static
+   * @param {string} date
+   * @return {*}  {boolean}
+   * @memberof ValidationUtils
+   */
+  static isValidDate(date:string):boolean {
+    const regex = /^\d{2}\/\d{2}\/\d{2}$/; // Formato DD/MM/YY
+    return regex.test(date);
+  }
+
 
 }

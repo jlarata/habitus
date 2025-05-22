@@ -8,7 +8,7 @@ const routes: Routes = [
     redirectTo: 'splash',
     pathMatch: 'full'
   },
-    {
+  {
     path: 'splash',
     loadChildren: () => import('./pages/splash/splash.module').then( m => m.SplashPageModule)
   },
@@ -29,7 +29,14 @@ const routes: Routes = [
     loadChildren: () => import('./tabs/tabs.module').then(m => m.TabsPageModule),
     canActivate: [AuthGuard],
   },
-  { path: '', redirectTo: '/login', pathMatch: 'full', }, 
+  { path: '', redirectTo: '/login', pathMatch: 'full', },   
+  
+  {
+    path: 'profile',
+    loadChildren: () => import('./pages/profile/profile.module').then( m => m.ProfilePageModule),
+    canActivate: [AuthGuard]
+  },
+
 ];
 @NgModule({
   imports: [
