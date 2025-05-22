@@ -1,4 +1,5 @@
 import { Component, AfterViewInit } from '@angular/core';
+import { ToastController } from '@ionic/angular';
 
 
 // Definición de las interfaces que modelan los eventos y días del calendario
@@ -54,6 +55,26 @@ export class Tab2Page implements AfterViewInit {
   addEventFrom!: HTMLInputElement;
   addEventTo!: HTMLInputElement;
   addEventSubmit!: HTMLElement;
+
+  constructor(
+    private toastCtrl: ToastController,
+  ) { }
+
+  ///toast para los alertas
+  /**
+   *Muestra temporalmente el mensaje ingresado por parametro
+   *
+   * @param {string} message
+   * @memberof LoginPage
+   */
+  async showToast(message: string) {
+    const toast = await this.toastCtrl.create({
+      message,
+      duration: 3000,
+      position: 'top'
+    });
+    toast.present();
+  }
 
   ngAfterViewInit() {
     // Inicializa referencias después de que la vista se ha cargado
@@ -237,7 +258,7 @@ let days: string = "";
         return;
       }
     }
-    alert("Fecha incorrecta"); 
+    this.showToast("Fecha incorrecta .. poner un ejemplito?" ); 
   }
 
   // Función para agregar listeners a los días del calendario
@@ -350,7 +371,7 @@ let days: string = "";
     const eventTimeTo: string = this.addEventTo.value;
     // si alguno de los campos está vacio muestra una alerta
     if (eventTitle === "" || eventTimeFrom === "" || eventTimeTo === "") {
-      alert("Por favor, completa todos los campos");
+      this.showToast("Por favor, completa todos los campos");
       return;
     }
 // convierte las horas de inicio y fin en arreglos (desde/hasta)
@@ -365,7 +386,7 @@ let days: string = "";
       parseInt(timeToArr[0], 10) > 23 || // verifica si la hora de fin es mayor a 23
       parseInt(timeToArr[1], 10) > 59 // verifica si los minutos de fin son mayores a 59
     ) {
-      alert("Formato de hora incorrecto");
+      this.showToast("Formato de hora incorrecto");
       return;
     }
  // convierte las horas en el formato adecuado
@@ -388,7 +409,7 @@ let days: string = "";
       }
     });
     if (eventExist) {
-      alert("El evento ya ha sido añadido");
+      this.showToast("El evento ya ha sido añadido");
       return;
     }
 
@@ -530,5 +551,7 @@ let days: string = "";
 
     return time;
   }
+
+  
 }
 
