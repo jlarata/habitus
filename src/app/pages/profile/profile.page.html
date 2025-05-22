@@ -1,8 +1,8 @@
-<!--<ion-header [translucent]="true">
-  </ion-header>-->
+<ion-header [translucent]="true">
   <ion-toolbar>
     <ion-title>profile</ion-title>
   </ion-toolbar>
+</ion-header>
 
 <ion-content class="page">
   <div class="profile-container">
@@ -10,54 +10,102 @@
       <ion-icon name="person-outline" class="avatar-icon"></ion-icon>
     </ion-avatar>
 
-    <ion-item class="custom-input">
-      <ion-label>Email</ion-label>
-      <ion-input readonly value="usuario@example.com"></ion-input>
-    </ion-item>
+   <ion-label class="input-title">Email</ion-label>
 
-    <ion-item class="custom-input">
-      <ion-label>Nombre</ion-label>
-      <ion-input [(ngModel)]="userData.name"></ion-input>
-    </ion-item>
+<ion-item class="custom-input">
+  <ion-input type="email" [(ngModel)]="userData.email"  (ionBlur)="validateEmail()"placeholder="Escribí tu email">
+  </ion-input>
+</ion-item>
 
-    <ion-item class="custom-input">
-      <ion-label>Apellido</ion-label>
-      <ion-input [(ngModel)]="userData.lastName"></ion-input>
-    </ion-item>
+<p class="error-text" *ngIf="emailError">{{ emailError }}</p>
 
+
+
+    <ion-label class="input-title">Nombre</ion-label>
     <ion-item class="custom-input">
-      <ion-label>Fecha de nacimiento</ion-label>
+      <ion-input [(ngModel)]="userData.name" placeholder="Escribí tu nombre"  (ionBlur)="validateNombre()"
+    [class.input-error]="nombreError">
+  </ion-input>
+</ion-item>
+<p class="error-text" *ngIf="nombreError">{{ nombreError }}</p>
+    
+
+    <ion-label class="input-title">Apellido</ion-label>
+    <ion-item class="custom-input">
+    <ion-input [(ngModel)]="userData.lastName" placeholder="Escribi tu apellido"  (ionBlur)="validateApellido()"
+    [class.input-error]="apellidoError">
+  </ion-input>
+</ion-item>
+<p class="error-text" *ngIf="apellidoError">{{ apellidoError }}</p>
+
+<ion-label class= "input-title">Fecha de nacimiento</ion-label>
+<ion-item class="custom-input">
       <ion-input type="text" placeholder="DD/MM/YY" [(ngModel)]="userData.dateBirth" (ionBlur)="validateDate()"></ion-input>
     </ion-item>
     <p class="error-text" *ngIf="dateError">{{ dateError }}</p>
 
-    <ion-item class="custom-input">
-      <ion-label>Peso (kg)</ion-label>
-      <ion-input type="number" [(ngModel)]="userData.weight"></ion-input>
-    </ion-item>
 
-    <ion-item class="custom-input">
-      <ion-label>Altura (cm)</ion-label>
-      <ion-input type="number" [(ngModel)]="userData.heigth"></ion-input>
-    </ion-item>
+<div class="row">
+  <div class="radio-group half-width">
+    <label class="input-title">Sexo</label>
+    <ion-radio-group [(ngModel)]="userData.biologicalSex" class="horizontal-radios">
+      <div class="radio-option">
+        <ion-radio value="Masculino"></ion-radio>
+        <span>M</span>
+      </div>
+      <div class="radio-option">
+        <ion-radio value="Femenino"></ion-radio>
+        <span>F</span>
+      </div>
+      <div class="radio-option">
+        <ion-radio value="X"></ion-radio>
+        <span>X</span>
+      </div>
+    </ion-radio-group>
+  </div>
 
-    <ion-item class="custom-input">
-      <ion-label>Sexo</ion-label>
-      <ion-select [(ngModel)]="userData.biologicalSex">
-        <ion-select-option value="Masculino">Masculino</ion-select-option>
-        <ion-select-option value="Femenino">Femenino</ion-select-option>
+  <!-- Actividad Física -->
+  <div class="radio-group half-width">
+    <label class="input-title">Actividad Física</label>
+    <ion-radio-group [(ngModel)]="userData.levelActivity" class="horizontal-radios">
+      <div class="radio-option">
+        <ion-radio value="Baja"></ion-radio>
+        <span>Baja</span>
+      </div>
+      <div class="radio-option">
+        <ion-radio value="Media"></ion-radio>
+        <span>Media</span>
+      </div>
+      <div class="radio-option">
+        <ion-radio value="Alta"></ion-radio>
+        <span>Alta</span>
+      </div>
+    </ion-radio-group>
+  </div>
+</div>
+
+<div class="row">
+  <div class="select-group half-width">
+    <label class="input-title">Peso (kg)</label>
+    <ion-item class="custom-input no-border">
+      <ion-select [(ngModel)]="userData.weight" placeholder="Seleccioná tu peso">
+        <ion-select-option *ngFor="let peso of pesos" [value]="peso">{{ peso }} kg</ion-select-option>
       </ion-select>
     </ion-item>
+  </div>
 
-    <ion-item class="custom-input">
-      <ion-label>Actividad Física</ion-label>
-      <ion-select [(ngModel)]="userData.levelActivity">
-        <ion-select-option value="baja">Baja</ion-select-option>
-        <ion-select-option value="media">Media</ion-select-option>
-        <ion-select-option value="alta">Alta</ion-select-option>
+  <div class="select-group half-width">
+    <label class="input-title">Altura (cm)</label>
+    <ion-item class="custom-input no-border">
+      <ion-select [(ngModel)]="userData.heigth" placeholder="Seleccioná tu altura">
+        <ion-select-option *ngFor="let altura of alturas" [value]="altura">{{ altura }} cm</ion-select-option>
       </ion-select>
     </ion-item>
+  </div>
+</div>
+
+
 
     <ion-button class="save-button" expand="block" (click)="guardarPerfil()">Guardar Cambios</ion-button>
-  </div>
-</ion-content>
+</div>
+</ion-content> 

@@ -12,22 +12,27 @@ import { ValidationUtils } from 'src/app/utils/validation';
 })
 export class ProfilePage implements OnInit {
 
-  userData: UserProfile = {
-    uid: '',
-    email: '',
-    name: '',
-    lastName: '',
-    dateBirth: '',
-    biologicalSex: '',
-    weight: 0,
-    heigth: 0,
-    age: 0,
-    levelActivity: ''
-  };
+ userData = {
+  uid: '',
+  email: '',
+  name: '',
+  lastName: '',
+  dateBirth: '',
+   biologicalSex:'',
+  weight: 0,
+  heigth: 0,
+  age: 0,
+  levelBaja: false,
+  levelMedia: false,
+  levelAlta: false,
+  levelActivity: ''
+};
+
 
   dateError:string= "";
   loading: HTMLIonLoadingElement | null = null;
   currentUser: any | null = null;//para suscribirse a observable authservice
+  emailError: string= "";
 
   constructor(
     private toastCtrl: ToastController,
@@ -40,13 +45,16 @@ export class ProfilePage implements OnInit {
       uid: '',
       email: 'juana@example.com',
       name: 'juana',
-      levelActivity: 'baja',
       lastName: "",
       dateBirth: "", 
-      biologicalSex: "Femenino",
+      biologicalSex: '',
       weight: 60,   // Peso en kg (opcional)
       heigth: 170,  // Altura en cm (opcional)
-      age:25 //calculado desde la fecha de nacimiento//aun no implementado
+      age: 25, //calculado desde la fecha de nacimiento//aun no implementado
+      levelBaja: true,
+      levelMedia: false,
+      levelAlta: false,
+      levelActivity: 'baja'
     };
   }
 
@@ -67,11 +75,11 @@ export class ProfilePage implements OnInit {
 
     console.log('Perfil guardado:', 
     { 
-      nonmbre: this.userData?.name,
+      nombre: this.userData?.name,
       apellido:this.userData?.lastName,
       peso: this.userData?.weight, 
       altura: this.userData?.heigth, 
-      sexo: this.userData?.biologicalSex, 
+     sexo: this.userData?.biologicalSex || '',
       actividadFisica: this.userData?.levelActivity,
       fechaNacimiento: this.userData?.dateBirth
     });
@@ -81,9 +89,7 @@ export class ProfilePage implements OnInit {
     //Ocultar loading después de completar el ""guardado""
     await this.loading.dismiss();
   }
-  
   /**
-   *obtiene fecha actual formato DD/MM/YY
    *
    * @return {*}  {string}
    * @memberof ProfilePage
@@ -110,6 +116,52 @@ export class ProfilePage implements OnInit {
 
   }
 
+ validateEmail(){
+    
+    if (!this.userData?.email) {
+      this.emailError = "Por favor complete el campo.";
+      return;
+    }
+
+    if (!ValidationUtils.isValidEmail(this.userData.email)) {
+      this.emailError = "Por favor complete el campo con un email válido.";
+      return;
+    }
+
+    this.emailError = "";
+
+  }
+
+  apellidoError: string = '';
+  validateApellido() {
+    if (!this.userData?.lastName) {
+      this.apellidoError = "Por favor complete el campo";
+      return;
+    }
+
+    if (this.userData.lastName.length < 3) {
+      this.apellidoError = "campo vacio.";
+      return;
+    }
+
+    this.apellidoError = "";
+  }
+
+nombreError: string = '';
+  validateNombre() {
+    if (!this.userData?.name) {
+      this.nombreError = "Por favor complete el campo";
+      return;
+    }
+
+    if (this.userData.name.length < 3) {
+      this.nombreError = "Campo Vacío.";
+      return;
+    }
+
+    this.nombreError = "";
+  }
+
 
   async showToast(message: string) {
     const toast = await this.toastCtrl.create({
@@ -119,6 +171,10 @@ export class ProfilePage implements OnInit {
     });
     toast.present();
   }
+
+  pesos: number[] = Array.from({ length: 121 }, (_, i) => i + 30); // 30 - 150 kg
+alturas: number[] = Array.from({ length: 101 }, (_, i) => i + 100); // 100 - 200 cm
+
   //falta:
   ///-metodo calcular edad desde fecha de nacimiento( en utils?)
   //- metodo guardo en firebase,

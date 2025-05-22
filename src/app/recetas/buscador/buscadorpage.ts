@@ -11,7 +11,8 @@ import { QueryDeRecetas } from '../../models/recetas';
 })
 export class BuscadorPage {
 
-public isChecked = true;
+public vegetarianIsChecked = true;
+public glutenFreeIsChecked = false;
 queryDeRecetas? : QueryDeRecetas;
 @Output() buttonClicked = new EventEmitter<QueryDeRecetas>();
   
@@ -30,8 +31,9 @@ handleClick() {
   //private ionViewDidLoad() {
   buscarRecetas = () => {
     //this.spoonacular.obtenerRecetas()
-    if (this.isChecked) {
-      this.spoonacular.obtenerRecetasConInformacion(true)
+    if (this.vegetarianIsChecked) {
+      if (this.glutenFreeIsChecked) {
+        this.spoonacular.obtenerRecetasConInformacion(true, true)
       .subscribe(
       (data) => {
         this.queryDeRecetas = data,
@@ -40,8 +42,23 @@ handleClick() {
       },
       (error) => {console.log(error);} 
     )
+      } else {
+        this.spoonacular.obtenerRecetasConInformacion(true, false)
+      .subscribe(
+      (data) => {
+        this.queryDeRecetas = data,
+        console.log(this.queryDeRecetas.results),
+        this.buttonClicked.emit(this.queryDeRecetas)
+      },
+      (error) => {console.log(error);} 
+    )
+      }
+      
     } else {
-      this.spoonacular.obtenerRecetasConInformacion()
+
+
+      if (this.glutenFreeIsChecked) {
+        this.spoonacular.obtenerRecetasConInformacion(false, true)
       .subscribe(
       (data) => {
         this.queryDeRecetas = data,
@@ -50,6 +67,18 @@ handleClick() {
       },
       (error) => {console.log(error);} 
     )
+      } else {
+        this.spoonacular.obtenerRecetasConInformacion(false, false)
+      .subscribe(
+      (data) => {
+        this.queryDeRecetas = data,
+        console.log(this.queryDeRecetas.results),
+        this.buttonClicked.emit(this.queryDeRecetas)
+      },
+      (error) => {console.log(error);} 
+    )
+      }
+      
     };   
   }
 }
