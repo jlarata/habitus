@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { SpoonacularService } from '../services/spoonacular.service';
 import { QueryDeRecetas } from '../models/recetas';
+import { UsersService } from '../services/users.service';
 
 
 @Component({
@@ -17,13 +18,21 @@ export class RecetasPage {
   onButtonClicked(queryDeRecetas: QueryDeRecetas) {
     this.queryDeRecetas = queryDeRecetas
     console.log(queryDeRecetas.totalResults+' resultados encontrados')
+
   }
 
   public blanquearRecetas() {
     this.queryDeRecetas = undefined;
   }
 
-  constructor(public spoonacular: SpoonacularService) {}
+  constructor(
+    public spoonacular: SpoonacularService,
+    public usersService : UsersService
+  ) {}
+
+  ngOnInit() {
+  this.usersService.obtenerUsuarios();
+  }
 
 }
 
