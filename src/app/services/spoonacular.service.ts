@@ -10,28 +10,32 @@ import { environment } from 'src/environments/environment';
 export class SpoonacularService {
 
   headers = new HttpHeaders()
-  .set('Content-Type', 'application/json')
-  
+    .set('Content-Type', 'application/json')
+
   constructor(public http: HttpClient) { }
 
-/**
- * @function obtenerRecetas
- * @param 
- * @returns un objeto con el atributo results que es un array de objetos que estamos mandando a la clase queryDeRecetas
- */
+  /**
+   * @function obtenerRecetas
+   * @param 
+   * @returns un objeto con el atributo results que es un array de objetos que estamos mandando a la clase queryDeRecetas
+   * función obsoleta? eliminar?
+   */
   public obtenerRecetas() {
-    const url = 'https://api.spoonacular.com/recipes/complexSearch?apiKey='+environment.spoonacular.apiKey+'&fillIngredients=true&offset=1'
+    // original
+    //const url = 'https://api.spoonacular.com/recipes/complexSearch?apiKey='+environment.spoonacular.apiKey+'&fillIngredients=true&offset=1'
+    //test
+    const url = 'https://api.spoonacular.com/recipes/complexSearch?apiKey=' + environment.spoonacularTest.apiKey + '&fillIngredients=true&offset=1'
     //console.log(url)
     return this.http.get(url
       ,
       { headers: this.headers }
     )
   };
-/**
- * @function obtenerRecetasConInformacion
- * @returns el mismo objeto que obtenerRecetas() pero ahora los objetos del array results incluyen data como vegetarian, glutenfree, healthScore, summary
- */
-  public obtenerRecetasConInformacion(vegetarian? : boolean, glutenFree? : boolean, vegan? : boolean) {
+  /**
+   * @function obtenerRecetasConInformacion
+   * @returns el mismo objeto que obtenerRecetas() pero ahora los objetos del array results incluyen data como vegetarian, glutenfree, healthScore, summary
+   */
+  public obtenerRecetasConInformacion(vegetarian?: boolean, glutenFree?: boolean, vegan?: boolean) {
     let veg = "";
     let cel = "";
     let vveg = "";
@@ -40,14 +44,15 @@ export class SpoonacularService {
       veg = "&diet=vegetarian"
     }
     if (glutenFree && glutenFree == true) {
-      cel="&intolerances=gluten"
+      cel = "&intolerances=gluten"
     }
     if (vegan && vegan == true) {
       veg = "&diet=vegan"
     }
-    
-    let url = 'https://api.spoonacular.com/recipes/complexSearch?apiKey='+environment.spoonacular.apiKey+'&fillIngredients=true&addRecipeInformation=true'+veg+cel+vveg
-
+    //original    
+    //let url = 'https://api.spoonacular.com/recipes/complexSearch?apiKey='+environment.spoonacular.apiKey+'&fillIngredients=true&addRecipeInformation=true'+veg+cel+vveg
+    //test
+    let url = 'https://api.spoonacular.com/recipes/complexSearch?apiKey=' + environment.spoonacularTest.apiKey + '&fillIngredients=true&addRecipeInformation=true' + veg + cel + vveg
     return this.http.get(url
       ,
       { headers: this.headers }
@@ -58,9 +63,10 @@ export class SpoonacularService {
  * @function obtenerRecetasPorNombre
  * @param nombre un string. puede ser parcial.
  * @returns devuelve el mismo objeto pero filtrado. CUIDADO: busca resultados en cualquier parte de la receta no solo en el título
+ * FUNCION QUE NO VAMOS A USAR? ESTO sería para hacer un buscador copado
  */
   public obtenerRecetasPorNombre(nombre: string) {
-    const url = 'https://api.spoonacular.com/recipes/complexSearch?apiKey='+environment.spoonacular.apiKey+`&fillIngredients=true&addRecipeInformation=true&titleMatch=${nombre}`
+    const url = 'https://api.spoonacular.com/recipes/complexSearch?apiKey=' + environment.spoonacular.apiKey + `&fillIngredients=true&addRecipeInformation=true&titleMatch=${nombre}`
     //console.log(url)
     return this.http.get(url
       ,
@@ -75,11 +81,14 @@ export class SpoonacularService {
    */
 
   public obtenerRecetaPasoAPasoPorID(ID: string) {
-        const url = `https://api.spoonacular.com/recipes/${ID}/analyzedInstructions?apiKey=`+environment.spoonacular.apiKey+'&stepBreakdown'
+    //original
+    //const url = `https://api.spoonacular.com/recipes/${ID}/analyzedInstructions?apiKey=` + environment.spoonacular.apiKey + '&stepBreakdown'
+    //test
+    const url = `https://api.spoonacular.com/recipes/${ID}/analyzedInstructions?apiKey=` + environment.spoonacularTest.apiKey + '&stepBreakdown'
     return this.http.get(url
       ,
       { headers: this.headers }
     )
 
-  } 
+  }
 }
