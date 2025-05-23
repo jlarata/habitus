@@ -56,8 +56,8 @@ export class RegisterPage  {
         console.log("UID:", uid);
         console.log("Email:", email);
         
-        ///descomentar para probar envio data a firebase 
-        ///this.userService.crearDataUsuario(email,uid);
+        ///envio data adicional a firebase
+        this.userService.crearDataUsuario(email,uid);
 
         this.showToast('Registro exitoso.');
 
@@ -159,32 +159,6 @@ export class RegisterPage  {
     }
   }
 
-  /*metodo front que guardaria datos adicionales del usuario 
-  //no funciona
-  async saveUserData(uid: string) {
-    const birth = new Date(this.dateBirth);
-    const age = new Date().getFullYear() - birth.getFullYear();
-
-    const userData: UserProfile = {
-      uid,
-      name: this.name,
-      lastName: this.lastName,
-      email: this.email,
-      dateBirth: this.dateBirth,
-      biologicalSex: '',
-      age: age
-    };
-
-    try {
-      await this.authService.saveAditionalDataUser(userData, uid);
-      this.showToast('Datos guardados exitosamente.');
-    } catch (error: any) {
-      this.showToast('Error al guardar los datos de perfil.');
-      console.error('Error en Firestore:', error);
-    }
-  }*/
-
-  
 
 
 }
