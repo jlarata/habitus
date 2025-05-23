@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { LoadingController, ToastController } from '@ionic/angular';
-import { UserProfile } from 'src/app/models/userProfile.model';
+import { User } from 'src/app/models/user.model';
 import { ValidationUtils } from 'src/app/utils/validation';
 
 
@@ -18,7 +18,7 @@ export class ProfilePage implements OnInit {
   name: '',
   lastName: '',
   dateBirth: '',
-   biologicalSex:'',
+  biologicalSex:'',
   weight: 0,
   heigth: 0,
   age: 0,
@@ -33,6 +33,7 @@ export class ProfilePage implements OnInit {
   loading: HTMLIonLoadingElement | null = null;
   currentUser: any | null = null;//para suscribirse a observable authservice
   emailError: string= "";
+  apellidoError: string = '';
 
   constructor(
     private toastCtrl: ToastController,
@@ -79,7 +80,7 @@ export class ProfilePage implements OnInit {
       apellido:this.userData?.lastName,
       peso: this.userData?.weight, 
       altura: this.userData?.heigth, 
-     sexo: this.userData?.biologicalSex || '',
+      sexo: this.userData?.biologicalSex || '',
       actividadFisica: this.userData?.levelActivity,
       fechaNacimiento: this.userData?.dateBirth
     });
@@ -100,8 +101,6 @@ export class ProfilePage implements OnInit {
   }
 
   validateDate(){
-    
-
     if (!this.userData?.dateBirth) {
       this.dateError = "Ingrese una fecha válida.";
       return;
@@ -132,7 +131,7 @@ export class ProfilePage implements OnInit {
 
   }
 
-  apellidoError: string = '';
+ 
   validateApellido() {
     if (!this.userData?.lastName) {
       this.apellidoError = "Por favor complete el campo";
@@ -173,7 +172,7 @@ nombreError: string = '';
   }
 
   pesos: number[] = Array.from({ length: 121 }, (_, i) => i + 30); // 30 - 150 kg
-alturas: number[] = Array.from({ length: 101 }, (_, i) => i + 100); // 100 - 200 cm
+  alturas: number[] = Array.from({ length: 101 }, (_, i) => i + 100); // 100 - 200 cm
 
   //falta:
   ///-metodo calcular edad desde fecha de nacimiento( en utils?)
