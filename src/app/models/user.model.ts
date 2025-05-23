@@ -1,5 +1,5 @@
 /**
- *perfil de usuarios
+ *perfil/datos de usuarios
  *
  * @export
  * @interface UserProfile
