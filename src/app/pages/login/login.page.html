@@ -1,32 +1,49 @@
-<ion-header>
+<ion-header class="header">
   <ion-toolbar>
-    <ion-title>Login</ion-title>
+    <ion-title class="title-container">
+      <div class="logo-wrapper">
+        <img src="assets/img/icon.png" alt="Logo Habitus" class="heart-logo" />
+        <span class="app-name">Habitus</span>
+      </div>
+    </ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding">
-  <ng-container *ngIf="!isLoggedIn">
-    <ion-item>
-      <ion-label position="floating">Email</ion-label>
-      <ion-input type="email" [(ngModel)]="email"></ion-input>
-    </ion-item>
+<ion-content class="ion-padding page">
 
-    <ion-item>
-      <ion-label position="floating">Password</ion-label>
-      <ion-input type="password" [(ngModel)]="password"></ion-input>
-    </ion-item>
+  <ng-container>
+    <div class="content">
+      <h2 class="login-title">Iniciar sesión</h2>
 
-    <ion-button expand="full" (click)="login()">Iniciar Sesión</ion-button>
+
+      <ion-item class="custom-input" [class.error]="emailError">
+        <ion-label position="floating">Email</ion-label>
+        <ion-input type="email" [(ngModel)]="email"></ion-input>
+      </ion-item>
+      <p class="error-text" *ngIf="emailError">{{ emailError }}</p>
+
+
+      <ion-item class="custom-input" [class.error]="passwordError">
+        <ion-label position="floating">Password</ion-label>
+        <ion-input type="password" [(ngModel)]="password"></ion-input>
+      </ion-item>
+      <p class="error-text" *ngIf="passwordError">{{ passwordError }}</p>
+
+
+      <ion-button expand="block" class="login-button" (click)="login()">Iniciar Sesión</ion-button>
+
+
+      <ion-button expand="block" fill="outline" class="habitus-acerca-button" routerLink="/about">
+        <img src="assets/img/icon.png" class="habitus-icon" />
+        <span>Acerca de Habitus</span>
+      </ion-button>
+
+
+
+
+      <p class="signup-link">¿No tienes cuenta? <a routerLink="/register">Crear una cuenta</a></p>
+      <p class="signup-link">¿Olvidaste tu contraseña? <ion-button fill="clear" size="small" (click)="resetPassword()">Recuperar Contraseña</ion-button></p>
+    </div>
   </ng-container>
 
-  <ng-container *ngIf="isLoggedIn">
-    <ion-card>
-      <ion-card-header>
-        <ion-card-title>Bienvenido</ion-card-title>
-      </ion-card-header>
-      <ion-card-content>
-        Ahora puedes acceder a las tabs manualmente.
-      </ion-card-content>
-    </ion-card>
-  </ng-container>
 </ion-content>
