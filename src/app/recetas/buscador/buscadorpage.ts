@@ -15,6 +15,12 @@ export class BuscadorPage {
   public glutenFreeIsChecked = false;
   public veganIsChecked = false;
   queryDeRecetas?: QueryDeRecetas;
+
+  totalResults?: number;
+  recetasPerPage = 10;
+  recetasPagesNumber?: number;
+  currentPage = 1;
+
   @Output() buttonClicked = new EventEmitter<QueryDeRecetas>();
 
 
@@ -36,11 +42,18 @@ export class BuscadorPage {
         (data) => {
           console.log(data),
           this.queryDeRecetas = data,
+          this.calcularPaginas(this.queryDeRecetas.totalResults!)
             //para testear console.log(this.queryDeRecetas.results),
             this.buttonClicked.emit(this.queryDeRecetas)
         },
         (error) => { console.log(error); }
       )
+  }
+
+  calcularPaginas = (totalResults:number) => {
+    this.totalResults = totalResults;
+    this.recetasPagesNumber = this.totalResults! / this.recetasPerPage;
+    console.log(`se requieren ${this.recetasPagesNumber} páginas`);
   }
   
 }

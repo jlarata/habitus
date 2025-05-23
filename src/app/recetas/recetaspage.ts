@@ -15,12 +15,11 @@ import { UsersService } from '../services/users.service';
 
 export class RecetasPage {
 
-
-
   queryDeRecetas?: QueryDeRecetas;
   isShowingMore:boolean = false;
   queryDeRecetaForDisplay?: QueryDeRecetaForDisplay;
   imagenEnDisplay? : string;
+
 
   constructor(
     public spoonacular: SpoonacularService,
@@ -68,7 +67,8 @@ export class RecetasPage {
       )
   }
 
-}
+  
 
+}
 
 
