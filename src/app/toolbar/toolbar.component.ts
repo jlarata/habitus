@@ -20,11 +20,8 @@ export class ToolbarComponent  implements OnInit {
     private alertCtrl: AlertController
   ) {}
 
-  //metodos e iportaciones temporales para desloguearse y probar guard
   /**
    *Cierra sesion de usuario actual
-   *
-   * @memberof LoginPage
    */
   async logout() {
     try {
@@ -51,7 +48,7 @@ export class ToolbarComponent  implements OnInit {
     });
     toast.present();
   }
-
+  
   ngOnInit() {
     //no hace falta async/await por que no devuelve promesa
     //nos suscribimos al observable getUser y detectar 
