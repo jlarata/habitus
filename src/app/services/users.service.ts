@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { initializeApp } from 'firebase/app';
-import { collection, Firestore, getDocs, getFirestore } from 'firebase/firestore'
+import { doc, setDoc,addDoc, collection, Firestore, getDocs, getFirestore } from 'firebase/firestore'
 import { environment } from 'src/environments/environment';
+import { User } from '../models/user.model';
 
 const app = initializeApp(environment.firebase)
 const db =  getFirestore(app)
@@ -31,6 +32,45 @@ export class UsersService {
             console.log(`${doc.id} => ${doc.data()}`);
         }); */
     }
+
+    public async crearDataUsuario(email:string, uid:any) {
+        try {
+            const nuevoUsuario:User = {
+                uid: uid, // voy a almacenar el id uduario por las dudas
+                image:"",
+                email: email,
+                name: "",  
+                lastName: "", 
+                dateBirth: "", //dd/mm/yy
+                biologicalSex: "X",    
+                weight: 0,   // Peso en kg (opcional)
+                heigth: 0,  // Altura en cm (opcional)
+                age:0, //calculado desde la fecha de nacimiento
+                levelActivity:"Medio", //bajo, medio, alto
+                calendar_event: [], //esto tiene q ser un array de 
+                //eventuales objetos
+                celiaco: false,
+                recetas_favoritas: [],
+                vegano: false,
+                vegetariano: false
+            };
+
+            //pone id random a la colleccion
+            //const docRef = await addDoc(collection(db, "users"),nuevoUsuario);
+
+            //enviamos el email para id de coleccion
+            const docRef = await setDoc(doc(db, "users", email), nuevoUsuario);
+
+            console.log("Usuario agregado exitosamente. "+  docRef);
+
+        } catch (error) {
+
+            console.error("Error guardado datos usuario: " + error)
+            
+        }
+    }
+
+
 
 
 }

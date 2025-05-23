@@ -11,7 +11,7 @@ import { ToastController, AlertController } from '@ionic/angular';
 })
 export class ToolbarComponent  implements OnInit {
 
-  currentUser: any | null = null;
+  isCurrentUser:boolean = false;
 
   constructor(
     private authService: AuthService,
@@ -20,18 +20,15 @@ export class ToolbarComponent  implements OnInit {
     private alertCtrl: AlertController
   ) {}
 
-  //metodos e iportaciones temporales para desloguearse y probar guard
   /**
    *Cierra sesion de usuario actual
-   *
-   * @memberof LoginPage
    */
   async logout() {
     try {
       await this.authService.logout();
-      this.router.navigateByUrl('/login');
       this.showToast('Sesión Finalizada. Hasta pronto!');
-
+      this.router.navigateByUrl('/login');
+      
     } catch (error: any) {
       this.showToast('Error al cerrar sesión: ' + error.message);
     }
@@ -51,7 +48,7 @@ export class ToolbarComponent  implements OnInit {
     });
     toast.present();
   }
-
+  
   ngOnInit() {
     //no hace falta async/await por que no devuelve promesa
     //nos suscribimos al observable getUser y detectar 
@@ -59,7 +56,9 @@ export class ToolbarComponent  implements OnInit {
     //si logueado muestra toolbar en un ngif en <ion-toolbar> del html
     this.authService.getAuthState().subscribe(user => {
       if (user) {
-        this.currentUser = user;
+        this.isCurrentUser = true;
+      }else{
+        this.isCurrentUser = false;
       }
     });
   }
@@ -68,7 +67,7 @@ export class ToolbarComponent  implements OnInit {
       const alert = await this.alertCtrl.create({
         cssClass: 'alert-wrapper', // clase estilo alert
         message: '¿Está seguro que desea cerrar sesión?',
-        buttons: [
+        buttons: [//definimos botones del alert
           {
             text: 'Cancelar',
             role: 'cancel',

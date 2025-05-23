@@ -3,6 +3,7 @@ import { ToastController, LoadingController } from '@ionic/angular';
 import { ValidationUtils } from 'src/app/utils/validation';
 import { AuthService } from 'src/app/services/auth.service';
 import { Router } from '@angular/router';
+import { UsersService } from 'src/app/services/users.service';
 
 @Component({
   selector: 'app-register',
@@ -22,7 +23,8 @@ export class RegisterPage  {
     private authService: AuthService, 
     private toastCtrl: ToastController,
     private loadingCtrl: LoadingController,
-    private router: Router
+    private router: Router,
+    private userService:UsersService
   ) {}
 
   async register() {
@@ -47,7 +49,16 @@ export class RegisterPage  {
       try {
         //crear usuario
         const userCredential = await this.authService.register(this.email, this.password);
-            
+        ///obtener uid 
+        let uid = userCredential.user.uid;
+        let email = userCredential.user.email;
+        //log prueba
+        console.log("UID:", uid);
+        console.log("Email:", email);
+        
+        ///envio data adicional a firebase
+        this.userService.crearDataUsuario(email,uid);
+
         this.showToast('Registro exitoso.');
 
         //llevar a login
@@ -148,32 +159,6 @@ export class RegisterPage  {
     }
   }
 
-  /*metodo front que guardaria datos adicionales del usuario 
-  //no funciona
-  async saveUserData(uid: string) {
-    const birth = new Date(this.dateBirth);
-    const age = new Date().getFullYear() - birth.getFullYear();
-
-    const userData: UserProfile = {
-      uid,
-      name: this.name,
-      lastName: this.lastName,
-      email: this.email,
-      dateBirth: this.dateBirth,
-      biologicalSex: '',
-      age: age
-    };
-
-    try {
-      await this.authService.saveAditionalDataUser(userData, uid);
-      this.showToast('Datos guardados exitosamente.');
-    } catch (error: any) {
-      this.showToast('Error al guardar los datos de perfil.');
-      console.error('Error en Firestore:', error);
-    }
-  }*/
-
-  
 
 
 }
