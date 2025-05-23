@@ -15,6 +15,7 @@ import { UsersService } from '../services/users.service';
 
 export class RecetasPage {
 
+
   queryDeRecetas? : QueryDeRecetas = undefined;
 
   //para una visualización interactiva de los ingredientes.
@@ -22,10 +23,12 @@ export class RecetasPage {
 
   //variables para mostrar las instrucciones de una receta
   isShowingMore: boolean = false;
+
   queryDeRecetaForDisplay?: QueryDeRecetaForDisplay;
   imagenEnDisplay?: string;
 
   busquedaDesplegada?: boolean = false;
+
 
   constructor(
     public spoonacular: SpoonacularService,
@@ -81,6 +84,7 @@ export class RecetasPage {
       )
   }
 
+
   /**
  * @function muestraIngredientes cambia una variable para que el DOM renderice una ventana
  * @param receta es un INDEX de la lista de recetas de la query. el DOM sabe cual es y lo envía
@@ -100,7 +104,6 @@ export class RecetasPage {
       this.queryDeRecetas = undefined;
       this.busquedaDesplegada = !this.busquedaDesplegada;
       }
-
 }
 
 

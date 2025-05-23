@@ -17,7 +17,9 @@ export class BuscadorPage {
   public glutenFreeIsChecked = false;
   public veganIsChecked = false;
   queryDeRecetas?: QueryDeRecetas;
+
   //busquedaDesplegada = false;
+
 
   totalResults?: number;
   recetasPerPage = 10;
@@ -68,6 +70,7 @@ export class BuscadorPage {
   calcularPaginas = (totalResults:number) => {
     this.totalResults = totalResults;
     this.recetasPagesNumber =  Math.ceil(this.totalResults! / this.recetasPerPage);
+
     console.log(`se requieren ${this.recetasPagesNumber} páginas`);
   }
   

@@ -15,7 +15,9 @@
       
         <ion-card-subtitle>subtitulo</ion-card-subtitle>
 
+
       </ion-card-header>
+
 
       <ion-list *ngFor="let step of this.queryDeRecetaForDisplay?.steps!">
         <ion-item>{{step.number}}. {{step.step}}</ion-item>
@@ -24,8 +26,6 @@
       <ion-button (click)="toggleRecipeSteps()">Volver</ion-button>
     </ion-card>
   </ion-card-content>
-
-  
 
   <!-- las cards de las recetas -->
 
