@@ -7,3 +7,40 @@ ion-checkbox::part(container) {
   border-radius: 6px;
   border: 2px solid #6815ec;
 }
+
+.rightPageArrow {
+  font-size: 64px;
+  color: rgba(0, 0, 0, 0.500);
+  background-color: rgba(255, 255, 255, 0);
+}
+
+.leftPageArrow {
+  font-size: 64px;
+  color: rgba(0, 0, 0, 0.500);
+  background-color: rgba(255, 255, 255, 0);
+}
+
+.rightPageArrowButton {
+  font-size: 64px;
+}
+
+.leftPageArrowButton {
+  font-size: 64px;
+}
+
+.paginationButtons {
+  position: fixed;
+  top: 50%;
+  z-index: 10;
+  display: flex;
+  flex-direction: row;
+  //border: solid black 1px;
+  width: 99vw;
+  justify-content: space-between;
+  
+  background-color: rgba($color: #ffffff00, $alpha: 0.0)
+}
+
+.pagesButtons {
+  border: solid black 1px
+}

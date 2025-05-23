@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { SpoonacularService } from '../../services/spoonacular.service';
 import { QueryDeRecetas } from '../../models/recetas';
 
@@ -11,10 +11,13 @@ import { QueryDeRecetas } from '../../models/recetas';
 })
 export class BuscadorPage {
 
+  @Input() busquedaDesplegada?: boolean;
+
   public vegetarianIsChecked = false;
   public glutenFreeIsChecked = false;
   public veganIsChecked = false;
   queryDeRecetas?: QueryDeRecetas;
+  //busquedaDesplegada = false;
 
   totalResults?: number;
   recetasPerPage = 10;
@@ -22,6 +25,7 @@ export class BuscadorPage {
   currentPage = 1;
 
   @Output() buttonClicked = new EventEmitter<QueryDeRecetas>();
+  @Output() busquedaDesplegadaChange = new EventEmitter<boolean>
 
 
   handleClick() {
@@ -40,9 +44,10 @@ export class BuscadorPage {
     this.spoonacular.obtenerRecetasConInformacion(this.vegetarianIsChecked, this.glutenFreeIsChecked, this.veganIsChecked)
       .subscribe(
         (data) => {
-          console.log(data),
+          //console.log(data),
           this.queryDeRecetas = data,
           this.calcularPaginas(this.queryDeRecetas.totalResults!)
+          this.busquedaDesplegada = !this.busquedaDesplegada
             //para testear console.log(this.queryDeRecetas.results),
             this.buttonClicked.emit(this.queryDeRecetas)
         },
@@ -50,9 +55,19 @@ export class BuscadorPage {
       )
   }
 
+   /**
+   * @function blanquearRecetas limpia la query, el DOM deja de mostrar las cards.
+   */
+   public blanquearRecetas() {
+    this.queryDeRecetas = undefined;
+    this.busquedaDesplegada = !this.busquedaDesplegada;
+    this.busquedaDesplegadaChange.emit(!this.busquedaDesplegada)
+    this.buttonClicked.emit(this.queryDeRecetas)
+    }
+
   calcularPaginas = (totalResults:number) => {
     this.totalResults = totalResults;
-    this.recetasPagesNumber = this.totalResults! / this.recetasPerPage;
+    this.recetasPagesNumber =  Math.ceil(this.totalResults! / this.recetasPerPage);
     console.log(`se requieren ${this.recetasPagesNumber} páginas`);
   }
   

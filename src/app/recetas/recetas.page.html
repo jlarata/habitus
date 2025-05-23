@@ -1,30 +1,35 @@
+
 <ion-content>
   <div class="title">
     <h2>Recetas. Faltó ganas!</h2>
   </div>
-  <ion-button *ngIf="queryDeRecetas && !isShowingMore" (click)="blanquearRecetas()">borrar búsqueda</ion-button>
 
-  <!-- <ion-button *ngIf="queryDeRecetas && !isShowingMore" (click)="()"></ion-button> -->
+  <app-buscador [(busquedaDesplegada)]="busquedaDesplegada" (buttonClicked)="onButtonClicked($event)"></app-buscador>
 
+  <!-- el componente card que se despliega cuando pedís las instrucciones -->
   <ion-card-content *ngIf="isShowingMore">
     <ion-card class="recetaEnDisplay">
       <ion-card-header>
-         <img alt="foto de receta" src="{{imagenEnDisplay}}">
         <ion-card-title>titulo</ion-card-title>
+        <img alt="foto de receta" src="{{imagenEnDisplay}}">
+      
         <ion-card-subtitle>subtitulo</ion-card-subtitle>
-              
+
       </ion-card-header>
-      
-        <ion-list *ngFor="let step of this.queryDeRecetaForDisplay?.steps!">
-          <ion-item>{{step.number}}. {{step.step}}</ion-item>
-        </ion-list>
-      
+
+      <ion-list *ngFor="let step of this.queryDeRecetaForDisplay?.steps!">
+        <ion-item>{{step.number}}. {{step.step}}</ion-item>
+      </ion-list>
+
       <ion-button (click)="toggleRecipeSteps()">Volver</ion-button>
     </ion-card>
-    
   </ion-card-content>
 
-  <div *ngIf="!isShowingMore">
+  
+
+  <!-- las cards de las recetas -->
+
+  <div *ngIf="!isShowingMore" class="divDeRecetas">
     <ion-card-content *ngFor=" let receta of queryDeRecetas?.results">
       <ion-card>
         <img alt="foto de {{receta.title}}" src="{{receta.image}}">
@@ -32,36 +37,25 @@
           <ion-card-title>{{receta.title}}</ion-card-title>
           <ion-card-subtitle>subtitulo?</ion-card-subtitle>
         </ion-card-header>
-        <ion-card-content>un breve texto para cada receta?</ion-card-content>
-        <ion-button (click)="buscarPorId(receta.id!, receta.image!)">Más información</ion-button>
+        <ion-card-content *ngIf="queryDeRecetas?.results?.indexOf(receta) == recetaConIngredientes">ingredientes de
+          {{receta.title}}
+
+          <div class="ingredients">
+            <ul *ngFor="let ingredient of receta.missedIngredients">
+              <li>{{ingredient.original}} </li>
+            </ul>
+          </div>
+        </ion-card-content>
+        <ion-button *ngIf="queryDeRecetas?.results?.indexOf(receta) != recetaConIngredientes"
+          (click)="muestraIngredientes(queryDeRecetas?.results?.indexOf(receta)!)">Mostrar ingredientes</ion-button>
+        <ion-button *ngIf="queryDeRecetas?.results?.indexOf(receta) == recetaConIngredientes"
+          (click)="ocultaIngredientes()">Ocultar ingredientes</ion-button>
+        <ion-button (click)="buscarPorId(receta.id!, receta.image!)">Instrucciones paso a paso</ion-button>
       </ion-card>
     </ion-card-content>
   </div>
-  
 
-
-
-
-  <!-- <div class="recipeContainer">
-    <div class="recipeCard" *ngFor="let receta of queryDeRecetas?.results">
-      <div class="titleAndPhoto">
-        <h2>{{receta.title}}
-        </h2>
-        <img src="{{receta.image}}">
-      </div>
-      <div class="ingredients">
-        <ul *ngFor="let ingredient of receta.missedIngredients">
-          <li>{{ingredient.original}} </li>
-        </ul>
-      </div>
-
-    </div>
-
-  </div> -->
-
-  <ion-button *ngIf="queryDeRecetas && !isShowingMore" (click)="blanquearRecetas()">borrar búsqueda</ion-button>
-  <app-buscador *ngIf="!queryDeRecetas" (buttonClicked)="onButtonClicked($event)"></app-buscador>
-
+  <ion-button *ngIf="queryDeRecetas != undefined" (click)="blanquearRecetas()">borrar búsqueda</ion-button>
 
 
 </ion-content>
