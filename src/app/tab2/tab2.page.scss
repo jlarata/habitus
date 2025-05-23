@@ -7,7 +7,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 /* Scrollbar, barra de desplazamiento */
@@ -28,7 +28,7 @@
 ion-header,
 ion-toolbar {
   --background: #E1BEE7;
-  --color: #7B1FA2; 
+  --color: #7B1FA2;
   border-bottom: 1px solid #ce93d8;
   border-radius: 8px 8px 0 0;
 }
@@ -55,6 +55,14 @@ ion-title.title-container {
   background-color: #e4cce8;
 }
 
+/*.calendar {
+  background: white;
+  border-radius: 10px;
+  padding: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}*/
+
+
 
 /*columna izquierda donde va el calendario*/
 .left {
@@ -77,6 +85,70 @@ ion-title.title-container {
   background-color: #ffffff;
 }
 
+.month {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: bold;
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+}
+.weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  text-align: center;
+  font-weight: 500;
+  color: #444;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr); /* una columna por día */
+  gap: 5px;
+  text-align: center;
+  padding: 0;
+  margin: 0;
+}
+
+.day {
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 500;
+  cursor: pointer;
+  border-radius: 6px;
+  margin: 0;
+  padding: 0;
+}
+
+.day:hover {
+  background-color: #f3e5f5;
+}
+
+
+.day.today {
+  background-color: #fce4ec;
+  font-weight: bold;
+}
+
+.day.active {
+  border: 2px solid #ec407a;
+}
+
+.day.event::after {
+  content: '';
+  display: block;
+  width: 6px;
+  height: 6px;
+  margin: 4px auto 0;
+  background: #ec407a;
+  border-radius: 50%;
+}
+
+
 
 .calendar::before,
 .calendar::after {
@@ -98,7 +170,7 @@ ion-title.title-container {
 }
 
 
-.calendar .month {
+/*.calendar .month {
   width: 100%;
   height: 150px;
   display: flex;
@@ -108,7 +180,7 @@ ion-title.title-container {
   font-size: 1.2rem;
   font-weight: 500;
   text-transform: capitalize;
-}
+}*/
 
 /* botones de navegacion (mes anterior y siguiente)*/
 .calendar .month .prev,
@@ -124,7 +196,7 @@ ion-title.title-container {
 
 
 /*estilo de dias de la semana en el calendario*/
-.calendar .weekdays {
+/*.calendar .weekdays {
   width: 100%;
   height: 100px;
   display: flex;
@@ -134,18 +206,18 @@ ion-title.title-container {
   font-size: 1rem;
   font-weight: 500;
   text-transform: capitalize;
-}
+}*/
 
-.weekdays div {
+/*.weekdays div {
   width: 14.28%;
   height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-}
+}*/
 
 /* Contenedor de los días del mes (números) */
-.calendar .days {
+/*.calendar .days {
   width: 100%;
   display: flex;
   flex-wrap: wrap;
@@ -154,9 +226,9 @@ ion-title.title-container {
   font-size: 1rem;
   font-weight: 500;
   margin-bottom: 50px;
-}
+}*/
 /* Estilo individual de cada día del calendario */
-.calendar .days .day {
+/*.calendar .days .day {
   width: 14.28%;
   height: 90px;
   display: flex;
@@ -165,7 +237,7 @@ ion-title.title-container {
   cursor: pointer;
   color: var(--primary-clr);
   border: 500px solid #610303;
-}
+}*/
 
 
 /* Bordes del calendario */
@@ -229,6 +301,36 @@ ion-title.title-container {
   background-color: var(--primary-clr);
 }
 
+.goto-today {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1rem;
+
+  ion-input.date-input {
+    width: 100px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    padding: 4px;
+    text-align: center;
+  }
+
+  .goto-btn, .today-btn {
+    --background: #ec407a;
+    --color: white;
+    --border-radius: 8px;
+    font-weight: bold;
+    padding: 6px 12px;
+    margin-left: 5px;
+  }
+
+  /*.today-btn {
+    --background: #ec407a;
+    --color: #333;
+  }*/
+}
+
+
 .calendar .days .day:hover.event::after {
   background-color: #ffffff;
 }
@@ -248,7 +350,7 @@ ion-title.title-container {
   width: 40%;
   min-height: 100%;
   padding: 20px 0;
-} 
+}
 
 
 .right .today-date {
@@ -433,7 +535,7 @@ ion-input {
   display: flex;
   align-items: center;
   overflow: hidden;
-  gap:10px; 
+  gap:10px;
 }
 
 .add-event-wrapper.active {
@@ -483,7 +585,7 @@ ion-input {
   width:150px;
   cursor:pointer;
   justify-content: center;
-} 
+}
 
 @media screen and (max-width: 1000px) {
   body {
