@@ -16,8 +16,8 @@ export interface User {
     heigth?: number;  // Altura en cm (opcional)
     age?:number; //calculado desde la fecha de nacimiento
     levelActivity?:string; //bajo, medio, alto
+    recetas_favoritas?: string[]; //array strings 
     //cambiar tipos una vez definido los modelos
-    recetas_favoritas?: any; //array pero por las dudas any
     calendar_event?: any; //esto tiene q ser un array de //eventuales objetos
     vegano?: boolean;
     vegetariano?: boolean;
