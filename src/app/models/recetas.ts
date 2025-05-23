@@ -14,9 +14,20 @@ export class Receta {
     missedIngredients?: Ingredientes[]
 }
 
+export class Step {
+    number?:number;
+    step?: string;
+}
+
+export class QueryDeRecetaForDisplay {
+    name? : string;
+    steps?: Step[]
+}
+
 export class QueryDeRecetas {
     number?: number;
     offset?: number;
     results?: Receta[];
     totalResults?: number;
 }
+
