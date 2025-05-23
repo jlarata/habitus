@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpClientModule } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 
-
 @Injectable({
   providedIn: 'root'
 })
@@ -76,10 +75,11 @@ export class SpoonacularService {
    */
 
   public obtenerRecetaPasoAPasoPorID(ID: string) {
-        const url = `https://api.spoonacular.com/recipes/${ID}/analyzedInstructions?apiKey=`+environment.spoonacular.apiKey
+        const url = `https://api.spoonacular.com/recipes/${ID}/analyzedInstructions?apiKey=`+environment.spoonacular.apiKey+'&stepBreakdown'
     return this.http.get(url
       ,
       { headers: this.headers }
     )
+
   } 
 }
