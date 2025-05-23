@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { initializeApp } from 'firebase/app';
 import { doc, setDoc,addDoc, collection, Firestore, getDocs, getFirestore } from 'firebase/firestore'
 import { environment } from 'src/environments/environment';
+import { User } from '../models/user.model';
 
 const app = initializeApp(environment.firebase)
 const db =  getFirestore(app)
@@ -34,22 +35,26 @@ export class UsersService {
 
     public async crearDataUsuario(email:string, uid:any) {
         try {
-            const nuevoUsuario = {
-                mail: email,
-                hace_actividad_fisica_regular: false,
-                UID: uid, //la alternativa es que al crear el usuario 
-                //le hagas un get para saber la ID,
+            const nuevoUsuario:User = {
+                uid: uid, // voy a almacenar el id uduario por las dudas
+                image:"",
+                email: email,
+                name: "",  
+                lastName: "", 
+                dateBirth: "", //dd/mm/yy
+                biologicalSex: "X",    
+                weight: 0,   // Peso en kg (opcional)
+                heigth: 0,  // Altura en cm (opcional)
+                age:0, //calculado desde la fecha de nacimiento
+                levelActivity:"Medio", //bajo, medio, alto
                 calendar_event: [], //esto tiene q ser un array de 
                 //eventuales objetos
                 celiaco: false,
-                edad: 0, //acá podemos implementar un
-                // "fecha de nacimiento" como quieran
-                fechaNacimiento: "15/05/00",
-                peso: 0,
                 recetas_favoritas: [],
                 vegano: false,
                 vegetariano: false
             };
+
             //pone id random a la colleccion
             //const docRef = await addDoc(collection(db, "users"),nuevoUsuario);
 
