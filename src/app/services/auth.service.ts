@@ -7,6 +7,8 @@ import { BehaviorSubject, Observable } from 'rxjs';//libreria js para implementa
 import { environment } from '../../environments/environment'
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import firebase from 'firebase/compat/app';
+import { UsersService } from './users.service';
+import { User } from '../models/user.model';
 
 
 
@@ -34,7 +36,8 @@ export class AuthService {
 
   constructor(
     private afAuth: AngularFireAuth,
-    public http: HttpClient
+    public http: HttpClient,
+    private userService:UsersService
   ) { 
 
     this.initializeAuthState();
@@ -42,9 +45,9 @@ export class AuthService {
   }
 
   /**
- * Iniciala suscripción al estado de autenticación.
- * Actualiza `userSubject` cuando el usuario inicia o cierra sesión.
- */
+   * Iniciala suscripción al estado de autenticación.
+   * Actualiza `userSubject` cuando el usuario inicia o cierra sesión.
+  */
   private initializeAuthState(): void {
     try {
 
@@ -83,6 +86,16 @@ export class AuthService {
     // observable es buena practica para recordar que se debe suscribirse
     //para ver el valor de la misma
     return this.user$;
+  }
+  
+  /**
+   *Ubtiene el usuario firebase desde el BehaviorSubject(algo de rjx)
+   *
+   * @return {*}  {(firebase.User | null)}
+   * @memberof AuthService
+   */
+  getCurrentUser(): firebase.User | null {
+    return this.userSubject.getValue();
   }
 
   /**
