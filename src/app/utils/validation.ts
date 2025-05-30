@@ -51,9 +51,30 @@ export class ValidationUtils {
    * @return {*}  {boolean}
    * @memberof ValidationUtils
    */
-  static isValidDate(date:string):boolean {
-    const regex = /^\d{2}\/\d{2}\/\d{2}$/; // Formato DD/MM/YY
-    return regex.test(date);
+  static isValidDate(date: string): boolean {
+    // Validar formato DD/MM/YYYY con regex
+    const regex = /^\d{2}\/\d{2}\/\d{4}$/;
+    if (!regex.test(date)) return false;
+
+    // dividir la fecha y convertir a números
+    const [day, month, year] = date.split("/").map(Number);
+
+    // validar año dentro de un rango  (1900-actual)
+    const currentYear = new Date().getFullYear();
+    if (year < 1900 || year > currentYear) return false;
+
+    // crear objeto fecha con los valores ingresados
+    const validDate = new Date(year, month - 1, day);
+
+    // obtener la fecha actual quitando horas/minutos/segundos
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    // validar que la fecha ingresada es real y que sea menor o igual a hoy
+    return validDate.getFullYear() === year &&
+           validDate.getMonth() + 1 === month &&
+           validDate.getDate() === day &&
+           validDate <= today;
   }
 
 

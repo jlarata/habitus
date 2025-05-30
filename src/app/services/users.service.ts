@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { initializeApp } from 'firebase/app';
-import { doc, setDoc,addDoc, collection, Firestore, getDocs, getFirestore, getDoc } from 'firebase/firestore'
+import { doc, setDoc,addDoc, collection, Firestore, getDocs, getFirestore, getDoc, updateDoc } from 'firebase/firestore'
 import { environment } from 'src/environments/environment';
 import { User } from '../models/user.model';
 
@@ -96,6 +96,21 @@ export class UsersService {
         }
 
         return docSnap.data() as User;
+    }
+    
+    /**
+     *updateDoc() → Actualiza solo los campos enviados es método de firestore
+     *Partial<T> es un tipo genérico en TypeScript
+     *Partial<User> → Permite que solo pases los datos que quieres modificar.
+     *
+     * @param {string} email
+     * @param {Partial<User>} datosActualizados
+     * @return {*}  {Promise<void>}
+     * @memberof UsersService
+    */
+    public async actualizarPerfilUsuario(email: string, datosActualizados: Partial<User>): Promise<void> {
+        const docRef = doc(db, "users", email); 
+        await updateDoc(docRef, datosActualizados);
     }
 
 

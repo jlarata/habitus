@@ -13,8 +13,8 @@ import { ValidationUtils } from 'src/app/utils/validation';
   standalone: false
 })
 export class ProfilePage implements OnInit {
-
-  userData = {
+ 
+  userData:User = {
     uid: '',
     email: '',
     name: '',
@@ -24,9 +24,9 @@ export class ProfilePage implements OnInit {
     weight: 0,
     heigth: 0,
     age: 0,
-    levelBaja: false,
-    levelMedia: false,
-    levelAlta: false,
+    //levelBaja: false,
+    //levelMedia: false,
+    //levelAlta: false,
     levelActivity: ''
   };
   
@@ -47,21 +47,27 @@ export class ProfilePage implements OnInit {
     private auth:AuthService,
     private userService:UsersService
   ) 
-  { }
+  { 
+    this.loadUserProfile();
+  }
 
   ngOnInit() {
-    
-   this.loadUserProfile();
     
   }
 
   /**
-   *metodo temporal solo muestra por consola los datos guardados
+   *metodo que actualiza en firestore parte del perfil del usuario
    *
    * @memberof ProfilePage
-   */
-  async guardarPerfil() {
-    this.dateError = "";
+  */
+  async saveProfile() {
+
+    this.validateDate(); // validar fecha
+
+    if (this.dateError) { // si error en fecha, detener guardado
+      this.showToast("Corrige la fecha antes de guardar.");
+      return;
+    }
 
     this.loading = await this.loadingCtrl.create({
         message: 'Guardando datos...',
@@ -70,31 +76,46 @@ export class ProfilePage implements OnInit {
 
     await this.loading.present();
 
-    console.log('Perfil guardado:', 
-    { 
-      nombre: this.userData?.name,
-      apellido:this.userData?.lastName,
-      peso: this.userData?.weight, 
-      altura: this.userData?.heigth, 
-      sexo: this.userData?.biologicalSex || '',
-      actividadFisica: this.userData?.levelActivity,
-      fechaNacimiento: this.userData?.dateBirth
-    });
+    let user:User = { 
+      email: this.userData.email,
+      uid: this.userData.uid,
+      name: this.userData?.name,
+      lastName:this.userData?.lastName,
+      weight: this.userData?.weight, 
+      heigth: this.userData?.heigth, 
+      biologicalSex: this.userData?.biologicalSex || '',
+      levelActivity: this.userData?.levelActivity,
+      dateBirth: this.userData?.dateBirth
+    };
 
-    this.showToast('Datos guardados!');
+    try {
+      await this.userService.actualizarPerfilUsuario(this.userData.email, user);
 
+      this.showToast("Perfil actualizado correctamente.");
+
+    } catch (error) {
+
+      this.showToast("Error al actualizar perfil: " + error);
+
+      console.error("Error en perfil:", error);
+
+    }
+
+    console.log("datos guardados!: " + user);
+    
     //Ocultar loading después de completar el ""guardado""
     await this.loading.dismiss();
   }
  
   validateDate(){
     if (!this.userData?.dateBirth) {
-      this.dateError = "Ingrese una fecha válida.";
+      //no lanzo error por que no es obligatoria la fecha
+      this.userData.dateBirth = "";
       return;
     }
 
     if (!ValidationUtils.isValidDate(this.userData.dateBirth)) {
-      this.dateError = "Formato inválido. Ejemplo: 15/02/98";
+      this.dateError = "Formato o fecha inválida. Ejemplo: 15/02/1998";
       return;
     }
 
@@ -176,9 +197,9 @@ export class ProfilePage implements OnInit {
         weight: user.weight || 0,   // Peso en kg (opcional)
         heigth: user.heigth || 0,  // Altura en cm (opcional)
         age: user.age || 0, //calculado desde la fecha de nacimiento//aun no implementado
-        levelBaja: true,
-        levelMedia: false,
-        levelAlta: false,
+        //levelBaja: true,
+        //levelMedia: false,
+       // levelAlta: false,
         levelActivity: user.levelActivity || "Baja"
       };
 
