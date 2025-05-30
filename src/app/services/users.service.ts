@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { initializeApp } from 'firebase/app';
-import { doc, setDoc,addDoc, collection, Firestore, getDocs, getFirestore } from 'firebase/firestore'
+import { doc, setDoc,addDoc, collection, Firestore, getDocs, getFirestore, getDoc } from 'firebase/firestore'
 import { environment } from 'src/environments/environment';
 import { User } from '../models/user.model';
 
@@ -32,7 +32,16 @@ export class UsersService {
             console.log(`${doc.id} => ${doc.data()}`);
         }); */
     }
-
+    
+    /**
+     *
+     *Al crear usuario inicializamos una collecion en firestore 
+     *con datos preinicializados del usuario. 
+     *usamos eail como id de la colleccion
+     * @param {string} email
+     * @param {*} uid
+     * @memberof UsersService
+     */
     public async crearDataUsuario(email:string, uid:any) {
         try {
             const nuevoUsuario:User = {
@@ -46,7 +55,7 @@ export class UsersService {
                 weight: 0,   // Peso en kg (opcional)
                 heigth: 0,  // Altura en cm (opcional)
                 age:0, //calculado desde la fecha de nacimiento
-                levelActivity:"Medio", //bajo, medio, alto
+                levelActivity:"Media", //Baja, Media, Alta
                 calendar_event: [], //esto tiene q ser un array de 
                 //eventuales objetos
                 celiaco: false,
@@ -69,8 +78,25 @@ export class UsersService {
             
         }
     }
+    
+    /**
+     *busca coleccion por id (email) que se le pasa por parametro
+     *retorna promesa datos en forma de la interface User o null si da error
+     * @param {string} email
+     * @return {*}  {(Promise<User | null>)}
+     * @memberof UsersService
+    */
+    public async obtenerPerfilUsuario(email: string): Promise<User | null> {
+        //voy a atrapar los errores desde profile.page.ts
+        const docRef = doc(db, "users", email); // referencia al doc por email
+        const docSnap = await getDoc(docRef); // obtiene el documento desde Firestore
 
+        if (!docSnap.exists()) {
+            throw new Error(`No se encontró perfil de usuario con email: ${email}`);
+        }
 
+        return docSnap.data() as User;
+    }
 
 
 }

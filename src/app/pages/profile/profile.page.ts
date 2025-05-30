@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { LoadingController, ToastController } from '@ionic/angular';
 import { User } from 'src/app/models/user.model';
+import { AuthService } from 'src/app/services/auth.service';
+import { UsersService } from 'src/app/services/users.service';
 import { ValidationUtils } from 'src/app/utils/validation';
 
 
@@ -12,55 +14,49 @@ import { ValidationUtils } from 'src/app/utils/validation';
 })
 export class ProfilePage implements OnInit {
 
- userData = {
-  uid: '',
-  email: '',
-  name: '',
-  lastName: '',
-  dateBirth: '',
-  biologicalSex:'',
-  weight: 0,
-  heigth: 0,
-  age: 0,
-  levelBaja: false,
-  levelMedia: false,
-  levelAlta: false,
-  levelActivity: ''
-};
-
+  userData = {
+    uid: '',
+    email: '',
+    name: '',
+    lastName: '',
+    dateBirth: '',
+    biologicalSex:'',
+    weight: 0,
+    heigth: 0,
+    age: 0,
+    levelBaja: false,
+    levelMedia: false,
+    levelAlta: false,
+    levelActivity: ''
+  };
+  
+  loading: HTMLIonLoadingElement | null = null;
 
   dateError:string= "";
-  loading: HTMLIonLoadingElement | null = null;
-  currentUser: any | null = null;//para suscribirse a observable authservice
   emailError: string= "";
-  apellidoError: string = '';
+  nombreError: string = '';
+  
+  //array tipo nuber 121 elementos genera valores de 30 hasta 150
+  pesos: number[] = Array.from({ length: 121 }, (_, i) => i + 30); // 30 - 150 kg
+  //array tipo nuber 121 elementos genera valores de 100  hasta 200
+  alturas: number[] = Array.from({ length: 101 }, (_, i) => i + 100); // 100 - 200 cm
 
   constructor(
     private toastCtrl: ToastController,
-    private loadingCtrl: LoadingController
+    private loadingCtrl: LoadingController,
+    private auth:AuthService,
+    private userService:UsersService
   ) 
   { }
 
   ngOnInit() {
-    this.userData = {
-      uid: '',
-      email: 'juana@example.com',
-      name: 'juana',
-      lastName: "",
-      dateBirth: "", 
-      biologicalSex: '',
-      weight: 60,   // Peso en kg (opcional)
-      heigth: 170,  // Altura en cm (opcional)
-      age: 25, //calculado desde la fecha de nacimiento//aun no implementado
-      levelBaja: true,
-      levelMedia: false,
-      levelAlta: false,
-      levelActivity: 'baja'
-    };
+    
+   this.loadUserProfile();
+    
   }
 
   /**
-   *metodo temporal solo muestra por consolo los datos guardados
+   *metodo temporal solo muestra por consola los datos guardados
    *
    * @memberof ProfilePage
    */
@@ -90,16 +86,7 @@ export class ProfilePage implements OnInit {
     //Ocultar loading después de completar el ""guardado""
     await this.loading.dismiss();
   }
-  /**
-   *
-   * @return {*}  {string}
-   * @memberof ProfilePage
-   */
-  getCustomFormattedDate(): string {
-    const fecha = new Date();
-    return new Intl.DateTimeFormat('es-ES', { year: 'numeric', month: '2-digit', day: '2-digit' }).format(fecha);
-  }
-
+ 
   validateDate(){
     if (!this.userData?.dateBirth) {
       this.dateError = "Ingrese una fecha válida.";
@@ -115,38 +102,7 @@ export class ProfilePage implements OnInit {
 
   }
 
- validateEmail(){
-    
-    if (!this.userData?.email) {
-      this.emailError = "Por favor complete el campo.";
-      return;
-    }
-
-    if (!ValidationUtils.isValidEmail(this.userData.email)) {
-      this.emailError = "Por favor complete el campo con un email válido.";
-      return;
-    }
-
-    this.emailError = "";
-
-  }
-
- 
-  validateApellido() {
-    if (!this.userData?.lastName) {
-      this.apellidoError = "Por favor complete el campo";
-      return;
-    }
-
-    if (this.userData.lastName.length < 3) {
-      this.apellidoError = "campo vacio.";
-      return;
-    }
-
-    this.apellidoError = "";
-  }
-
-nombreError: string = '';
+  //elimine validaciones apellido para que sea opcional
   validateNombre() {
     if (!this.userData?.name) {
       this.nombreError = "Por favor complete el campo";
@@ -161,7 +117,12 @@ nombreError: string = '';
     this.nombreError = "";
   }
 
-
+  /**
+   *mostrar alerta dtos guardados o error 
+   *
+   * @param {string} message
+   * @memberof ProfilePage
+   */
   async showToast(message: string) {
     const toast = await this.toastCtrl.create({
       message,
@@ -171,14 +132,64 @@ nombreError: string = '';
     toast.present();
   }
 
-  pesos: number[] = Array.from({ length: 121 }, (_, i) => i + 30); // 30 - 150 kg
-  alturas: number[] = Array.from({ length: 101 }, (_, i) => i + 100); // 100 - 200 cm
+ 
 
   //falta:
-  ///-metodo calcular edad desde fecha de nacimiento( en utils?)
+  ///-metodo calcular edad desde fecha de nacimiento( en utils?)//falta campo edad readonly
   //- metodo guardo en firebase,
-  //- obtener el user firebase y mostrar el email que es lo que tenemos
+    
+  /**
+  *recupera apartir del email los datos de usuario
+  *almacenados en firestore
+  *usado en oninit de esta clase
+  * @return {*} 
+  * @memberof ProfilePage
+  */
+  async loadUserProfile() {
+    try {
+      // Obtener el usuario autenticado desde Firebase
+      const userFirebase = this.auth.getCurrentUser();
 
+      if (!userFirebase?.email) {
+        this.showToast("No hay usuario autenticado o no tiene un email válido.");
+        console.error("No hay usuario autenticado o no tiene un email válido.");
+        return;
+      }
 
+      // Obtener los datos desde Firestore directamente
+      const user = await this.userService.obtenerPerfilUsuario(userFirebase.email);
+
+      if (!user) {
+        console.error("No se encontró perfil de usuario en Firestore.");
+        this.showToast("No se encontró perfil de usuario en Firestore.");
+        return;
+      }
+
+      // Asignar los datos obtenidos al objeto userData
+      this.userData = {
+        uid: user.uid || "",
+        email: user.email || "",
+        name: user.name ||"",
+        lastName: user.lastName || "",
+        dateBirth: user.dateBirth || "", 
+        biologicalSex:user.biologicalSex || '',
+        weight: user.weight || 0,   // Peso en kg (opcional)
+        heigth: user.heigth || 0,  // Altura en cm (opcional)
+        age: user.age || 0, //calculado desde la fecha de nacimiento//aun no implementado
+        levelBaja: true,
+        levelMedia: false,
+        levelAlta: false,
+        levelActivity: user.levelActivity || "Baja"
+      };
+
+      console.log("Datos del usuario cargados:", this.userData);
+
+    } catch (error) {
+
+      console.error("Error al obtener los datos del usuario:", error);
+
+      this.showToast("Error al obtener los datos del usuario: " + error);
+    }
+  }
 
 }

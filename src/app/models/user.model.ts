@@ -2,7 +2,7 @@
  *perfil/datos de usuarios
  *
  * @export
- * @interface UserProfile
+ * @interface User
 */
 export interface User {
     uid: string;      // ID único del usuario (proporcionado por Firebase)
