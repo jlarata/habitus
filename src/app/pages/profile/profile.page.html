@@ -5,7 +5,11 @@
 </ion-header>
 
 <ion-content class="page">
+  
   <div class="profile-container">
+    <ion-buttons slot="start">
+        Volver<ion-back-button defaultHref="/" color="tertiary"></ion-back-button>
+    </ion-buttons>
     <ion-avatar class="avatar-container">
       <ion-icon name="person-outline" class="avatar-icon"></ion-icon>
     </ion-avatar>
@@ -18,8 +22,6 @@
     </ion-item>
 
     <p class="error-text" *ngIf="emailError">{{ emailError }}</p>
-
-
 
     <ion-label class="input-title">Nombre</ion-label>
     <ion-item class="custom-input">
