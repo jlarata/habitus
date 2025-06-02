@@ -59,6 +59,7 @@ export class SpoonacularService {
     )
   }
 
+
   /**
  * @function obtenerRecetasPorNombre
  * @param nombre un string. puede ser parcial.
@@ -85,6 +86,15 @@ export class SpoonacularService {
     //const url = `https://api.spoonacular.com/recipes/${ID}/analyzedInstructions?apiKey=` + environment.spoonacular.apiKey + '&stepBreakdown'
     //test
     const url = `https://api.spoonacular.com/recipes/${ID}/analyzedInstructions?apiKey=` + environment.spoonacularTest.apiKey + '&stepBreakdown'
+    return this.http.get(url
+      ,
+      { headers: this.headers }
+    )
+  }
+
+  public obtenerRecetaSimplePorID(ID: string) {
+    const url = `https://api.spoonacular.com/recipes/${ID}/information?apiKey=` + environment.spoonacularTest.apiKey
+    
     return this.http.get(url
       ,
       { headers: this.headers }

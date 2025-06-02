@@ -1,7 +1,11 @@
 import { Component } from '@angular/core';
 import { SpoonacularService } from '../services/spoonacular.service';
 import { QueryDeRecetaForDisplay, QueryDeRecetas } from '../models/recetas';
+import { UserParaRecetas } from '../models/user.model';
 import { UsersService } from '../services/users.service';
+import { AuthService } from 'src/app/services/auth.service';
+import { ToastController } from '@ionic/angular';
+
 
 
 @Component({
@@ -15,8 +19,7 @@ import { UsersService } from '../services/users.service';
 
 export class RecetasPage {
 
-
-  queryDeRecetas? : QueryDeRecetas = undefined;
+  queryDeRecetas?: QueryDeRecetas = undefined;
 
   //para una visualización interactiva de los ingredientes.
   recetaConIngredientes?: number;
@@ -26,19 +29,35 @@ export class RecetasPage {
 
   queryDeRecetaForDisplay?: QueryDeRecetaForDisplay;
   imagenEnDisplay?: string;
-
   busquedaDesplegada?: boolean = false;
 
+  userConRecetas: UserParaRecetas = {
+    mail: '',
+    vegetariano: false,
+    vegano: false,
+    celiaco: false,
+    recetas_favoritas: [],
+    calendar_event: {}
+  }
+
+  IDReceta: string = '';
+  recetasFavoritas: any;
 
   constructor(
     public spoonacular: SpoonacularService,
-    public usersService: UsersService
-    ) { }
+    public usersService: UsersService,
+    private auth: AuthService,
+    private userService: UsersService,
+    private toastCtrl: ToastController
+  ) { }
 
 
-  ngOnInit() {
-    // esto era para probar nomás this.usersService.obtenerUsuarios();
-    //de todos modos aquí irá un llamado al usuario para desplegar recetas favoritas etc.
+  async ngOnInit() {
+    this.userConRecetas = await this.loadUserProfile()
+    console.log('el usuario tiene ', this.userConRecetas.recetas_favoritas?.length, ' recetas favoritas.')
+    if (this.userConRecetas.recetas_favoritas?.length != 0) {
+      this.recetasFavoritas = this.buscarRecetasFavoritas(this.userConRecetas)
+    }
   }
 
   /**
@@ -62,7 +81,54 @@ export class RecetasPage {
 
   }
 
-  
+  async loadUserProfile(): Promise<UserParaRecetas> {
+    try {
+      // Obtener el usuario autenticado desde Firebase
+      const userFirebase = this.auth.getCurrentUser();
+      //obtener los datos de firestore usando el usuario de firebase
+      const user = await this.userService.obtenerPerfilUsuario(userFirebase!.email!);
+
+      //construyo un profile con los datos y lo devuelvo
+      // btw creo que este paso es al pedo. podiamos retornar el user
+
+      let userConRecetas = {
+        mail: user?.mail,
+        vegetariano: user?.vegetariano,
+        celiaco: user?.celiaco,
+        vegano: user?.vegano,
+        recetas_favoritas: user?.recetas_favoritas,
+        calendar_event: user?.calendar_event
+      };
+
+      return userConRecetas!
+
+    } catch (error) {
+      console.error("Error al obtener los datos del usuario:", error);
+      this.showToast("Error al obtener los datos del usuario: " + error);
+
+      return this.userConRecetas
+    }
+  }
+
+  buscarRecetasFavoritas = (userConRecetas: UserParaRecetas) => {
+
+    let recetas: any = []
+
+    for (let i = 0; i < userConRecetas.recetas_favoritas!.length; i++) {
+      console.log('buscando receta ID N° ', userConRecetas.recetas_favoritas![i])
+      this.spoonacular.obtenerRecetaSimplePorID(userConRecetas.recetas_favoritas![i])
+        .subscribe(
+          (data: any) => {
+            recetas.push(data)
+          },
+          (error) => { console.log(error); }
+        )
+    }
+
+  console.log('resultado final: ', recetas)
+  return recetas
+}
+
 
   /**
    * @function buscarPorId pide al servicio que le pegue de nuevo a la API esta vez con información
@@ -70,7 +136,7 @@ export class RecetasPage {
    * @param id la id de la receta (el dom la conoce desde la primera query)
    * @param image como esta nueva query por id no incluye imagen, el DOM se la manda así se puede 
    * usar en la card que se despliega. 
-   */  
+   */
   buscarPorId = (id: number, image: string) => {
     this.imagenEnDisplay = image;
     this.spoonacular.obtenerRecetaPasoAPasoPorID(id.toString())
@@ -97,13 +163,27 @@ export class RecetasPage {
     this.recetaConIngredientes = undefined;
   }
 
-     /**
-   * @function blanquearRecetas limpia la query, el DOM deja de mostrar las cards.
-   */
-     public blanquearRecetas() {
-      this.queryDeRecetas = undefined;
-      this.busquedaDesplegada = !this.busquedaDesplegada;
-      }
+  /**
+* @function blanquearRecetas limpia la query, el DOM deja de mostrar las cards.
+*/
+  public blanquearRecetas() {
+    this.queryDeRecetas = undefined;
+    this.busquedaDesplegada = !this.busquedaDesplegada;
+  }
+
+  /**
+*mostrar alerta dtos guardados o error 
+*
+* @param {string} message
+*/
+  async showToast(message: string) {
+    const toast = await this.toastCtrl.create({
+      message,
+      duration: 3000,
+      position: 'top'
+    });
+    toast.present();
+  }
 }
 
 

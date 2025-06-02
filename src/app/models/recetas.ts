@@ -30,4 +30,3 @@ export class QueryDeRecetas {
     results?: Receta[];
     totalResults?: number;
 }
-

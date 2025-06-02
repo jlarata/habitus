@@ -14,21 +14,23 @@ import { ValidationUtils } from 'src/app/utils/validation';
 })
 export class ProfilePage implements OnInit {
 
-  userData = {
-    uid: '',
-    email: '',
-    name: '',
-    lastName: '',
-    dateBirth: '',
-    biologicalSex:'',
-    weight: 0,
-    heigth: 0,
-    age: 0,
-    levelBaja: false,
-    levelMedia: false,
-    levelAlta: false,
-    levelActivity: ''
-  };
+  usuario: User = {
+    UID: '',
+    nombre: '',
+    apellido: '',
+    calendar_event: {},
+    celiaco: false,
+    fecha_de_nacimiento: '',
+    sexo: '',
+    mail: '',
+    vegano: false,
+    vegetariano: false,
+    peso: 0,
+    altura: 0,
+    edad: 0,
+    hace_actividad_fisica_regular: '',
+    recetas_favoritas: [],
+  }
   
   loading: HTMLIonLoadingElement | null = null;
 
@@ -45,13 +47,15 @@ export class ProfilePage implements OnInit {
     private toastCtrl: ToastController,
     private loadingCtrl: LoadingController,
     private auth:AuthService,
-    private userService:UsersService
+    private userService:UsersService,
   ) 
   { }
 
-  ngOnInit() {
+  async ngOnInit() {
     
-   this.loadUserProfile();
+   this.usuario = await this.loadUserProfile();
+   console.log("Datos del usuario cargados:", this.usuario);
+
     
   }
 
@@ -70,17 +74,19 @@ export class ProfilePage implements OnInit {
 
     await this.loading.present();
 
-    console.log('Perfil guardado:', 
-    { 
-      nombre: this.userData?.name,
-      apellido:this.userData?.lastName,
-      peso: this.userData?.weight, 
-      altura: this.userData?.heigth, 
-      sexo: this.userData?.biologicalSex || '',
-      actividadFisica: this.userData?.levelActivity,
-      fechaNacimiento: this.userData?.dateBirth
-    });
+    const nueva_data_de_usuario = {
+      nombre: this.usuario?.nombre,
+      apellido:this.usuario?.apellido,
+      peso: this.usuario?.peso, 
+      altura: this.usuario?.altura, 
+      sexo: this.usuario?.sexo || '',
+      hace_actividad_fisica_regular: this.usuario?.hace_actividad_fisica_regular,
+    }
 
+    console.log('Perfil guardado:', 
+    nueva_data_de_usuario);
+
+    this.userService.actualizarUsuario(this.usuario.mail!, nueva_data_de_usuario)
     this.showToast('Datos guardados!');
 
     //Ocultar loading después de completar el ""guardado""
@@ -88,12 +94,12 @@ export class ProfilePage implements OnInit {
   }
  
   validateDate(){
-    if (!this.userData?.dateBirth) {
+    if (!this.usuario?.fecha_de_nacimiento) {
       this.dateError = "Ingrese una fecha válida.";
       return;
     }
 
-    if (!ValidationUtils.isValidDate(this.userData.dateBirth)) {
+    if (!ValidationUtils.isValidDate(this.usuario?.fecha_de_nacimiento)) {
       this.dateError = "Formato inválido. Ejemplo: 15/02/98";
       return;
     }
@@ -104,12 +110,12 @@ export class ProfilePage implements OnInit {
 
   //elimine validaciones apellido para que sea opcional
   validateNombre() {
-    if (!this.userData?.name) {
+    if (!this.usuario?.nombre) {
       this.nombreError = "Por favor complete el campo";
       return;
     }
 
-    if (this.userData.name.length < 3) {
+    if (this.usuario.nombre.length < 3) {
       this.nombreError = "Campo Vacío.";
       return;
     }
@@ -145,50 +151,43 @@ export class ProfilePage implements OnInit {
   * @return {*} 
   * @memberof ProfilePage
   */
-  async loadUserProfile() {
+  async loadUserProfile():Promise<User> {
     try {
       // Obtener el usuario autenticado desde Firebase
       const userFirebase = this.auth.getCurrentUser();
+      //obtener los datos de firestore usando el usuario de firebase
+      const user = await this.userService.obtenerPerfilUsuario(userFirebase!.email!);
 
-      if (!userFirebase?.email) {
-        this.showToast("No hay usuario autenticado o no tiene un email válido.");
-        console.error("No hay usuario autenticado o no tiene un email válido.");
-        return;
-      }
-
-      // Obtener los datos desde Firestore directamente
-      const user = await this.userService.obtenerPerfilUsuario(userFirebase.email);
-
-      if (!user) {
-        console.error("No se encontró perfil de usuario en Firestore.");
-        this.showToast("No se encontró perfil de usuario en Firestore.");
-        return;
-      }
-
-      // Asignar los datos obtenidos al objeto userData
-      this.userData = {
-        uid: user.uid || "",
-        email: user.email || "",
-        name: user.name ||"",
-        lastName: user.lastName || "",
-        dateBirth: user.dateBirth || "", 
-        biologicalSex:user.biologicalSex || '',
-        weight: user.weight || 0,   // Peso en kg (opcional)
-        heigth: user.heigth || 0,  // Altura en cm (opcional)
-        age: user.age || 0, //calculado desde la fecha de nacimiento//aun no implementado
-        levelBaja: true,
-        levelMedia: false,
-        levelAlta: false,
-        levelActivity: user.levelActivity || "Baja"
+      //construyo un profile con los datos y lo devuelvo
+      // btw creo que este paso es al pedo. podiamos retornar el user
+      
+      let currentProfile = {
+        UID: user?.UID || "",
+        mail: user?.mail || "",
+        vegetariano: user?.vegetariano,
+        nombre: user?.nombre ||"",
+        apellido: user?.apellido || "",
+        fecha_de_nacimiento: user?.fecha_de_nacimiento || undefined, 
+        sexo:user?.sexo || '',
+        celiaco: user?.celiaco,
+        vegano: user?.vegano,
+        peso: user?.peso || 0,
+        //weight: user?.weight || 0,   // Peso en kg (opcional)
+        altura: user?.altura || 0,  // Altura en cm (opcional)
+        edad: user?.edad || 0, //calculado desde la fecha de nacimiento//aun no implementado
+        hace_actividad_fisica_regular: user?.hace_actividad_fisica_regular,
+        recetas_favoritas: user?.recetas_favoritas,
+        calendar_event: user?.calendar_event
       };
 
-      console.log("Datos del usuario cargados:", this.userData);
+      console.log('usuario cargado en el método: ',currentProfile)
+      return currentProfile!
 
     } catch (error) {
-
       console.error("Error al obtener los datos del usuario:", error);
-
       this.showToast("Error al obtener los datos del usuario: " + error);
+      
+      return this.usuario
     }
   }
 

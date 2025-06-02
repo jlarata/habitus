@@ -12,7 +12,7 @@ import { UsersService } from 'src/app/services/users.service';
   standalone:false
 })
 export class RegisterPage  {
-  email = '';
+  mail = '';
   password = '';
   repeatPassword = '';
   emailError = '';//captura error de email
@@ -48,16 +48,17 @@ export class RegisterPage  {
 
       try {
         //crear usuario
-        const userCredential = await this.authService.register(this.email, this.password);
+        const userCredential = await this.authService.register(this.mail, this.password);
         ///obtener uid 
         let uid = userCredential.user.uid;
-        let email = userCredential.user.email;
+        let mail = userCredential.user.mail;
         //log prueba
         console.log("UID:", uid);
-        console.log("Email:", email);
+        console.log("mail:", mail);
         
         ///envio data adicional a firebase
-        this.userService.crearDataUsuario(email,uid);
+        this.userService.crearDataUsuario(mail//,uid          
+        );
 
         this.showToast('Registro exitoso.');
 
@@ -103,13 +104,13 @@ export class RegisterPage  {
 
     //Validaciones antes de enviar credenciales
     //email
-    if (ValidationUtils.isFieldEmpty(this.email)) {
+    if (ValidationUtils.isFieldEmpty(this.mail)) {
 
       this.emailError = 'El email es requerido.';
 
       isValid = false;
 
-    } else if (!ValidationUtils.isValidEmail(this.email)) {
+    } else if (!ValidationUtils.isValidEmail(this.mail)) {
 
       this.emailError = 'El email no es válido. Ejemplo: habitus@gmail.com';
 
