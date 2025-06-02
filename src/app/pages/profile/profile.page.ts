@@ -55,6 +55,7 @@ export class ProfilePage implements OnInit {
     
   }
 
+  //- metodo guardado en firestore
   /**
    *metodo que actualiza en firestore parte del perfil del usuario
    *
@@ -62,7 +63,8 @@ export class ProfilePage implements OnInit {
   */
   async saveProfile() {
 
-    this.validateDate(); // validar fecha
+    // validar fecha y calcular edad
+    this.validateDate();
 
     if (this.dateError) { // si error en fecha, detener guardado
       this.showToast("Corrige la fecha antes de guardar.");
@@ -83,9 +85,10 @@ export class ProfilePage implements OnInit {
       lastName:this.userData?.lastName,
       weight: this.userData?.weight, 
       heigth: this.userData?.heigth, 
-      biologicalSex: this.userData?.biologicalSex || '',
+      biologicalSex: this.userData?.biologicalSex || 'X',
       levelActivity: this.userData?.levelActivity,
-      dateBirth: this.userData?.dateBirth
+      dateBirth: this.userData?.dateBirth,
+      age: this.userData.age
     };
 
     try {
@@ -118,6 +121,9 @@ export class ProfilePage implements OnInit {
       this.dateError = "Formato o fecha inválida. Ejemplo: 15/02/1998";
       return;
     }
+
+    //si esta todo ok calculamos edad
+    this.userData.age = ValidationUtils.calculateAge(this.userData.dateBirth);
 
     this.dateError = "";
 
@@ -157,7 +163,7 @@ export class ProfilePage implements OnInit {
 
   //falta:
   ///-metodo calcular edad desde fecha de nacimiento( en utils?)//falta campo edad readonly
-  //- metodo guardo en firebase,
+ 
     
   /**
   *recupera apartir del email los datos de usuario

@@ -72,10 +72,29 @@ export class ValidationUtils {
 
     // validar que la fecha ingresada es real y que sea menor o igual a hoy
     return validDate.getFullYear() === year &&
-           validDate.getMonth() + 1 === month &&
+           validDate.getMonth() + 1 === month &&//en js el mes arranca en 0
            validDate.getDate() === day &&
            validDate <= today;
   }
 
+  /**
+   * calcula la edad a partir de fecha en formato DD/MM/YYYY
+   * @param {string} dateBirth - fecha en formato "DD/MM/YYYY"
+   * @returns {number} - edad o 0 si fecha inválida
+   */
+  static calculateAge(dateBirth: string): number {
+    
+    //mapeo la string a array de nuemeros con día, mes -1 (js cuenta desde 0), año
+    const [day, month, year] = dateBirth.split("/").map(Number);
+    //pasamos a tipo date
+    const birthDate = new Date(year, month - 1, day);
+    //hoy
+    const today = new Date();
+
+    //restamos hoy - fecha nacimiento
+    let age = today.getFullYear() - birthDate.getFullYear();
+
+    return age;
+  }
 
 }
