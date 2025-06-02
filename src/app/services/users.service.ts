@@ -99,9 +99,10 @@ export class UsersService {
     }
     
     /**
-     *updateDoc() → Actualiza solo los campos enviados es método de firestore
+     *updateDoc() → Actualiza solo los campos enviados (método de firestore)
      *Partial<T> es un tipo genérico en TypeScript
      *Partial<User> → Permite que solo pases los datos que quieres modificar.
+     *pero email y uid es obligatorio creo(ver)
      *
      * @param {string} email
      * @param {Partial<User>} datosActualizados
