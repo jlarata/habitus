@@ -41,6 +41,8 @@ export class ProfilePage implements OnInit {
   //array tipo nuber 121 elementos genera valores de 100  hasta 200
   alturas: number[] = Array.from({ length: 101 }, (_, i) => i + 100); // 100 - 200 cm
 
+
+
   constructor(
     private toastCtrl: ToastController,
     private loadingCtrl: LoadingController,
