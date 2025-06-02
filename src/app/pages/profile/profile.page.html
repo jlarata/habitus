@@ -5,7 +5,6 @@
 </ion-header>
 
 <ion-content class="page">
-  
   <div class="profile-container">
     <ion-buttons slot="start">
         Volver<ion-back-button defaultHref="/" color="tertiary"></ion-back-button>
@@ -34,6 +33,12 @@
     <ion-label class="input-title">Apellido</ion-label>
     <ion-item class="custom-input">
       <ion-input [(ngModel)]="userData.lastName" placeholder="Escribi tu apellido"></ion-input>
+    </ion-item>
+
+    <ion-label class="input-title">Edad</ion-label>
+    <ion-item class="custom-input">
+      <ion-input type="number" [(ngModel)]="userData.age" readonly>
+      </ion-input>
     </ion-item>
 
     <ion-label class="input-title">Fecha de nacimiento</ion-label>
