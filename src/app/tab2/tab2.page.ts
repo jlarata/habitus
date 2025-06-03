@@ -1,5 +1,5 @@
 import { Component, AfterViewInit } from '@angular/core';
-import { ToastController } from '@ionic/angular';
+import { ToastController, AlertController } from '@ionic/angular';
 import { AuthService } from '../services/auth.service';
 import { UsersService } from '../services/users.service';
 import { CalendarEvent, EventDay } from '../models/calendar.model';
@@ -25,9 +25,7 @@ export class Tab2Page implements AfterViewInit {
   ];
 
   // array que contiene a los eventos del dia
-  //ESTO ES LO QUE ESTÁ ROMPIENDO TODO, LIMPIA EL ARRAY DE EVENTOS CADA VEZ QUE LEVANTA EL COSO.
   eventsArr: EventDay[] = [];
-
 
   // Referencias a elementos del DOM
   calendar!: HTMLElement;
@@ -52,14 +50,18 @@ export class Tab2Page implements AfterViewInit {
   constructor(
     private toastCtrl: ToastController,
     private auth: AuthService,
-    private userService: UsersService
-  ) { }
+    private userService: UsersService,
+    private alertCtrl: AlertController
+  ) {
+    
+  }
 
   /*ngOnInit es una función especial de Angular que se ejecuta siempre que abrís un componente ANTES
   de renderizar el DOM */
 
   ngOnInit() {
     this.loadUserProfile();
+    
   }
 
   ///toast para los alertas
@@ -93,6 +95,9 @@ export class Tab2Page implements AfterViewInit {
       console.log("Datos del usuario cargados:", user);
 
       console.log("array eventos: ", this.eventsArr);
+
+      // ir a Hoy luego de obtener el array 
+      this.goToday();
 
       console.log("al final de ngonInit el eventsArray tiene ", this.eventsArr.length, " tareas")
     } catch (error) {
@@ -162,6 +167,8 @@ export class Tab2Page implements AfterViewInit {
 
     console.log("al final de afterviewinit el eventsArray tiene ", this.eventsArr.length, " tareas")
 
+    this.goToday();
+    
   }
 
 
@@ -288,7 +295,7 @@ export class Tab2Page implements AfterViewInit {
         return;
       }
     }
-    this.showToast("Fecha incorrecta .. poner un ejemplito?");
+    this.showToast("Fecha incorrecta. Ejemplo: 12/2025");
   }
 
   // Función para agregar listeners a los días del calendario
@@ -379,9 +386,8 @@ export class Tab2Page implements AfterViewInit {
               <h3>No hay Eventos</h3>
           </div>`;
     }
+
     this.eventsContainer.innerHTML = events;
-    //no se si deberiaguardarlo en esta instancia
-    //this.saveEvents();
   }
 
   // Función que maneja la entrada del campo de hora.
@@ -417,7 +423,7 @@ export class Tab2Page implements AfterViewInit {
       parseInt(timeToArr[0], 10) > 23 || // verifica si la hora de fin es mayor a 23
       parseInt(timeToArr[1], 10) > 59 // verifica si los minutos de fin son mayores a 59
     ) {
-      this.showToast("Formato de hora incorrecto");
+      this.showToast("Formato de hora incorrecto, Ejemplo: 14:30");
       return;
     }
     // convierte las horas en el formato adecuado
@@ -492,64 +498,76 @@ export class Tab2Page implements AfterViewInit {
       // sirve para marcar visualmente en el calendario que ese día tiene al menos un evento
     }
 
-    //guardar en db?
+    //guardar en firestore
     this.saveEvents();
   }
 
   // Función para eliminar un evento al hacer clic en él
-  onDeleteEvent(e: MouseEvent): void {
+  //se vuelve async por el alert controller
+  async onDeleteEvent(e: MouseEvent) {
     const target = e.target as HTMLElement;
-    const eventDiv = target.closest(".event") as HTMLElement | null; // Busca el elemento padre más cercano con la clase "event"
+    const eventDiv = target.closest(".event") as HTMLElement | null;
 
-    if (eventDiv) { // confirma que el usuario quiere eliminar el evento
-      if (confirm("Está seguro que quiere eliminar éste evento?")) {
-        const eventTitleElement = eventDiv.querySelector(".event-title") as HTMLElement | null; // obtengo el título del evento desde el DOM
+    if (!eventDiv) return;
 
-        // Si el elemento existe, obtengo su contenido
-        // y busco en el arreglo de eventos para eliminarlo
-        if (eventTitleElement) {
-          const eventTitle: string = eventTitleElement.innerHTML;
-          this.eventsArr.forEach((event: EventDay) => {
-            if ( // verifica si el dia, mes y año del evento coinciden con el evento que deseo eliminar
-              event.day === this.activeDay &&
-              event.month === this.month + 1 &&
-              event.year === this.year
-            ) {
-              // busca el indice del evento por su titulo
-              const itemIndex = event.events.findIndex(item => item.title === eventTitle);
-              // si el evento existe lo elimina
-              if (itemIndex !== -1) {
-                event.events.splice(itemIndex, 1);
-              }
+    const eventTitleElement = eventDiv.querySelector(".event-title") as HTMLElement | null;
+    if (!eventTitleElement) return;
 
-              // Si no hay eventos en el día, lo elimina del arreglo de eventos
+    const eventTitle: string = eventTitleElement.innerHTML;
 
-              if (event.events.length === 0) {
-                const eventDayIndex = this.eventsArr.indexOf(event); // busca la posicion dia actual dentro de eventsArray
-                if (eventDayIndex !== -1) { // si el indice (posicion) es valido
-                  this.eventsArr.splice(eventDayIndex, 1); // entonces elimina ese dia completo del arreglo de eventos
-                }
+    const alert = await this.alertCtrl.create({
+      header: "Eliminar evento",
+      message: `¿Está seguro de eliminar el evento "${eventTitle}"?`,
+      buttons: [
+        {
+          text: "Cancelar",
+          role: "cancel"
+        },
+        {
+          text: "Eliminar",
+          handler: () => {
+            this.deleteEvent(eventTitle);
+          }
+        }
+      ]
+    });
 
-                // Elimina la clase "event" del día activo en el calendario
-                // Esto es para que el día no esté marcado como un día con eventos si ya no tiene ninguno.
-                const activeDayEl: HTMLElement | null = document.querySelector(".day.active");
-                if (activeDayEl && activeDayEl.classList.contains("event")) {
-                  activeDayEl.classList.remove("event");
-                }
-              }
-            }
-          });
-          this.updateEvents(this.activeDay); // actualiza los eventos que se muestran en pantalla
+    await alert.present();
+  }
+
+  /**
+   * elimina el evento del array,actualiza la vista y guarda en firestore
+  */
+  deleteEvent(eventTitle: string) {
+    this.eventsArr.forEach((event: EventDay) => {
+      if (event.day === this.activeDay && event.month === this.month + 1 && event.year === this.year) {
+        const itemIndex = event.events.findIndex(item => item.title === eventTitle);
+        if (itemIndex !== -1) {
+          event.events.splice(itemIndex, 1);
+        }
+
+        if (event.events.length === 0) {
+          const eventDayIndex = this.eventsArr.indexOf(event);
+          if (eventDayIndex !== -1) {
+            this.eventsArr.splice(eventDayIndex, 1);
+          }
+
+          const activeDayEl: HTMLElement | null = document.querySelector(".day.active");
+          if (activeDayEl?.classList.contains("event")) {
+            activeDayEl.classList.remove("event");
+          }
         }
       }
-    }
+    });
+
+    this.updateEvents(this.activeDay);
+    //guardar en firestore
+    this.saveEvents();
   }
-  // Guarda los eventos en el localStorage
+
+  // Guarda los eventos en firestore
   // Esto permite que los eventos persistan incluso si el usuario recarga la página o cierra la aplicación.
   async saveEvents() {
-    /* guardar la info en localStorage, esto no sirve hay que cambiarlo */
-    //localStorage.setItem("events", JSON.stringify(this.eventsArr));
-    /* en su lugar quedaría algo así */
 
     try {
       // Obtener el usuario autenticado desde Firebase
@@ -560,32 +578,8 @@ export class Tab2Page implements AfterViewInit {
       console.error("Error al guardar los eventos del usuario:", error);
       this.showToast("Error al guardar los eventos del usuario: " + error);
     }
+
   }
-
-  // Recupera los eventos del localStorage
-  // Esto se hace al cargar la página para mostrar los eventos guardados previamente.
-  
-  // ESTO ROMPE TODO PERO QUE YO SEPA NO SE ESTÁ ACTIVANDO NUNCA igual lo comento
-/*   getEvents(): void {
-    
-    const storedEvents = localStorage.getItem("events");
-    if (storedEvents === null) { // si no hay nada guardado sale de la funcion 
-      return;
-    }
-    try {
-      // Intenta convertir el texto guardado en un arreglo de eventos.
-      const parsedEvents: EventDay[] = JSON.parse(storedEvents);
-
-      // Limpia el arreglo actual y agrega los eventos recuperados.
-      // Esto asegura que el arreglo de eventos siempre esté actualizado con los datos del localStorage.
-      this.eventsArr.length = 0;
-      this.eventsArr.push(...parsedEvents);
-    } catch (e) { // Si hay un error al analizar los eventos, muestra un mensaje de error en la consola
-      // y elimina el elemento del localStorage para evitar problemas futuros.
-      console.error("Error al leer los eventos guardados en el almacenamiento local", e);
-      localStorage.removeItem("events");
-    }
-  } */
 
   // Convierte la hora de 24 horas a 12 horas con formato AM/PM
   convertTime(time: string): string {
