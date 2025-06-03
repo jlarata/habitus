@@ -7,8 +7,6 @@ import { AuthService } from 'src/app/services/auth.service';
 import { ToastController } from '@ionic/angular';
 
 
-
-
 @Component({
   selector: 'app-recetas',
   templateUrl: 'recetas.page.html',
