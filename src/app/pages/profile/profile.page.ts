@@ -4,7 +4,7 @@ import { User } from 'src/app/models/user.model';
 import { AuthService } from 'src/app/services/auth.service';
 import { UsersService } from 'src/app/services/users.service';
 import { ValidationUtils } from 'src/app/utils/validation';
-import { EventDay } from "./calendar.model";
+import { EventDay } from "../../models/calendar.model";
 
 
 @Component({
@@ -31,7 +31,7 @@ export class ProfilePage implements OnInit {
     edad: 0,
     hace_actividad_fisica_regular: '',
     recetas_favoritas: [],
-    events_array: EventDay[]
+    events_array: [],
   }
 
   loading: HTMLIonLoadingElement | null = null;
@@ -91,7 +91,7 @@ export class ProfilePage implements OnInit {
     nueva_data_de_usuario);
 
     this.userService.actualizarUsuario(this.usuario.mail!, nueva_data_de_usuario)
-    console.log("datos guardados!: " + user);
+    console.log("datos guardados!: " + this.usuario);
     this.showToast('Datos guardados!');
     
     //Ocultar loading después de completar el ""guardado""
@@ -112,7 +112,7 @@ export class ProfilePage implements OnInit {
     }
 
     //si esta todo ok calculamos edad
-    this.usuario.edad = ValidationUtils.calculateAge(this.usuario.nueva_data_de_usuario);
+    this.usuario.edad = ValidationUtils.calculateAge(this.usuario.fecha_de_nacimiento);
 
     this.dateError = "";
 
@@ -181,7 +181,8 @@ export class ProfilePage implements OnInit {
         edad: user?.edad || 0, //calculado desde la fecha de nacimiento//aun no implementado
         hace_actividad_fisica_regular: user?.hace_actividad_fisica_regular,
         recetas_favoritas: user?.recetas_favoritas,
-        calendar_event: user?.calendar_event
+        calendar_event: user?.calendar_event,
+        events_array: user?.events_array
       };
 
       console.log('usuario cargado en el método: ',currentProfile)

@@ -88,7 +88,7 @@ export class Tab2Page implements AfterViewInit {
       const user = await this.userService.obtenerPerfilUsuario(userFirebase!.email!);
       //! -> le digo a TS que la variable nunca será null ni undefined, omite comprobacion
       console.log(user!)
-      this.eventsArr = user!.events_array
+      this.eventsArr = user!.events_array!
       //console.log("Datos del usuario autenticado: ", userFirebase!.email)
       console.log("Datos del usuario cargados:", user);
 
