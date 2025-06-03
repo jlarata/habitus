@@ -46,7 +46,7 @@ export interface User {
     vegano?: boolean;
     vegetariano?: boolean;
     celiaco?: boolean;
-    events_array: EventDay[]
+    events_array?: EventDay[]
 }
 
 export class UserParaRecetas {

@@ -39,7 +39,7 @@
 
     <ion-label class="input-title">Edad</ion-label>
     <ion-item class="custom-input">
-      <ion-input type="number" [(ngModel)]="userData.age" readonly>
+      <ion-input type="number" [(ngModel)]="usuario.edad" readonly>
       </ion-input>
     </ion-item>
 
@@ -117,7 +117,7 @@
       </div>
     </div>
 
-    <ion-button class="save-button" expand="block" (click)="saveProfile()">Guardar Cambios</ion-button>
+    <ion-button class="save-button" expand="block" (click)="guardarPerfil()">Guardar Cambios</ion-button>
 
   </div>
 </ion-content>
