@@ -1,20 +1,11 @@
 import { Component, AfterViewInit } from '@angular/core';
 import { ToastController } from '@ionic/angular';
+import { AuthService } from '../services/auth.service';
+import { UsersService } from '../services/users.service';
+import { CalendarEvent, EventDay } from '../models/calendar.model';
 
 
-// Definición de las interfaces que modelan los eventos y días del calendario
-interface CalendarEvent {
-  title: string; // titulo del evento
-  time: string; //  hora del evento
-}
 
-
-interface EventDay {
-  day: number; // dia del mes
-  month: number; // mes (1 al 12)
-  year: number;  // año
-  events: CalendarEvent[]; // lista de eventos en el dia
-}
 
 @Component({
   selector: 'app-tab2',
@@ -34,7 +25,9 @@ export class Tab2Page implements AfterViewInit {
   ];
 
   // array que contiene a los eventos del dia
+  //ESTO ES LO QUE ESTÁ ROMPIENDO TODO, LIMPIA EL ARRAY DE EVENTOS CADA VEZ QUE LEVANTA EL COSO.
   eventsArr: EventDay[] = [];
+
 
   // Referencias a elementos del DOM
   calendar!: HTMLElement;
@@ -58,7 +51,16 @@ export class Tab2Page implements AfterViewInit {
 
   constructor(
     private toastCtrl: ToastController,
+    private auth: AuthService,
+    private userService: UsersService
   ) { }
+
+  /*ngOnInit es una función especial de Angular que se ejecuta siempre que abrís un componente ANTES
+  de renderizar el DOM */
+
+  ngOnInit() {
+    this.loadUserProfile();
+  }
 
   ///toast para los alertas
   /**
@@ -76,7 +78,32 @@ export class Tab2Page implements AfterViewInit {
     toast.present();
   }
 
+
+  async loadUserProfile() {
+    try {
+      // Obtener el usuario autenticado desde Firebase
+      const userFirebase = this.auth.getCurrentUser();
+
+      // Obtener los datos desde Firestore directamente
+      const user = await this.userService.obtenerPerfilUsuario(userFirebase!.email!);
+      //! -> le digo a TS que la variable nunca será null ni undefined, omite comprobacion
+      console.log(user!)
+      this.eventsArr = user!.events_array
+      //console.log("Datos del usuario autenticado: ", userFirebase!.email)
+      console.log("Datos del usuario cargados:", user);
+
+      console.log("array eventos: ", this.eventsArr);
+
+      console.log("al final de ngonInit el eventsArray tiene ", this.eventsArr.length, " tareas")
+    } catch (error) {
+
+      console.error("Error al obtener los datos del usuario:", error);
+      this.showToast("Error al obtener los datos del usuario: " + error);
+    }
+  }
+
   ngAfterViewInit() {
+
     // Inicializa referencias después de que la vista se ha cargado
     this.calendar = document.querySelector(".calendar") as HTMLElement;
     this.date = document.querySelector(".date") as HTMLElement;
@@ -101,7 +128,7 @@ export class Tab2Page implements AfterViewInit {
     // listeners serian las funciones que escuchan acciones del usuario
     this.initCalendar();
 
- // Agrega los eventos de los botones prev/next
+    // Agrega los eventos de los botones prev/next
     this.prev.addEventListener("click", () => this.prevMonth());
     this.next.addEventListener("click", () => this.nextMonth());
     this.todayBtn.addEventListener("click", () => this.goToday());
@@ -127,11 +154,14 @@ export class Tab2Page implements AfterViewInit {
     this.addEventFrom.addEventListener("input", () => this.onTimeInput(this.addEventFrom));
     this.addEventTo.addEventListener("input", () => this.onTimeInput(this.addEventTo));
 
-//  añade un evento
+    //  añade un evento
     this.addEventSubmit.addEventListener("click", () => this.onAddEvent());
 
     // elimina un evento
     this.eventsContainer.addEventListener("click", (e: MouseEvent) => this.onDeleteEvent(e));
+
+    console.log("al final de afterviewinit el eventsArray tiene ", this.eventsArr.length, " tareas")
+
   }
 
 
@@ -144,14 +174,14 @@ export class Tab2Page implements AfterViewInit {
     const day: number = firstDay.getDay(); // Obtiene el día de la semana del 1er día del mes actual
     const nextDays: number = 7 - lastDay.getDay() - 1; // Esto sirve para llenar la última fila del calendario con los días del siguiente mes
 
-// muestra el título del mes en la parte superior del calendario
+    // muestra el título del mes en la parte superior del calendario
 
-    this.date.innerHTML = this.months[this.month] + " " + this.year; 
+    this.date.innerHTML = this.months[this.month] + " " + this.year;
 
     // almacena el HTML de todos los días del calendario (como string)
-let days: string = "";
+    let days: string = "";
 
-// Agrega los días del mes anterior si el primer día del mes actual no es domingo
+    // Agrega los días del mes anterior si el primer día del mes actual no es domingo
     for (let x: number = day; x > 0; x--) {
       days += `<div class="day prev-date">${prevDays - x + 1}</div>`;
     }
@@ -217,16 +247,16 @@ let days: string = "";
     }
     this.initCalendar(); // recarga el calendario con el nuevo mes/año
   }
- 
+
   // va a la fecha actual (hoy) en el calendario
-   goToday(): void {
+  goToday(): void {
     this.today = new Date(); // establece la fecha de hoy
     this.month = this.today.getMonth(); // Establece el mes actual según la fecha de hoy
     this.year = this.today.getFullYear(); // Establece el año actual según la fecha de hoy
     this.initCalendar();
   }
 
-// Función para manejar la entrada de fecha del usuario (input)
+  // Función para manejar la entrada de fecha del usuario (input)
   // Esta función se activa cuando el usuario escribe en el campo de entrada de fechas
   onDateInput(e: Event): void {
     const inputEvent = e as InputEvent;
@@ -245,7 +275,7 @@ let days: string = "";
   }
 
   // Función para ir a una fecha específica basada en la entrada del usuario
-    gotoDate(): void {
+  gotoDate(): void {
     const dateArr: string[] = this.dateInput.value.split("/"); // Divide la cadena de fecha escrita en el input en 2 partes usando la barra ("/")
     if (dateArr.length === 2) { // si la entrada tiene 2 partes (mes y año) 
       const inputMonth = parseInt(dateArr[0], 10); // convierte el mes a un numero entero
@@ -258,14 +288,14 @@ let days: string = "";
         return;
       }
     }
-    this.showToast("Fecha incorrecta .. poner un ejemplito?" ); 
+    this.showToast("Fecha incorrecta .. poner un ejemplito?");
   }
 
   // Función para agregar listeners a los días del calendario
   addListner(): void {
     const days: NodeListOf<HTMLElement> = document.querySelectorAll(".day"); // Selecciona todos los elementos con la clase "day"
     days.forEach((day: HTMLElement) => { // Recorre cada día
-      
+
       day.addEventListener("click", (e: MouseEvent) => { // cuando el usuario hace click sobre un dia se ejecuta esta funcion
         const target = e.target as HTMLElement; // obtiene el elemento que fue clickeado
         const dayNumber = Number(target.innerHTML);
@@ -274,7 +304,7 @@ let days: string = "";
         this.activeDay = dayNumber; // nos permite saber que dia fue seleccionado 
 
         // asegura que solo un día esté marcado como "activo" a la vez
-        days.forEach((dayEl: HTMLElement) => { 
+        days.forEach((dayEl: HTMLElement) => {
           dayEl.classList.remove("active"); // elimina la clase "active" de todos los días
         });
 
@@ -300,7 +330,7 @@ let days: string = "";
                 !dayEl.classList.contains("next-date") && // verifica si el dia no pertenece al mes siguiente
                 dayEl.innerHTML === target.innerHTML // verifica si el dia coincide con el clickeado
               ) {
-                dayEl.classList.add("active"); 
+                dayEl.classList.add("active");
               }
             });
           }, 100);
@@ -317,12 +347,12 @@ let days: string = "";
     const diasSemana: string[] = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
     const nombreDia: string = diasSemana[dateObj.getDay()]; // obtiene el nombre del día de la semana seleccionada
     this.eventDay.innerHTML = nombreDia; // muestra el nombre del día
-    this.eventDate.innerHTML = `${day} ${this.months[this.month]} ${this.year}`; 
+    this.eventDate.innerHTML = `${day} ${this.months[this.month]} ${this.year}`;
   }
 
   // Función para actualizar los eventos del día seleccionado.
   updateEvents(date: number): void {
-    let events: string = ""; 
+    let events: string = "";
     this.eventsArr.forEach((event: EventDay) => { // recorre el arreglo de eventos para buscar los eventos del día seleccionado.
       if ( // verifica si el día, mes y año del evento coinciden con el día seleccionado.
         date === event.day &&
@@ -350,11 +380,12 @@ let days: string = "";
           </div>`;
     }
     this.eventsContainer.innerHTML = events;
-    this.saveEvents();
+    //no se si deberiaguardarlo en esta instancia
+    //this.saveEvents();
   }
 
   // Función que maneja la entrada del campo de hora.
-   onTimeInput(input: HTMLInputElement): void {
+  onTimeInput(input: HTMLInputElement): void {
     input.value = input.value.replace(/[^0-9:]/g, ""); // Elimina caracteres no numericos o ":"
     if (input.value.length === 2) { // Si el campo tiene 2 caracteres, agrega ":"
       input.value += ":";
@@ -363,23 +394,23 @@ let days: string = "";
       input.value = input.value.slice(0, 5);
     }
   }
-// funcion cuando se añade un evento
+  // funcion cuando se añade un evento
   onAddEvent(): void {
-      // Toma los valores de los campos de entrada de título y hora.
-    const eventTitle: string = this.addEventTitle.value; 
-    const eventTimeFrom: string = this.addEventFrom.value; 
+    // Toma los valores de los campos de entrada de título y hora.
+    const eventTitle: string = this.addEventTitle.value;
+    const eventTimeFrom: string = this.addEventFrom.value;
     const eventTimeTo: string = this.addEventTo.value;
     // si alguno de los campos está vacio muestra una alerta
     if (eventTitle === "" || eventTimeFrom === "" || eventTimeTo === "") {
       this.showToast("Por favor, completa todos los campos");
       return;
     }
-// convierte las horas de inicio y fin en arreglos (desde/hasta)
+    // convierte las horas de inicio y fin en arreglos (desde/hasta)
     const timeFromArr: string[] = eventTimeFrom.split(":");
     const timeToArr: string[] = eventTimeTo.split(":");
     // verifica si el formato de la hora es correcto
     if (
-      timeFromArr.length !== 2 || 
+      timeFromArr.length !== 2 ||
       timeToArr.length !== 2 ||
       parseInt(timeFromArr[0], 10) > 23 || // verifica si la hora  de inicio es mayor a 23
       parseInt(timeFromArr[1], 10) > 59 || // verifica si los minutos de inicio son mayores a 59
@@ -389,11 +420,11 @@ let days: string = "";
       this.showToast("Formato de hora incorrecto");
       return;
     }
- // convierte las horas en el formato adecuado
+    // convierte las horas en el formato adecuado
     const timeFrom: string = this.convertTime(eventTimeFrom);
     const timeTo: string = this.convertTime(eventTimeTo);
 
-    
+
     let eventExist: boolean = false; // verifica si el evento ya existe
     this.eventsArr.forEach((event: EventDay) => {
       if ( // verifica si el dia, mes y año del evento coinciden con el dia seleccionado
@@ -409,7 +440,7 @@ let days: string = "";
       }
     });
     if (eventExist) {
-      this.showToast("El evento ya ha sido añadido");
+      this.showToast("Ya existe un evento con ese título");
       return;
     }
 
@@ -442,7 +473,7 @@ let days: string = "";
         events: [newEvent], // 
       });
     }
-// actualiza la vista del calendario y los eventos
+    // actualiza la vista del calendario y los eventos
     this.addEventWrapper.classList.remove("active");
     // limpia los campos de entrada
     this.addEventTitle.value = "";
@@ -451,15 +482,18 @@ let days: string = "";
 
     // actualiza la vista de los eventos 
     this.updateEvents(this.activeDay);
-    
+
     // Es decir, busca el día del calendario que está actualmente seleccionado.
     // y le añade la clase "event" para marcarlo como un día con eventos.
     // Esto se hace para que el día seleccionado tenga un estilo diferente si tiene eventos.
     const activeDayEl: HTMLElement | null = document.querySelector(".day.active");
     if (activeDayEl && !activeDayEl.classList.contains("event")) { // 
       activeDayEl.classList.add("event");  // Si no tiene la clase "event", se la agrega.
-  // sirve para marcar visualmente en el calendario que ese día tiene al menos un evento
+      // sirve para marcar visualmente en el calendario que ese día tiene al menos un evento
     }
+
+    //guardar en db?
+    this.saveEvents();
   }
 
   // Función para eliminar un evento al hacer clic en él
@@ -470,7 +504,7 @@ let days: string = "";
     if (eventDiv) { // confirma que el usuario quiere eliminar el evento
       if (confirm("Está seguro que quiere eliminar éste evento?")) {
         const eventTitleElement = eventDiv.querySelector(".event-title") as HTMLElement | null; // obtengo el título del evento desde el DOM
-       
+
         // Si el elemento existe, obtengo su contenido
         // y busco en el arreglo de eventos para eliminarlo
         if (eventTitleElement) {
@@ -480,23 +514,22 @@ let days: string = "";
               event.day === this.activeDay &&
               event.month === this.month + 1 &&
               event.year === this.year
-            )
-             { 
+            ) {
               // busca el indice del evento por su titulo
               const itemIndex = event.events.findIndex(item => item.title === eventTitle);
               // si el evento existe lo elimina
-              if (itemIndex !== -1) { 
+              if (itemIndex !== -1) {
                 event.events.splice(itemIndex, 1);
               }
 
               // Si no hay eventos en el día, lo elimina del arreglo de eventos
-              
+
               if (event.events.length === 0) {
                 const eventDayIndex = this.eventsArr.indexOf(event); // busca la posicion dia actual dentro de eventsArray
                 if (eventDayIndex !== -1) { // si el indice (posicion) es valido
                   this.eventsArr.splice(eventDayIndex, 1); // entonces elimina ese dia completo del arreglo de eventos
                 }
-                
+
                 // Elimina la clase "event" del día activo en el calendario
                 // Esto es para que el día no esté marcado como un día con eventos si ya no tiene ninguno.
                 const activeDayEl: HTMLElement | null = document.querySelector(".day.active");
@@ -511,24 +544,39 @@ let days: string = "";
       }
     }
   }
-// Guarda los eventos en el localStorage
+  // Guarda los eventos en el localStorage
   // Esto permite que los eventos persistan incluso si el usuario recarga la página o cierra la aplicación.
-  saveEvents(): void {
-    localStorage.setItem("events", JSON.stringify(this.eventsArr));
+  async saveEvents() {
+    /* guardar la info en localStorage, esto no sirve hay que cambiarlo */
+    //localStorage.setItem("events", JSON.stringify(this.eventsArr));
+    /* en su lugar quedaría algo así */
+
+    try {
+      // Obtener el usuario autenticado desde Firebase
+      const userFirebase = this.auth.getCurrentUser();
+      this.userService.saveEventsArray(userFirebase!.email!, this.eventsArr)
+    }
+    catch (error) {
+      console.error("Error al guardar los eventos del usuario:", error);
+      this.showToast("Error al guardar los eventos del usuario: " + error);
+    }
   }
 
   // Recupera los eventos del localStorage
   // Esto se hace al cargar la página para mostrar los eventos guardados previamente.
-  getEvents(): void {
+  
+  // ESTO ROMPE TODO PERO QUE YO SEPA NO SE ESTÁ ACTIVANDO NUNCA igual lo comento
+/*   getEvents(): void {
+    
     const storedEvents = localStorage.getItem("events");
     if (storedEvents === null) { // si no hay nada guardado sale de la funcion 
       return;
     }
-    try { 
-     // Intenta convertir el texto guardado en un arreglo de eventos.
+    try {
+      // Intenta convertir el texto guardado en un arreglo de eventos.
       const parsedEvents: EventDay[] = JSON.parse(storedEvents);
 
-    // Limpia el arreglo actual y agrega los eventos recuperados.
+      // Limpia el arreglo actual y agrega los eventos recuperados.
       // Esto asegura que el arreglo de eventos siempre esté actualizado con los datos del localStorage.
       this.eventsArr.length = 0;
       this.eventsArr.push(...parsedEvents);
@@ -537,7 +585,7 @@ let days: string = "";
       console.error("Error al leer los eventos guardados en el almacenamiento local", e);
       localStorage.removeItem("events");
     }
-  }
+  } */
 
   // Convierte la hora de 24 horas a 12 horas con formato AM/PM
   convertTime(time: string): string {
@@ -552,6 +600,6 @@ let days: string = "";
     return time;
   }
 
-  
+
 }
 

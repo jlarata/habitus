@@ -1,9 +1,12 @@
+import { EventDay } from "./calendar.model";
+
 /**
  *perfil/datos de usuarios
  *
  * @export
  * @interface User
 */
+
 /* export interface User {
     UID?: string;      // ID único del usuario (proporcionado por Firebase)
     image?:string;   //por si queremos poner foto perfil
@@ -43,6 +46,16 @@ export interface User {
     vegano?: boolean;
     vegetariano?: boolean;
     celiaco?: boolean;
+    events_array: EventDay[]
+}
+
+export class UserParaRecetas {
+    mail?: string;
+    vegetariano?: boolean;
+    vegano?: boolean;
+    celiaco?: boolean;
+    recetas_favoritas?: string[];
+    calendar_event?: any; //esto tiene q ser un array de //eventuales objetos
 }
 
 //esto era para editar usuario pero claramente los muchachos de FIRESTORAGE no estaban pensando
@@ -62,11 +75,3 @@ export class Nueva_data_de_usuario {
     celiaco?: boolean; */
 }
 
-export class UserParaRecetas {
-    mail?: string;
-    vegetariano?: boolean;
-    vegano?: boolean;
-    celiaco?: boolean;
-    recetas_favoritas?: string[];
-    calendar_event?: any; //esto tiene q ser un array de //eventuales objetos
-}

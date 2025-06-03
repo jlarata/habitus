@@ -4,6 +4,7 @@ import { User } from 'src/app/models/user.model';
 import { AuthService } from 'src/app/services/auth.service';
 import { UsersService } from 'src/app/services/users.service';
 import { ValidationUtils } from 'src/app/utils/validation';
+import { EventDay } from "./calendar.model";
 
 
 @Component({
@@ -30,8 +31,9 @@ export class ProfilePage implements OnInit {
     edad: 0,
     hace_actividad_fisica_regular: '',
     recetas_favoritas: [],
+    events_array: EventDay[]
   }
-  
+
   loading: HTMLIonLoadingElement | null = null;
 
   dateError:string= "";
@@ -43,29 +45,31 @@ export class ProfilePage implements OnInit {
   //array tipo nuber 121 elementos genera valores de 100  hasta 200
   alturas: number[] = Array.from({ length: 101 }, (_, i) => i + 100); // 100 - 200 cm
 
+
+
   constructor(
     private toastCtrl: ToastController,
     private loadingCtrl: LoadingController,
     private auth:AuthService,
     private userService:UsersService,
   ) 
-  { }
+  {}
 
   async ngOnInit() {
-    
    this.usuario = await this.loadUserProfile();
    console.log("Datos del usuario cargados:", this.usuario);
-
-    
   }
 
-  /**
-   *metodo temporal solo muestra por consola los datos guardados
-   *
-   * @memberof ProfilePage
-   */
+
   async guardarPerfil() {
-    this.dateError = "";
+
+    // validar fecha y calcular edad
+    this.validateDate();
+
+    if (this.dateError) { // si error en fecha, detener guardado
+      this.showToast("Corrige la fecha antes de guardar.");
+      return;
+    }
 
     this.loading = await this.loadingCtrl.create({
         message: 'Guardando datos...',
@@ -87,22 +91,28 @@ export class ProfilePage implements OnInit {
     nueva_data_de_usuario);
 
     this.userService.actualizarUsuario(this.usuario.mail!, nueva_data_de_usuario)
+    console.log("datos guardados!: " + user);
     this.showToast('Datos guardados!');
-
+    
     //Ocultar loading después de completar el ""guardado""
     await this.loading.dismiss();
   }
  
   validateDate(){
+
     if (!this.usuario?.fecha_de_nacimiento) {
-      this.dateError = "Ingrese una fecha válida.";
+      //no lanzo error por que no es obligatoria la fecha
+      this.usuario.fecha_de_nacimiento = "";
       return;
     }
 
-    if (!ValidationUtils.isValidDate(this.usuario?.fecha_de_nacimiento)) {
-      this.dateError = "Formato inválido. Ejemplo: 15/02/98";
+    if (!ValidationUtils.isValidDate(this.usuario.fecha_de_nacimiento)) {
+      this.dateError = "Formato o fecha inválida. Ejemplo: 15/02/1998";
       return;
     }
+
+    //si esta todo ok calculamos edad
+    this.usuario.edad = ValidationUtils.calculateAge(this.usuario.nueva_data_de_usuario);
 
     this.dateError = "";
 
@@ -138,12 +148,6 @@ export class ProfilePage implements OnInit {
     toast.present();
   }
 
- 
-
-  //falta:
-  ///-metodo calcular edad desde fecha de nacimiento( en utils?)//falta campo edad readonly
-  //- metodo guardo en firebase,
-    
   /**
   *recupera apartir del email los datos de usuario
   *almacenados en firestore

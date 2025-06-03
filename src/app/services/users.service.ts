@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
 import { initializeApp } from 'firebase/app';
-import { doc, setDoc,addDoc, collection, Firestore, getDocs, getFirestore, getDoc, updateDoc } from 'firebase/firestore'
+import { doc, setDoc, addDoc, collection, Firestore, getDocs, getFirestore, getDoc, updateDoc } from 'firebase/firestore'
 import { environment } from 'src/environments/environment';
-import { Nueva_data_de_usuario, User } from '../models/user.model';
+import { User } from '../models/user.model';
+import { EventDay } from '../models/calendar.model';
 
 const app = initializeApp(environment.firebase)
-const db =  getFirestore(app)
+const db = getFirestore(app)
 
 @Injectable({
     providedIn: 'root'
@@ -20,7 +21,7 @@ export class UsersService {
      *
      *Al crear usuario inicializamos una collecion en firestore 
      *con datos preinicializados del usuario. 
-     *usamos eail como id de la colleccion
+     *usamos email como id de la colleccion
      * @param {string} mail
      * @param {*} uid //POR AHORA NO LO USAMOS
      * @memberof UsersService
@@ -47,24 +48,25 @@ export class UsersService {
                 celiaco: false,
                 recetas_favoritas: [],
                 vegano: false,
-                vegetariano: false
+                vegetariano: false,
+                events_array: [],
             };
 
             //pone id random a la colleccion
             //const docRef = await addDoc(collection(db, "users"),nuevoUsuario);
 
-            //enviamos el email para id de coleccion
+            //enviamos el email para id de coleccion <- qué era esto? ya no sirve?
             const docRef = await setDoc(doc(db, "users", mail), nuevoUsuario);
 
-            console.log("Usuario agregado exitosamente. "+  docRef);
+            console.log("Usuario agregado exitosamente. " + docRef);
 
         } catch (error) {
 
             console.error("Error guardado datos usuario: " + error)
-            
+
         }
     }
-    
+
     /**
      *busca coleccion por id (email) que se le pasa por parametro
      *retorna promesa datos en forma de la interface User o null si da error
@@ -85,7 +87,41 @@ export class UsersService {
         //console.log("el servicio devuelve: ", perfil)
         return docSnap.data() as User;
     }
+    
+    /**
+     * Ariel: SI NO ME EQUIVOCO este método queda obsoleto por el otro que armé más abajo. Lo comento por ahora
+     * si luego nada se rompe vemos de borrarlo.
+     *
+     *updateDoc() → Actualiza solo los campos enviados (método de firestore)
+     *Partial<T> es un tipo genérico en TypeScript
+     *Partial<User> → Permite que solo pases los datos que quieres modificar.
+     *pero email y uid es obligatorio creo(ver)
+     *
+     * @param {string} email
+     * @param {Partial<User>} datosActualizados
+     * @return {*}  {Promise<void>}
+     * @memberof UsersService
+    */
+    /*public async actualizarPerfilUsuario(email: string, datosActualizados: Partial<User>): Promise<void> {
+        const docRef = doc(db, "users", email); 
+        await updateDoc(docRef, datosActualizados);
+    }*/
 
+    /*este es el método para updatear desde el calendario no? documentémoslo si es así
+    no se por qué hablo en plural si lo hice yo, debería comentarlo yo
+    bueno estoy inseguro*/
+  
+    async saveEventsArray(email: string, events_array: EventDay[]) {
+
+        const docRef = doc(db, "users", email); // referencia al doc por email
+
+        // Update 
+        await updateDoc(docRef, {
+            events_array
+        });
+
+        //console.log(events_array, " updateado para ", email);
+    }
 
     async actualizarUsuario(mail: string, nueva_data_de_usuario:any) {
         const docRef = doc(db, "users", mail); // referencia al doc por email
