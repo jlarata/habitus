@@ -30,3 +30,4 @@ export class QueryDeRecetas {
     offset?: number;
     results?: Receta[];
     totalResults?: number;
+}
