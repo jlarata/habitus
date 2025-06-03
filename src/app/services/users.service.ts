@@ -100,6 +100,22 @@ export class UsersService {
 
         return docSnap.data() as User;
     }
+    
+    /**
+     *updateDoc() → Actualiza solo los campos enviados (método de firestore)
+     *Partial<T> es un tipo genérico en TypeScript
+     *Partial<User> → Permite que solo pases los datos que quieres modificar.
+     *pero email y uid es obligatorio creo(ver)
+     *
+     * @param {string} email
+     * @param {Partial<User>} datosActualizados
+     * @return {*}  {Promise<void>}
+     * @memberof UsersService
+    */
+    public async actualizarPerfilUsuario(email: string, datosActualizados: Partial<User>): Promise<void> {
+        const docRef = doc(db, "users", email); 
+        await updateDoc(docRef, datosActualizados);
+    }
 
     /*    async getEventsArray(email: string) : Promise<EventDay[]>{
            const docRef = doc(db, "users", email); // referencia al doc por email

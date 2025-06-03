@@ -7,10 +7,10 @@ import { EventDay } from "./calendar.model";
  * @interface User
 */
 export interface User {
-    uid: string;      // ID único del usuario (proporcionado por Firebase)
+    uid?: string;      // ID único del usuario (proporcionado por Firebase)
     image?:string;   //por si queremos poner foto perfil
     email: string;    // Correo electrónico
-    name: string;   // Nombre
+    name?: string;   // Nombre
     lastName?: string; // Apellido (opcional)
     dateBirth?: string; // Fecha de nacimiento (opcional)
     biologicalSex?: string;     // Sexo biologico (opcional)

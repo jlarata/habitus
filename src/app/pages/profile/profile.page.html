@@ -6,6 +6,9 @@
 
 <ion-content class="page">
   <div class="profile-container">
+    <ion-buttons slot="start">
+        Volver<ion-back-button defaultHref="/" color="tertiary"></ion-back-button>
+    </ion-buttons>
     <ion-avatar class="avatar-container">
       <ion-icon name="person-outline" class="avatar-icon"></ion-icon>
     </ion-avatar>
@@ -19,14 +22,11 @@
 
     <p class="error-text" *ngIf="emailError">{{ emailError }}</p>
 
-
-
     <ion-label class="input-title">Nombre</ion-label>
     <ion-item class="custom-input">
-      <ion-input [(ngModel)]="userData.name" placeholder="Escribí tu nombre" (ionBlur)="validateNombre()"
-        [class.input-error]="nombreError">
-      </ion-input>
+      <ion-input [(ngModel)]="userData.name" placeholder="Escribí tu nombre" (ionBlur)="validateNombre()"></ion-input>
     </ion-item>
+
     <p class="error-text" *ngIf="nombreError">{{ nombreError }}</p>
 
 
@@ -35,10 +35,18 @@
       <ion-input [(ngModel)]="userData.lastName" placeholder="Escribi tu apellido"></ion-input>
     </ion-item>
 
+    <ion-label class="input-title">Edad</ion-label>
+    <ion-item class="custom-input">
+      <ion-input type="number" [(ngModel)]="userData.age" readonly>
+      </ion-input>
+    </ion-item>
+
     <ion-label class="input-title">Fecha de nacimiento</ion-label>
     <ion-item class="custom-input">
-      <ion-input type="text" placeholder="DD/MM/YY" [(ngModel)]="userData.dateBirth"
-        (ionBlur)="validateDate()"></ion-input>
+      <ion-input type="text" placeholder="DD/MM/YYYY" [(ngModel)]="userData.dateBirth"
+        (ionBlur)="validateDate()">
+        <!--ionBlur en Ionic es un evento que se dispara cuando un campo de entrada pierde el foco-->
+      </ion-input>
     </ion-item>
     <p class="error-text" *ngIf="dateError">{{ dateError }}</p>
 
@@ -102,7 +110,7 @@
       </div>
     </div>
 
-    <ion-button class="save-button" expand="block" (click)="guardarPerfil()">Guardar Cambios</ion-button>
+    <ion-button class="save-button" expand="block" (click)="saveProfile()">Guardar Cambios</ion-button>
 
   </div>
 </ion-content>
