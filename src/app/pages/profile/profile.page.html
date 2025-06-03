@@ -16,7 +16,7 @@
     <ion-label class="input-title">Email</ion-label>
 
     <ion-item class="custom-input">
-      <ion-input type="email" [(ngModel)]="userData.email" readonly>
+      <ion-input type="email" [(ngModel)]="usuario.mail" readonly>
       </ion-input>
     </ion-item>
 
@@ -24,7 +24,9 @@
 
     <ion-label class="input-title">Nombre</ion-label>
     <ion-item class="custom-input">
-      <ion-input [(ngModel)]="userData.name" placeholder="Escribí tu nombre" (ionBlur)="validateNombre()"></ion-input>
+      <ion-input [(ngModel)]="usuario.nombre" placeholder="Escribí tu nombre" (ionBlur)="validateNombre()"
+        [class.input-error]="nombreError">
+      </ion-input>
     </ion-item>
 
     <p class="error-text" *ngIf="nombreError">{{ nombreError }}</p>
@@ -32,7 +34,7 @@
 
     <ion-label class="input-title">Apellido</ion-label>
     <ion-item class="custom-input">
-      <ion-input [(ngModel)]="userData.lastName" placeholder="Escribi tu apellido"></ion-input>
+      <ion-input [(ngModel)]="usuario.apellido" placeholder="Escribi tu apellido"></ion-input>
     </ion-item>
 
     <ion-label class="input-title">Edad</ion-label>
@@ -43,10 +45,11 @@
 
     <ion-label class="input-title">Fecha de nacimiento</ion-label>
     <ion-item class="custom-input">
-      <ion-input type="text" placeholder="DD/MM/YYYY" [(ngModel)]="userData.dateBirth"
-        (ionBlur)="validateDate()">
-        <!--ionBlur en Ionic es un evento que se dispara cuando un campo de entrada pierde el foco-->
-      </ion-input>
+
+      <ion-input type="text" placeholder="DD/MM/YY" [(ngModel)]="usuario.fecha_de_nacimiento"
+        (ionBlur)="validateDate()"></ion-input>
+    <!--ionBlur en Ionic es un evento que se dispara cuando un campo de entrada pierde el foco-->
+
     </ion-item>
     <p class="error-text" *ngIf="dateError">{{ dateError }}</p>
 
@@ -54,13 +57,13 @@
     <div class="row">
       <div class="radio-group half-width">
         <label class="input-title">Sexo</label>
-        <ion-radio-group [(ngModel)]="userData.biologicalSex" class="horizontal-radios">
+        <ion-radio-group [(ngModel)]="usuario.sexo" class="horizontal-radios">
           <div class="radio-option">
-            <ion-radio value="Masculino"></ion-radio>
+            <ion-radio value="M"></ion-radio>
             <span>M</span>
           </div>
           <div class="radio-option">
-            <ion-radio value="Femenino"></ion-radio>
+            <ion-radio value="F"></ion-radio>
             <span>F</span>
           </div>
           <div class="radio-option">
@@ -73,17 +76,21 @@
       <!-- Actividad Física -->
       <div class="radio-group half-width">
         <label class="input-title">Actividad Física</label>
-        <ion-radio-group [(ngModel)]="userData.levelActivity" class="horizontal-radios">
+        <ion-radio-group [(ngModel)]="usuario.hace_actividad_fisica_regular" class="horizontal-radios">
           <div class="radio-option">
-            <ion-radio value="Baja"></ion-radio>
+            <ion-radio value="nada"></ion-radio>
+            <span>Nada</span>
+          </div>
+          <div class="radio-option">
+            <ion-radio value="bajo"></ion-radio>
             <span>Baja</span>
           </div>
           <div class="radio-option">
-            <ion-radio value="Media"></ion-radio>
+            <ion-radio value="medio"></ion-radio>
             <span>Media</span>
           </div>
           <div class="radio-option">
-            <ion-radio value="Alta"></ion-radio>
+            <ion-radio value="alto"></ion-radio>
             <span>Alta</span>
           </div>
         </ion-radio-group>
@@ -94,7 +101,7 @@
       <div class="select-group half-width">
         <label class="input-title">Peso (kg)</label>
         <ion-item class="custom-input no-border">
-          <ion-select [(ngModel)]="userData.weight" placeholder="Seleccioná tu peso">
+          <ion-select [(ngModel)]="usuario.peso" placeholder="Seleccioná tu peso">
             <ion-select-option *ngFor="let peso of pesos" [value]="peso">{{ peso }} kg</ion-select-option>
           </ion-select>
         </ion-item>
@@ -103,7 +110,7 @@
       <div class="select-group half-width">
         <label class="input-title">Altura (cm)</label>
         <ion-item class="custom-input no-border">
-          <ion-select [(ngModel)]="userData.heigth" placeholder="Seleccioná tu altura">
+          <ion-select [(ngModel)]="usuario.altura" placeholder="Seleccioná tu altura">
             <ion-select-option *ngFor="let altura of alturas" [value]="altura">{{ altura }} cm</ion-select-option>
           </ion-select>
         </ion-item>

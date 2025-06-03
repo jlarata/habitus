@@ -57,5 +57,35 @@
 
   <ion-button *ngIf="queryDeRecetas != undefined" (click)="blanquearRecetas()">borrar búsqueda</ion-button>
 
+<!--   en test: recetas favoritas
+ -->
+  <div *ngIf="recetasFavoritas?.length != 0" class="divDeRecetas">
+    <h1>Recetas Favoritas: {{ recetasFavoritas?.length +1}}</h1>
+    
+    <ion-card-content *ngFor=" let receta of recetasFavoritas">
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>{{receta.title}}</ion-card-title>
+          <img alt="foto de {{receta.title}}" src="{{receta.image}}">
+        </ion-card-header>
+        <ion-card-content *ngIf="recetasFavoritas.indexOf(receta) == recetaConIngredientes">ingredientes de
+          {{receta.title}}
+
+          <div class="ingredients">
+            <ul *ngFor="let ingredient of receta.missedIngredients">
+              <li>{{ingredient.original}} </li>
+            </ul>
+          </div>
+        </ion-card-content>
+        <ion-button *ngIf="queryDeRecetas?.results?.indexOf(receta) != recetaConIngredientes"
+          (click)="muestraIngredientes(queryDeRecetas?.results?.indexOf(receta)!)">Mostrar ingredientes</ion-button>
+        <ion-button *ngIf="queryDeRecetas?.results?.indexOf(receta) == recetaConIngredientes"
+          (click)="ocultaIngredientes()">Ocultar ingredientes</ion-button>
+        <ion-button (click)="buscarPorId(receta.id!, receta.image!)">Instrucciones paso a paso</ion-button>
+      </ion-card>
+    </ion-card-content>
+  </div>
+
+
 
 </ion-content>

@@ -4,6 +4,7 @@ import { User } from 'src/app/models/user.model';
 import { AuthService } from 'src/app/services/auth.service';
 import { UsersService } from 'src/app/services/users.service';
 import { ValidationUtils } from 'src/app/utils/validation';
+import { EventDay } from "./calendar.model";
 
 
 @Component({
@@ -13,23 +14,26 @@ import { ValidationUtils } from 'src/app/utils/validation';
   standalone: false
 })
 export class ProfilePage implements OnInit {
- 
-  userData:User = {
-    uid: '',
-    email: '',
-    name: '',
-    lastName: '',
-    dateBirth: '',
-    biologicalSex:'',
-    weight: 0,
-    heigth: 0,
-    age: 0,
-    //levelBaja: false,
-    //levelMedia: false,
-    //levelAlta: false,
-    levelActivity: ''
-  };
-  
+
+  usuario: User = {
+    UID: '',
+    nombre: '',
+    apellido: '',
+    calendar_event: {},
+    celiaco: false,
+    fecha_de_nacimiento: '',
+    sexo: '',
+    mail: '',
+    vegano: false,
+    vegetariano: false,
+    peso: 0,
+    altura: 0,
+    edad: 0,
+    hace_actividad_fisica_regular: '',
+    recetas_favoritas: [],
+    events_array: EventDay[]
+  }
+
   loading: HTMLIonLoadingElement | null = null;
 
   dateError:string= "";
@@ -47,23 +51,17 @@ export class ProfilePage implements OnInit {
     private toastCtrl: ToastController,
     private loadingCtrl: LoadingController,
     private auth:AuthService,
-    private userService:UsersService
+    private userService:UsersService,
   ) 
-  { 
-    this.loadUserProfile();
+  {}
+
+  async ngOnInit() {
+   this.usuario = await this.loadUserProfile();
+   console.log("Datos del usuario cargados:", this.usuario);
   }
 
-  ngOnInit() {
-    
-  }
 
-  //- metodo guardado en firestore
-  /**
-   *metodo que actualiza en firestore parte del perfil del usuario
-   *
-   * @memberof ProfilePage
-  */
-  async saveProfile() {
+  async guardarPerfil() {
 
     // validar fecha y calcular edad
     this.validateDate();
@@ -80,52 +78,41 @@ export class ProfilePage implements OnInit {
 
     await this.loading.present();
 
-    let user:User = { 
-      email: this.userData.email,
-      uid: this.userData.uid,
-      name: this.userData?.name,
-      lastName:this.userData?.lastName,
-      weight: this.userData?.weight, 
-      heigth: this.userData?.heigth, 
-      biologicalSex: this.userData?.biologicalSex || 'X',
-      levelActivity: this.userData?.levelActivity,
-      dateBirth: this.userData?.dateBirth,
-      age: this.userData.age
-    };
-
-    try {
-      await this.userService.actualizarPerfilUsuario(this.userData.email, user);
-
-      this.showToast("Perfil actualizado correctamente.");
-
-    } catch (error) {
-
-      this.showToast("Error al actualizar perfil: " + error);
-
-      console.error("Error en perfil:", error);
-
+    const nueva_data_de_usuario = {
+      nombre: this.usuario?.nombre,
+      apellido:this.usuario?.apellido,
+      peso: this.usuario?.peso, 
+      altura: this.usuario?.altura, 
+      sexo: this.usuario?.sexo || '',
+      hace_actividad_fisica_regular: this.usuario?.hace_actividad_fisica_regular,
     }
 
+    console.log('Perfil guardado:', 
+    nueva_data_de_usuario);
+
+    this.userService.actualizarUsuario(this.usuario.mail!, nueva_data_de_usuario)
     console.log("datos guardados!: " + user);
+    this.showToast('Datos guardados!');
     
     //Ocultar loading después de completar el ""guardado""
     await this.loading.dismiss();
   }
  
   validateDate(){
-    if (!this.userData?.dateBirth) {
+
+    if (!this.usuario?.fecha_de_nacimiento) {
       //no lanzo error por que no es obligatoria la fecha
-      this.userData.dateBirth = "";
+      this.usuario.fecha_de_nacimiento = "";
       return;
     }
 
-    if (!ValidationUtils.isValidDate(this.userData.dateBirth)) {
+    if (!ValidationUtils.isValidDate(this.usuario.fecha_de_nacimiento)) {
       this.dateError = "Formato o fecha inválida. Ejemplo: 15/02/1998";
       return;
     }
 
     //si esta todo ok calculamos edad
-    this.userData.age = ValidationUtils.calculateAge(this.userData.dateBirth);
+    this.usuario.edad = ValidationUtils.calculateAge(this.usuario.nueva_data_de_usuario);
 
     this.dateError = "";
 
@@ -133,12 +120,12 @@ export class ProfilePage implements OnInit {
 
   //elimine validaciones apellido para que sea opcional
   validateNombre() {
-    if (!this.userData?.name) {
+    if (!this.usuario?.nombre) {
       this.nombreError = "Por favor complete el campo";
       return;
     }
 
-    if (this.userData.name.length < 3) {
+    if (this.usuario.nombre.length < 3) {
       this.nombreError = "Campo Vacío.";
       return;
     }
@@ -161,12 +148,6 @@ export class ProfilePage implements OnInit {
     toast.present();
   }
 
- 
-
-  //falta:
-  ///-metodo calcular edad desde fecha de nacimiento( en utils?)//falta campo edad readonly
- 
-    
   /**
   *recupera apartir del email los datos de usuario
   *almacenados en firestore
@@ -174,50 +155,43 @@ export class ProfilePage implements OnInit {
   * @return {*} 
   * @memberof ProfilePage
   */
-  async loadUserProfile() {
+  async loadUserProfile():Promise<User> {
     try {
       // Obtener el usuario autenticado desde Firebase
       const userFirebase = this.auth.getCurrentUser();
+      //obtener los datos de firestore usando el usuario de firebase
+      const user = await this.userService.obtenerPerfilUsuario(userFirebase!.email!);
 
-      if (!userFirebase?.email) {
-        this.showToast("No hay usuario autenticado o no tiene un email válido.");
-        console.error("No hay usuario autenticado o no tiene un email válido.");
-        return;
-      }
-
-      // Obtener los datos desde Firestore directamente
-      const user = await this.userService.obtenerPerfilUsuario(userFirebase.email);
-
-      if (!user) {
-        console.error("No se encontró perfil de usuario en Firestore.");
-        this.showToast("No se encontró perfil de usuario en Firestore.");
-        return;
-      }
-
-      // Asignar los datos obtenidos al objeto userData
-      this.userData = {
-        uid: user.uid || "",
-        email: user.email || "",
-        name: user.name ||"",
-        lastName: user.lastName || "",
-        dateBirth: user.dateBirth || "", 
-        biologicalSex:user.biologicalSex || '',
-        weight: user.weight || 0,   // Peso en kg (opcional)
-        heigth: user.heigth || 0,  // Altura en cm (opcional)
-        age: user.age || 0, //calculado desde la fecha de nacimiento//aun no implementado
-        //levelBaja: true,
-        //levelMedia: false,
-       // levelAlta: false,
-        levelActivity: user.levelActivity || "Baja"
+      //construyo un profile con los datos y lo devuelvo
+      // btw creo que este paso es al pedo. podiamos retornar el user
+      
+      let currentProfile = {
+        UID: user?.UID || "",
+        mail: user?.mail || "",
+        vegetariano: user?.vegetariano,
+        nombre: user?.nombre ||"",
+        apellido: user?.apellido || "",
+        fecha_de_nacimiento: user?.fecha_de_nacimiento || undefined, 
+        sexo:user?.sexo || '',
+        celiaco: user?.celiaco,
+        vegano: user?.vegano,
+        peso: user?.peso || 0,
+        //weight: user?.weight || 0,   // Peso en kg (opcional)
+        altura: user?.altura || 0,  // Altura en cm (opcional)
+        edad: user?.edad || 0, //calculado desde la fecha de nacimiento//aun no implementado
+        hace_actividad_fisica_regular: user?.hace_actividad_fisica_regular,
+        recetas_favoritas: user?.recetas_favoritas,
+        calendar_event: user?.calendar_event
       };
 
-      console.log("Datos del usuario cargados:", this.userData);
+      console.log('usuario cargado en el método: ',currentProfile)
+      return currentProfile!
 
     } catch (error) {
-
       console.error("Error al obtener los datos del usuario:", error);
-
       this.showToast("Error al obtener los datos del usuario: " + error);
+      
+      return this.usuario
     }
   }
 
