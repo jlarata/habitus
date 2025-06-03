@@ -1,3 +1,5 @@
+import { EventDay } from "./calendar.model";
+
 /**
  *perfil/datos de usuarios
  *
@@ -22,4 +24,6 @@ export interface User {
     vegano?: boolean;
     vegetariano?: boolean;
     celiaco?: boolean;
+
+    events_array: EventDay[]
 }
