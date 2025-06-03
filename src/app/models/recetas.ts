@@ -24,9 +24,9 @@ export class QueryDeRecetaForDisplay {
     steps?: Step[]
 }
 
+
 export class QueryDeRecetas {
     number?: number;
     offset?: number;
     results?: Receta[];
     totalResults?: number;
-}

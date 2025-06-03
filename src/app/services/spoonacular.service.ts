@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpClientModule } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 
+
 @Injectable({
   providedIn: 'root'
 })
@@ -25,6 +26,7 @@ export class SpoonacularService {
     //const url = 'https://api.spoonacular.com/recipes/complexSearch?apiKey='+environment.spoonacular.apiKey+'&fillIngredients=true&offset=1'
     //test
     const url = 'https://api.spoonacular.com/recipes/complexSearch?apiKey=' + environment.spoonacularTest.apiKey + '&fillIngredients=true&offset=1'
+
     //console.log(url)
     return this.http.get(url
       ,
@@ -36,6 +38,7 @@ export class SpoonacularService {
    * @returns el mismo objeto que obtenerRecetas() pero ahora los objetos del array results incluyen data como vegetarian, glutenfree, healthScore, summary
    */
   public obtenerRecetasConInformacion(vegetarian?: boolean, glutenFree?: boolean, vegan?: boolean) {
+
     let veg = "";
     let cel = "";
     let vveg = "";
@@ -45,6 +48,7 @@ export class SpoonacularService {
     }
     if (glutenFree && glutenFree == true) {
       cel = "&intolerances=gluten"
+
     }
     if (vegan && vegan == true) {
       veg = "&diet=vegan"
@@ -53,6 +57,7 @@ export class SpoonacularService {
     //let url = 'https://api.spoonacular.com/recipes/complexSearch?apiKey='+environment.spoonacular.apiKey+'&fillIngredients=true&addRecipeInformation=true'+veg+cel+vveg
     //test
     let url = 'https://api.spoonacular.com/recipes/complexSearch?apiKey=' + environment.spoonacularTest.apiKey + '&fillIngredients=true&addRecipeInformation=true' + veg + cel + vveg
+
     return this.http.get(url
       ,
       { headers: this.headers }
@@ -68,6 +73,7 @@ export class SpoonacularService {
  */
   public obtenerRecetasPorNombre(nombre: string) {
     const url = 'https://api.spoonacular.com/recipes/complexSearch?apiKey=' + environment.spoonacular.apiKey + `&fillIngredients=true&addRecipeInformation=true&titleMatch=${nombre}`
+
     //console.log(url)
     return this.http.get(url
       ,
@@ -95,10 +101,12 @@ export class SpoonacularService {
   public obtenerRecetaSimplePorID(ID: string) {
     const url = `https://api.spoonacular.com/recipes/${ID}/information?apiKey=` + environment.spoonacularTest.apiKey
     
+
     return this.http.get(url
       ,
       { headers: this.headers }
     )
 
   }
+
 }

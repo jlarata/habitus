@@ -12,6 +12,7 @@ import { User } from '../models/user.model';
 
 
 
+
 /**
  *
  *Provee la lógica de autenticación con firebase
@@ -38,6 +39,7 @@ export class AuthService {
     private afAuth: AngularFireAuth,
     public http: HttpClient,
     private userService:UsersService
+
   ) { 
 
     this.initializeAuthState();
@@ -48,6 +50,7 @@ export class AuthService {
    * Iniciala suscripción al estado de autenticación.
    * Actualiza `userSubject` cuando el usuario inicia o cierra sesión.
   */
+
   private initializeAuthState(): void {
     try {
 
@@ -97,6 +100,7 @@ export class AuthService {
   getCurrentUser(): firebase.User | null {
     return this.userSubject.getValue();
   }
+
 
   /**
    *Desloguea usuario acual 

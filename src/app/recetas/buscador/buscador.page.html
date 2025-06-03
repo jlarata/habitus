@@ -6,6 +6,7 @@
 style="z-index: 999;
 max-height: 25vh;">
   <ion-buttons *ngIf="busquedaDesplegada == false" style="
+
   display:flex;
   flex-direction:column;
   gap:2px;
@@ -31,3 +32,4 @@ max-height: 25vh;">
     <ion-button *ngIf="queryDeRecetas == undefined" (click)="handleClick()">¡Buscar recetas!</ion-button>
   <ion-button *ngIf="queryDeRecetas != undefined" (click)="blanquearRecetas()">borrar búsqueda</ion-button>
 </ion-content>
+

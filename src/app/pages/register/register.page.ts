@@ -5,6 +5,7 @@ import { AuthService } from 'src/app/services/auth.service';
 import { Router } from '@angular/router';
 import { UsersService } from 'src/app/services/users.service';
 
+
 @Component({
   selector: 'app-register',
   templateUrl: './register.page.html',
@@ -25,6 +26,7 @@ export class RegisterPage  {
     private loadingCtrl: LoadingController,
     private router: Router,
     private userService:UsersService
+
   ) {}
 
   async register() {
@@ -59,6 +61,7 @@ export class RegisterPage  {
         ///envio data adicional a firebase
         this.userService.crearDataUsuario(mail//,uid          
         );
+
 
         this.showToast('Registro exitoso.');
 
@@ -106,11 +109,13 @@ export class RegisterPage  {
     //email
     if (ValidationUtils.isFieldEmpty(this.mail)) {
 
+
       this.emailError = 'El email es requerido.';
 
       isValid = false;
 
     } else if (!ValidationUtils.isValidEmail(this.mail)) {
+
 
       this.emailError = 'El email no es válido. Ejemplo: habitus@gmail.com';
 
@@ -159,6 +164,7 @@ export class RegisterPage  {
         this.showToast('Error al iniciar sesión: ' + error.message); 
     }
   }
+
 
 
 

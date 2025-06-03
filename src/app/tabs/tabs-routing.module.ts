@@ -12,6 +12,7 @@ const routes: Routes = [
         loadChildren: () => import('../recetas/recetas.module').then(m => m.RecetasPageModule)
       },
       /* {
+
         path: 'tab1',
         loadChildren: () => import('../tab1/tab1.module').then(m => m.Tab1PageModule)
       }, */
@@ -29,6 +30,7 @@ const routes: Routes = [
   {
     path: '',
     redirectTo: '/tabs/tabs/calendario',
+
     pathMatch: 'full'
   }
 ];

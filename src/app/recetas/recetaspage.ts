@@ -8,13 +8,13 @@ import { ToastController } from '@ionic/angular';
 
 
 
+
 @Component({
   selector: 'app-recetas',
   templateUrl: 'recetas.page.html',
   styleUrls: ['recetas.page.scss'],
   standalone: false,
 })
-
 
 
 export class RecetasPage {
@@ -145,6 +145,7 @@ export class RecetasPage {
           this.queryDeRecetaForDisplay = data[0]!;
           //console.log(data)
           this.isShowingMore = !this.isShowingMore;
+
         },
         (error) => { console.log(error); }
       )
@@ -185,5 +186,6 @@ export class RecetasPage {
     toast.present();
   }
 }
+
 
 

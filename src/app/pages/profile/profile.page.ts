@@ -7,6 +7,7 @@ import { ValidationUtils } from 'src/app/utils/validation';
 import { EventDay } from "../../models/calendar.model";
 
 
+
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.page.html',
@@ -71,6 +72,7 @@ export class ProfilePage implements OnInit {
       return;
     }
 
+
     this.loading = await this.loadingCtrl.create({
         message: 'Guardando datos...',
         cssClass: 'custom-loading'
@@ -114,6 +116,7 @@ export class ProfilePage implements OnInit {
     //si esta todo ok calculamos edad
     this.usuario.edad = ValidationUtils.calculateAge(this.usuario.fecha_de_nacimiento);
 
+
     this.dateError = "";
 
   }
@@ -121,11 +124,13 @@ export class ProfilePage implements OnInit {
   //elimine validaciones apellido para que sea opcional
   validateNombre() {
     if (!this.usuario?.nombre) {
+
       this.nombreError = "Por favor complete el campo";
       return;
     }
 
     if (this.usuario.nombre.length < 3) {
+
       this.nombreError = "Campo Vacío.";
       return;
     }
@@ -139,6 +144,7 @@ export class ProfilePage implements OnInit {
    * @param {string} message
    * @memberof ProfilePage
    */
+
   async showToast(message: string) {
     const toast = await this.toastCtrl.create({
       message,
@@ -195,5 +201,6 @@ export class ProfilePage implements OnInit {
       return this.usuario
     }
   }
+
 
 }

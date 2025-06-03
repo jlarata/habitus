@@ -13,6 +13,7 @@ export class ToolbarComponent  implements OnInit {
 
   isCurrentUser:boolean = false;
 
+
   constructor(
     private authService: AuthService,
     private router: Router,
@@ -22,6 +23,7 @@ export class ToolbarComponent  implements OnInit {
 
   /**
    *Cierra sesion de usuario actual
+
    */
   async logout() {
     try {
@@ -29,6 +31,7 @@ export class ToolbarComponent  implements OnInit {
       this.showToast('Sesión Finalizada. Hasta pronto!');
       this.router.navigateByUrl('/login');
       
+
     } catch (error: any) {
       this.showToast('Error al cerrar sesión: ' + error.message);
     }
@@ -48,7 +51,7 @@ export class ToolbarComponent  implements OnInit {
     });
     toast.present();
   }
-  
+
   ngOnInit() {
     //no hace falta async/await por que no devuelve promesa
     //nos suscribimos al observable getUser y detectar 
@@ -59,6 +62,7 @@ export class ToolbarComponent  implements OnInit {
         this.isCurrentUser = true;
       }else{
         this.isCurrentUser = false;
+
       }
     });
   }
@@ -68,6 +72,7 @@ export class ToolbarComponent  implements OnInit {
         cssClass: 'alert-wrapper', // clase estilo alert
         message: '¿Está seguro que desea cerrar sesión?',
         buttons: [//definimos botones del alert
+
           {
             text: 'Cancelar',
             role: 'cancel',

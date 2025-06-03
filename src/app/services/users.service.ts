@@ -8,6 +8,7 @@ import { EventDay } from '../models/calendar.model';
 const app = initializeApp(environment.firebase)
 const db = getFirestore(app)
 
+
 @Injectable({
     providedIn: 'root'
 })
@@ -137,6 +138,7 @@ export class UsersService {
     /* public async obtenerUsuarios() {
 
         // console.log(getDocs(collection(db, "users")))
+
         const querySnapshot = await getDocs(collection(db, "users"));
         console.log(querySnapshot.docs[1].data())
         console.log('mail id: '+querySnapshot.docs[1].data()['mail'])
@@ -150,5 +152,6 @@ export class UsersService {
           //  console.log(`${doc.id} => ${doc.data()}`);
         //}); 
     } */
+
 
 }

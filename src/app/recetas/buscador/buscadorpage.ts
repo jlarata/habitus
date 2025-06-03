@@ -12,7 +12,6 @@ import { QueryDeRecetas } from '../../models/recetas';
 export class BuscadorPage {
 
   @Input() busquedaDesplegada?: boolean;
-
   public vegetarianIsChecked = false;
   public glutenFreeIsChecked = false;
   public veganIsChecked = false;
@@ -28,6 +27,7 @@ export class BuscadorPage {
 
   @Output() buttonClicked = new EventEmitter<QueryDeRecetas>();
   @Output() busquedaDesplegadaChange = new EventEmitter<boolean>
+
 
 
   handleClick() {
@@ -50,6 +50,7 @@ export class BuscadorPage {
           this.queryDeRecetas = data,
           this.calcularPaginas(this.queryDeRecetas.totalResults!)
           this.busquedaDesplegada = !this.busquedaDesplegada
+
             //para testear console.log(this.queryDeRecetas.results),
             this.buttonClicked.emit(this.queryDeRecetas)
         },
@@ -73,6 +74,7 @@ export class BuscadorPage {
 
     console.log(`se requieren ${this.recetasPagesNumber} páginas`);
   }
+
   
 }
 

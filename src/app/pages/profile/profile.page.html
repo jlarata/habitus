@@ -9,6 +9,7 @@
     <ion-buttons slot="start">
         Volver<ion-back-button defaultHref="/" color="tertiary"></ion-back-button>
     </ion-buttons>
+
     <ion-avatar class="avatar-container">
       <ion-icon name="person-outline" class="avatar-icon"></ion-icon>
     </ion-avatar>
@@ -49,6 +50,7 @@
       <ion-input type="text" placeholder="DD/MM/YY" [(ngModel)]="usuario.fecha_de_nacimiento"
         (ionBlur)="validateDate()"></ion-input>
     <!--ionBlur en Ionic es un evento que se dispara cuando un campo de entrada pierde el foco-->
+
 
     </ion-item>
     <p class="error-text" *ngIf="dateError">{{ dateError }}</p>
@@ -121,3 +123,4 @@
 
   </div>
 </ion-content>
+
