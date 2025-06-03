@@ -111,7 +111,14 @@ export class UsersService {
     /*este es el método para updatear desde el calendario no? documentémoslo si es así
     no se por qué hablo en plural si lo hice yo, debería comentarlo yo
     bueno estoy inseguro*/
-  
+    /**
+     *busca coleccion de usuraio por email,
+     *y actualiza sus eventos 
+     *
+     * @param {string} email
+     * @param {EventDay[]} events_array
+     * @memberof UsersService
+     */
     async saveEventsArray(email: string, events_array: EventDay[]) {
 
         const docRef = doc(db, "users", email); // referencia al doc por email
@@ -124,6 +131,13 @@ export class UsersService {
         //console.log(events_array, " updateado para ", email);
     }
 
+    /**
+     *actualiza datos de usuario en firestore a partir del email
+     *
+     * @param {string} mail
+     * @param {*} nueva_data_de_usuario
+     * @memberof UsersService
+     */
     async actualizarUsuario(mail: string, nueva_data_de_usuario:any) {
         const docRef = doc(db, "users", mail); // referencia al doc por email
         await updateDoc(docRef, nueva_data_de_usuario)
