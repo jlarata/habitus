@@ -2,20 +2,10 @@ import { Component, AfterViewInit } from '@angular/core';
 import { ToastController } from '@ionic/angular';
 import { AuthService } from '../services/auth.service';
 import { UsersService } from '../services/users.service';
+import { CalendarEvent, EventDay } from '../models/calendar.model';
 
 
-// Definición de las interfaces que modelan los eventos y días del calendario
-interface CalendarEvent {
-  title: string; // titulo del evento
-  time: string; //  hora del evento
-}
 
-interface EventDay {
-  day: number; // dia del mes
-  month: number; // mes (1 al 12)
-  year: number;  // año
-  events: CalendarEvent[]; // lista de eventos en el dia
-}
 
 @Component({
   selector: 'app-tab2',
@@ -35,7 +25,9 @@ export class Tab2Page implements AfterViewInit {
   ];
 
   // array que contiene a los eventos del dia
+  //ESTO ES LO QUE ESTÁ ROMPIENDO TODO, LIMPIA EL ARRAY DE EVENTOS CADA VEZ QUE LEVANTA EL COSO.
   eventsArr: EventDay[] = [];
+
 
   // Referencias a elementos del DOM
   calendar!: HTMLElement;
@@ -95,10 +87,12 @@ export class Tab2Page implements AfterViewInit {
       // Obtener los datos desde Firestore directamente
       const user = await this.userService.obtenerPerfilUsuario(userFirebase!.email!);
 
-      // Asignar los datos obtenidos al objeto userData
-      console.log("Datos del usuario autenticado: ", userFirebase!.email)
-      console.log("Datos del usuario cargados:", user);
+      console.log(user!)
+      this.eventsArr = user!.events_array
+      //console.log("Datos del usuario autenticado: ", userFirebase!.email)
+      //console.log("Datos del usuario cargados:", user);
 
+      console.log("al final de ngonInit el eventsArray tiene ", this.eventsArr.length, " tareas")
     } catch (error) {
 
       console.error("Error al obtener los datos del usuario:", error);
@@ -107,6 +101,7 @@ export class Tab2Page implements AfterViewInit {
   }
 
   ngAfterViewInit() {
+
     // Inicializa referencias después de que la vista se ha cargado
     this.calendar = document.querySelector(".calendar") as HTMLElement;
     this.date = document.querySelector(".date") as HTMLElement;
@@ -162,6 +157,9 @@ export class Tab2Page implements AfterViewInit {
 
     // elimina un evento
     this.eventsContainer.addEventListener("click", (e: MouseEvent) => this.onDeleteEvent(e));
+
+    console.log("al final de afterviewinit el eventsArray tiene ", this.eventsArr.length, " tareas")
+
   }
 
 
@@ -439,7 +437,7 @@ export class Tab2Page implements AfterViewInit {
       }
     });
     if (eventExist) {
-      this.showToast("El evento ya ha sido añadido");
+      this.showToast("Ya existe un evento con ese título");
       return;
     }
 
@@ -542,13 +540,28 @@ export class Tab2Page implements AfterViewInit {
   }
   // Guarda los eventos en el localStorage
   // Esto permite que los eventos persistan incluso si el usuario recarga la página o cierra la aplicación.
-  saveEvents(): void {
-    localStorage.setItem("events", JSON.stringify(this.eventsArr));
+  async saveEvents() {
+    /* guardar la info en localStorage, esto no sirve hay que cambiarlo */
+    //localStorage.setItem("events", JSON.stringify(this.eventsArr));
+    /* en su lugar quedaría algo así */
+
+    try {
+      // Obtener el usuario autenticado desde Firebase
+      const userFirebase = this.auth.getCurrentUser();
+      this.userService.saveEventsArray(userFirebase!.email!, this.eventsArr)
+    }
+    catch (error) {
+      console.error("Error al guardar los eventos del usuario:", error);
+      this.showToast("Error al guardar los eventos del usuario: " + error);
+    }
   }
 
   // Recupera los eventos del localStorage
   // Esto se hace al cargar la página para mostrar los eventos guardados previamente.
-  getEvents(): void {
+  
+  // ESTO ROMPE TODO PERO QUE YO SEPA NO SE ESTÁ ACTIVANDO NUNCA igual lo comento
+/*   getEvents(): void {
+    
     const storedEvents = localStorage.getItem("events");
     if (storedEvents === null) { // si no hay nada guardado sale de la funcion 
       return;
@@ -566,7 +579,7 @@ export class Tab2Page implements AfterViewInit {
       console.error("Error al leer los eventos guardados en el almacenamiento local", e);
       localStorage.removeItem("events");
     }
-  }
+  } */
 
   // Convierte la hora de 24 horas a 12 horas con formato AM/PM
   convertTime(time: string): string {
