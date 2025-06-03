@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
 import { initializeApp } from 'firebase/app';
-import { doc, setDoc,addDoc, collection, Firestore, getDocs, getFirestore, getDoc, updateDoc } from 'firebase/firestore'
+import { doc, setDoc, addDoc, collection, Firestore, getDocs, getFirestore, getDoc, updateDoc } from 'firebase/firestore'
 import { environment } from 'src/environments/environment';
 import { User } from '../models/user.model';
+import { EventDay } from '../models/calendar.model';
 
 const app = initializeApp(environment.firebase)
-const db =  getFirestore(app)
+const db = getFirestore(app)
 
 @Injectable({
     providedIn: 'root'
@@ -21,18 +22,18 @@ export class UsersService {
         /* console.log(getDocs(collection(db, "users"))) */
         const querySnapshot = await getDocs(collection(db, "users"));
         console.log(querySnapshot.docs[1].data())
-        console.log('mail id: '+querySnapshot.docs[1].data()['mail'])
-        console.log('recetas favoritas: '+querySnapshot.docs[1].data()['recetas_favoritas'])
-        console.log('es veganx?: '+ querySnapshot.docs[1].data()['vegano'])
-        console.log('es celiacx?: '+querySnapshot.docs[1].data()['celiaco'])
-        console.log('se ejercita?: '+querySnapshot.docs[1].data()[' hace_actividad_fisica_regular'])
-        console.log('peso: '+querySnapshot.docs[1].data()['peso']+'Kgs')
-        console.log('eventos agendados?: '+querySnapshot.docs[1].data()['calendar_event']['title'])
+        console.log('mail id: ' + querySnapshot.docs[1].data()['mail'])
+        console.log('recetas favoritas: ' + querySnapshot.docs[1].data()['recetas_favoritas'])
+        console.log('es veganx?: ' + querySnapshot.docs[1].data()['vegano'])
+        console.log('es celiacx?: ' + querySnapshot.docs[1].data()['celiaco'])
+        console.log('se ejercita?: ' + querySnapshot.docs[1].data()[' hace_actividad_fisica_regular'])
+        console.log('peso: ' + querySnapshot.docs[1].data()['peso'] + 'Kgs')
+        console.log('eventos agendados?: ' + querySnapshot.docs[1].data()['calendar_event']['title'])
         /* querySnapshot.forEach((doc) => {
             console.log(`${doc.id} => ${doc.data()}`);
         }); */
     }
-    
+
     /**
      *
      *Al crear usuario inicializamos una collecion en firestore 
@@ -42,26 +43,28 @@ export class UsersService {
      * @param {*} uid
      * @memberof UsersService
      */
-    public async crearDataUsuario(email:string, uid:any) {
+    public async crearDataUsuario(email: string, uid: any) {
         try {
-            const nuevoUsuario:User = {
+            const nuevoUsuario: User = {
                 uid: uid, // voy a almacenar el id uduario por las dudas
-                image:"",
+                image: "",
                 email: email,
-                name: "",  
-                lastName: "", 
+                name: "",
+                lastName: "",
                 dateBirth: "", //dd/mm/yy
-                biologicalSex: "X",    
+                biologicalSex: "X",
                 weight: 0,   // Peso en kg (opcional)
                 heigth: 0,  // Altura en cm (opcional)
-                age:0, //calculado desde la fecha de nacimiento
-                levelActivity:"Media", //Baja, Media, Alta
+                age: 0, //calculado desde la fecha de nacimiento
+                levelActivity: "Media", //Baja, Media, Alta
                 calendar_event: [], //esto tiene q ser un array de 
                 //eventuales objetos
                 celiaco: false,
                 recetas_favoritas: [],
                 vegano: false,
-                vegetariano: false
+                vegetariano: false,
+
+                events_array: [],
             };
 
             //pone id random a la colleccion
@@ -70,15 +73,15 @@ export class UsersService {
             //enviamos el email para id de coleccion
             const docRef = await setDoc(doc(db, "users", email), nuevoUsuario);
 
-            console.log("Usuario agregado exitosamente. "+  docRef);
+            console.log("Usuario agregado exitosamente. " + docRef);
 
         } catch (error) {
 
             console.error("Error guardado datos usuario: " + error)
-            
+
         }
     }
-    
+
     /**
      *busca coleccion por id (email) que se le pasa por parametro
      *retorna promesa datos en forma de la interface User o null si da error
@@ -114,5 +117,27 @@ export class UsersService {
         await updateDoc(docRef, datosActualizados);
     }
 
+    /*    async getEventsArray(email: string) : Promise<EventDay[]>{
+           const docRef = doc(db, "users", email); // referencia al doc por email
+           const docSnap = await getDoc(docRef); // obtiene el documento desde Firestore
+   
+           if (!docSnap.exists()) {
+               throw new Error(`No se encontró perfil de usuario con email: ${email}`);
+           }
+   
+           return docSnap.data() as User;
+       }
+    */
+    async saveEventsArray(email: string, events_array: EventDay[]) {
+
+        const docRef = doc(db, "users", email); // referencia al doc por email
+
+        // Update 
+        await updateDoc(docRef, {
+            events_array
+        });
+
+        //console.log(events_array, " updateado para ", email);
+    }
 
 }
