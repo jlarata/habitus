@@ -1,20 +1,35 @@
-<ion-content>
-  <ion-buttons style="
+
+  <!-- hipotesis: los ion content por defecto tienden a ocupar una página entera. 
+   tuve que meter mano al style de los ion-content para q no pasen cosas -->
+
+<ion-content
+style="z-index: 999;
+max-height: 25vh;">
+  <ion-buttons *ngIf="busquedaDesplegada == false" style="
+
   display:flex;
   flex-direction:column;
   gap:2px;
   ">
-  <ion-checkbox  [(ngModel)]="vegetarianIsChecked">Solo Vegetarianas</ion-checkbox>
-
-  <ion-checkbox  [(ngModel)]="glutenFreeIsChecked">Solo Gluten Free</ion-checkbox>
-
-  <ion-checkbox  [(ngModel)]="veganIsChecked">Solo Vegan!</ion-checkbox>
+    <ion-checkbox [(ngModel)]="vegetarianIsChecked">Solo Vegetarianas</ion-checkbox>
+    <ion-checkbox [(ngModel)]="glutenFreeIsChecked">Solo Gluten Free</ion-checkbox>
+    <ion-checkbox [(ngModel)]="veganIsChecked">Solo Vegan!</ion-checkbox>
 
   </ion-buttons>
 
-  <div>
-    <ion-button (click)="handleClick()">¡Buscar recetas!</ion-button>
-  </div>
+  <ion-buttons *ngIf="queryDeRecetas != undefined" class="pagesButtons">
+    <ion-button>mostrando página 1 de {{recetasPagesNumber}}</ion-button>
+  </ion-buttons>
 
-  
-</ion-content> 
+  <ion-buttons *ngIf="queryDeRecetas != undefined" class="paginationButtons">
+    <ion-button class="leftPageArrowButton"><ion-icon class="leftPageArrow"
+        name="chevron-back-outline"></ion-icon></ion-button>
+
+    <ion-button class="rightPageArrowButton"><ion-icon class="leftPageArrow"
+        name="chevron-forward-outline"></ion-icon></ion-button>
+  </ion-buttons>
+
+    <ion-button *ngIf="queryDeRecetas == undefined" (click)="handleClick()">¡Buscar recetas!</ion-button>
+  <ion-button *ngIf="queryDeRecetas != undefined" (click)="blanquearRecetas()">borrar búsqueda</ion-button>
+</ion-content>
+

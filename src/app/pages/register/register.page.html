@@ -43,7 +43,8 @@
       <div class="form-wrapper">
         <ion-item [class.error]="emailError">
           <ion-label position="floating">Email</ion-label>
-          <ion-input type="email" [(ngModel)]="email"></ion-input>
+          <ion-input type="email readonly" [(ngModel)]="mail"></ion-input>
+
         </ion-item>
         <p class="error-text" *ngIf="emailError">{{ emailError }}</p>
 

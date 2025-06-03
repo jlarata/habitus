@@ -1,7 +1,12 @@
 import { Component } from '@angular/core';
 import { SpoonacularService } from '../services/spoonacular.service';
-import { QueryDeRecetas } from '../models/recetas';
+import { QueryDeRecetaForDisplay, QueryDeRecetas } from '../models/recetas';
+import { UserParaRecetas } from '../models/user.model';
 import { UsersService } from '../services/users.service';
+import { AuthService } from 'src/app/services/auth.service';
+import { ToastController } from '@ionic/angular';
+
+
 
 
 @Component({
@@ -11,39 +16,175 @@ import { UsersService } from '../services/users.service';
   standalone: false,
 })
 
+
 export class RecetasPage {
 
-  queryDeRecetas?: QueryDeRecetas;
-  
-  onButtonClicked(queryDeRecetas: QueryDeRecetas) {
-    this.queryDeRecetas = queryDeRecetas
-    console.log(queryDeRecetas.totalResults+' resultados encontrados')
+  queryDeRecetas?: QueryDeRecetas = undefined;
 
+  //para una visualización interactiva de los ingredientes.
+  recetaConIngredientes?: number;
+
+  //variables para mostrar las instrucciones de una receta
+  isShowingMore: boolean = false;
+
+  queryDeRecetaForDisplay?: QueryDeRecetaForDisplay;
+  imagenEnDisplay?: string;
+  busquedaDesplegada?: boolean = false;
+
+  userConRecetas: UserParaRecetas = {
+    mail: '',
+    vegetariano: false,
+    vegano: false,
+    celiaco: false,
+    recetas_favoritas: [],
+    calendar_event: {}
   }
 
-  public blanquearRecetas() {
-    this.queryDeRecetas = undefined;
-  }
+  IDReceta: string = '';
+  recetasFavoritas: any;
 
   constructor(
     public spoonacular: SpoonacularService,
-    public usersService : UsersService
-  ) {}
+    public usersService: UsersService,
+    private auth: AuthService,
+    private userService: UsersService,
+    private toastCtrl: ToastController
+  ) { }
 
-  ngOnInit() {
-  // esto era para probar nomás this.usersService.obtenerUsuarios();
+
+  async ngOnInit() {
+    this.userConRecetas = await this.loadUserProfile()
+    console.log('el usuario tiene ', this.userConRecetas.recetas_favoritas?.length, ' recetas favoritas.')
+    if (this.userConRecetas.recetas_favoritas?.length != 0) {
+      this.recetasFavoritas = this.buscarRecetasFavoritas(this.userConRecetas)
+    }
   }
-  
-  buscarPorId = (id: number) => {
+
+  /**
+   * @function toggleRecipeSteps un toggle booleano que el DOM usa para mostrar unas instrucciones y ocultar todo lo demás
+   * y viceversa
+   */
+  toggleRecipeSteps = () => {
+    this.isShowingMore = !this.isShowingMore
+  }
+
+  /**
+   * @function onButtonClicked esta funcion está bindeada al subcomponente buscador
+   * se entera cuando se hizo click en el botón dentro de ese componente y recibe una variable 
+   * emitida por ese componente (queryDeRecetas)
+   * @param queryDeRecetas 
+   */
+  onButtonClicked(queryDeRecetas: QueryDeRecetas) {
+    this.busquedaDesplegada = true;
+    this.queryDeRecetas = queryDeRecetas
+    //test console.log(queryDeRecetas.totalResults + ' resultados encontrados')
+
+  }
+
+  async loadUserProfile(): Promise<UserParaRecetas> {
+    try {
+      // Obtener el usuario autenticado desde Firebase
+      const userFirebase = this.auth.getCurrentUser();
+      //obtener los datos de firestore usando el usuario de firebase
+      const user = await this.userService.obtenerPerfilUsuario(userFirebase!.email!);
+
+      //construyo un profile con los datos y lo devuelvo
+      // btw creo que este paso es al pedo. podiamos retornar el user
+
+      let userConRecetas = {
+        mail: user?.mail,
+        vegetariano: user?.vegetariano,
+        celiaco: user?.celiaco,
+        vegano: user?.vegano,
+        recetas_favoritas: user?.recetas_favoritas,
+        calendar_event: user?.calendar_event
+      };
+
+      return userConRecetas!
+
+    } catch (error) {
+      console.error("Error al obtener los datos del usuario:", error);
+      this.showToast("Error al obtener los datos del usuario: " + error);
+
+      return this.userConRecetas
+    }
+  }
+
+  buscarRecetasFavoritas = (userConRecetas: UserParaRecetas) => {
+
+    let recetas: any = []
+
+    for (let i = 0; i < userConRecetas.recetas_favoritas!.length; i++) {
+      console.log('buscando receta ID N° ', userConRecetas.recetas_favoritas![i])
+      this.spoonacular.obtenerRecetaSimplePorID(userConRecetas.recetas_favoritas![i])
+        .subscribe(
+          (data: any) => {
+            recetas.push(data)
+          },
+          (error) => { console.log(error); }
+        )
+    }
+
+  console.log('resultado final: ', recetas)
+  return recetas
+}
+
+
+  /**
+   * @function buscarPorId pide al servicio que le pegue de nuevo a la API esta vez con información
+   * detallada específica para la receta en cuestión
+   * @param id la id de la receta (el dom la conoce desde la primera query)
+   * @param image como esta nueva query por id no incluye imagen, el DOM se la manda así se puede 
+   * usar en la card que se despliega. 
+   */
+  buscarPorId = (id: number, image: string) => {
+    this.imagenEnDisplay = image;
     this.spoonacular.obtenerRecetaPasoAPasoPorID(id.toString())
-    .subscribe(
-        (data) => {
-          console.log(data)
+      .subscribe(
+        (data: any) => {
+          this.queryDeRecetaForDisplay = data[0]!;
+          //console.log(data)
+          this.isShowingMore = !this.isShowingMore;
+
         },
         (error) => { console.log(error); }
       )
   }
 
+
+  /**
+ * @function muestraIngredientes cambia una variable para que el DOM renderice una ventana
+ * @param receta es un INDEX de la lista de recetas de la query. el DOM sabe cual es y lo envía
+ */
+  muestraIngredientes = (receta: number) => {
+    this.recetaConIngredientes = receta
+  }
+
+  ocultaIngredientes = () => {
+    this.recetaConIngredientes = undefined;
+  }
+
+  /**
+* @function blanquearRecetas limpia la query, el DOM deja de mostrar las cards.
+*/
+  public blanquearRecetas() {
+    this.queryDeRecetas = undefined;
+    this.busquedaDesplegada = !this.busquedaDesplegada;
+  }
+
+  /**
+*mostrar alerta dtos guardados o error 
+*
+* @param {string} message
+*/
+  async showToast(message: string) {
+    const toast = await this.toastCtrl.create({
+      message,
+      duration: 3000,
+      position: 'top'
+    });
+    toast.present();
+  }
 }
 
 

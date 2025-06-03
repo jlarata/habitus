@@ -101,12 +101,14 @@ ion-content {
 .half-width input {
   width: 100%;
 }
+
 ion-input{
   --border-color: #CE93D8; /* Cambia el color del borde */
   --highlight-color-focused: #7B1FA2; /* Cambia el color del borde al enfocar */
 }
 
-  .input-title {
+.input-title {
+
   font-weight: bold;
   color: #7B1FA2;
   margin: 8px 0 4px 0; 
@@ -123,6 +125,7 @@ ion-input{
   margin-top: -10px;
   margin-bottom: 10px;
 }
+
 /*estilos para los radios sexo y actividad fisica*/
 .radio-group {
   display: flex;
@@ -197,7 +200,8 @@ ion-radio {
 
 .select-item {
   flex: 1; /* Para que ambos ocupen el mismo espacio */
-   min-width: 150px; /* Ancho mínimo para cada select */
+  min-width: 150px; /* Ancho mínimo para cada select */
+
 }
 
 .no-border {
@@ -211,8 +215,10 @@ ion-select {
   --placeholder-color: #7B1FA2;
   --color: #000; 
   font-size: 14px;
-   text-align: left;
-   margin:0;
+  text-align: left;
+  margin:0;
+  
+
 }
 
 ion-select::part(text) {
@@ -220,11 +226,10 @@ ion-select::part(text) {
   overflow: visible;
   text-overflow: unset;
   display: block;
+  
 }
 
-ion-select-option {
-  color: #000;
-}
+
 
 
 /*estilo para boton "guardar cambios"*/

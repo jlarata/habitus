@@ -76,3 +76,42 @@
   --background: rgba(243, 229, 245, 0.9); /* Fondo semitransparente */
   color: #3a0053; /* Color del texto */
 }
+
+//perfil
+//color del texto
+.alert-radio-label.sc-ion-alert-md {
+  color: #7B1FA2 !important;
+  font-size: 16px !important;
+}
+
+.alert-radio-inner.sc-ion-alert-md {
+  background-color: #e65b89 !important; /* Color del círculo de selección */
+}
+
+/* Botón de Cancelar */
+.alert-button-role-cancel {
+  background-color: transparent !important;
+  color: #E91E63 !important; /* Color del texto */
+  font-weight: bold;
+  border: 2px solid #E91E63 !important; /* Borde del botón */
+  border-radius: 8px !important;
+  padding: 8px 16px !important;
+}
+
+/* Botón de Confirmar (OK) */
+.alert-button.sc-ion-alert-md {
+  background-color: #E91E63 !important; /* Fondo del botón */
+  color: white !important; /* Color del texto */
+  font-weight: bold;
+  border-radius: 8px !important;
+  padding: 8px 16px !important;
+}
+
+/* Efecto de ripple en los botones */
+//efecto al presionar
+ion-ripple-effect.sc-ion-alert-md {
+  background-color: rgba(233, 30, 99, 0.3) !important;
+}
+
+//fin ion select
+

@@ -1,7 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { LoadingController, ToastController } from '@ionic/angular';
-import { UserProfile } from 'src/app/models/userProfile.model';
+import { User } from 'src/app/models/user.model';
+import { AuthService } from 'src/app/services/auth.service';
+import { UsersService } from 'src/app/services/users.service';
 import { ValidationUtils } from 'src/app/utils/validation';
+import { EventDay } from "../../models/calendar.model";
+
 
 
 @Component({
@@ -12,59 +16,62 @@ import { ValidationUtils } from 'src/app/utils/validation';
 })
 export class ProfilePage implements OnInit {
 
- userData = {
-  uid: '',
-  email: '',
-  name: '',
-  lastName: '',
-  dateBirth: '',
-   biologicalSex:'',
-  weight: 0,
-  heigth: 0,
-  age: 0,
-  levelBaja: false,
-  levelMedia: false,
-  levelAlta: false,
-  levelActivity: ''
-};
+  usuario: User = {
+    UID: '',
+    nombre: '',
+    apellido: '',
+    calendar_event: {},
+    celiaco: false,
+    fecha_de_nacimiento: '',
+    sexo: '',
+    mail: '',
+    vegano: false,
+    vegetariano: false,
+    peso: 0,
+    altura: 0,
+    edad: 0,
+    hace_actividad_fisica_regular: '',
+    recetas_favoritas: [],
+    events_array: [],
+  }
 
+  loading: HTMLIonLoadingElement | null = null;
 
   dateError:string= "";
-  loading: HTMLIonLoadingElement | null = null;
-  currentUser: any | null = null;//para suscribirse a observable authservice
   emailError: string= "";
+  nombreError: string = '';
+  
+  //array tipo nuber 121 elementos genera valores de 30 hasta 150
+  pesos: number[] = Array.from({ length: 121 }, (_, i) => i + 30); // 30 - 150 kg
+  //array tipo nuber 121 elementos genera valores de 100  hasta 200
+  alturas: number[] = Array.from({ length: 101 }, (_, i) => i + 100); // 100 - 200 cm
+
+
 
   constructor(
     private toastCtrl: ToastController,
-    private loadingCtrl: LoadingController
+    private loadingCtrl: LoadingController,
+    private auth:AuthService,
+    private userService:UsersService,
   ) 
-  { }
+  {}
 
-  ngOnInit() {
-    this.userData = {
-      uid: '',
-      email: 'juana@example.com',
-      name: 'juana',
-      lastName: "",
-      dateBirth: "", 
-      biologicalSex: '',
-      weight: 60,   // Peso en kg (opcional)
-      heigth: 170,  // Altura en cm (opcional)
-      age: 25, //calculado desde la fecha de nacimiento//aun no implementado
-      levelBaja: true,
-      levelMedia: false,
-      levelAlta: false,
-      levelActivity: 'baja'
-    };
+  async ngOnInit() {
+   this.usuario = await this.loadUserProfile();
+   console.log("Datos del usuario cargados:", this.usuario);
   }
 
-  /**
-   *metodo temporal solo muestra por consolo los datos guardados
-   *
-   * @memberof ProfilePage
-   */
+
   async guardarPerfil() {
-    this.dateError = "";
+
+    // validar fecha y calcular edad
+    this.validateDate();
+
+    if (this.dateError) { // si error en fecha, detener guardado
+      this.showToast("Corrige la fecha antes de guardar.");
+      return;
+    }
+
 
     this.loading = await this.loadingCtrl.create({
         message: 'Guardando datos...',
@@ -73,88 +80,57 @@ export class ProfilePage implements OnInit {
 
     await this.loading.present();
 
+    const nueva_data_de_usuario = {
+      nombre: this.usuario?.nombre,
+      apellido:this.usuario?.apellido,
+      peso: this.usuario?.peso, 
+      altura: this.usuario?.altura, 
+      sexo: this.usuario?.sexo || '',
+      hace_actividad_fisica_regular: this.usuario?.hace_actividad_fisica_regular,
+    }
+
     console.log('Perfil guardado:', 
-    { 
-      nombre: this.userData?.name,
-      apellido:this.userData?.lastName,
-      peso: this.userData?.weight, 
-      altura: this.userData?.heigth, 
-     sexo: this.userData?.biologicalSex || '',
-      actividadFisica: this.userData?.levelActivity,
-      fechaNacimiento: this.userData?.dateBirth
-    });
+    nueva_data_de_usuario);
 
+    this.userService.actualizarUsuario(this.usuario.mail!, nueva_data_de_usuario)
+    console.log("datos guardados!: " + this.usuario);
     this.showToast('Datos guardados!');
-
+    
     //Ocultar loading después de completar el ""guardado""
     await this.loading.dismiss();
   }
-  /**
-   *
-   * @return {*}  {string}
-   * @memberof ProfilePage
-   */
-  getCustomFormattedDate(): string {
-    const fecha = new Date();
-    return new Intl.DateTimeFormat('es-ES', { year: 'numeric', month: '2-digit', day: '2-digit' }).format(fecha);
-  }
-
+ 
   validateDate(){
-    
 
-    if (!this.userData?.dateBirth) {
-      this.dateError = "Ingrese una fecha válida.";
+    if (!this.usuario?.fecha_de_nacimiento) {
+      //no lanzo error por que no es obligatoria la fecha
+      this.usuario.fecha_de_nacimiento = "";
       return;
     }
 
-    if (!ValidationUtils.isValidDate(this.userData.dateBirth)) {
-      this.dateError = "Formato inválido. Ejemplo: 15/02/98";
+    if (!ValidationUtils.isValidDate(this.usuario.fecha_de_nacimiento)) {
+      this.dateError = "Formato o fecha inválida. Ejemplo: 15/02/1998";
       return;
     }
+
+    //si esta todo ok calculamos edad
+    this.usuario.edad = ValidationUtils.calculateAge(this.usuario.fecha_de_nacimiento);
+
 
     this.dateError = "";
 
   }
 
- validateEmail(){
-    
-    if (!this.userData?.email) {
-      this.emailError = "Por favor complete el campo.";
-      return;
-    }
-
-    if (!ValidationUtils.isValidEmail(this.userData.email)) {
-      this.emailError = "Por favor complete el campo con un email válido.";
-      return;
-    }
-
-    this.emailError = "";
-
-  }
-
-  apellidoError: string = '';
-  validateApellido() {
-    if (!this.userData?.lastName) {
-      this.apellidoError = "Por favor complete el campo";
-      return;
-    }
-
-    if (this.userData.lastName.length < 3) {
-      this.apellidoError = "campo vacio.";
-      return;
-    }
-
-    this.apellidoError = "";
-  }
-
-nombreError: string = '';
+  //elimine validaciones apellido para que sea opcional
   validateNombre() {
-    if (!this.userData?.name) {
+    if (!this.usuario?.nombre) {
+
       this.nombreError = "Por favor complete el campo";
       return;
     }
 
-    if (this.userData.name.length < 3) {
+    if (this.usuario.nombre.length < 3) {
+
       this.nombreError = "Campo Vacío.";
       return;
     }
@@ -162,6 +138,12 @@ nombreError: string = '';
     this.nombreError = "";
   }
 
+  /**
+   *mostrar alerta dtos guardados o error 
+   *
+   * @param {string} message
+   * @memberof ProfilePage
+   */
 
   async showToast(message: string) {
     const toast = await this.toastCtrl.create({
@@ -172,14 +154,53 @@ nombreError: string = '';
     toast.present();
   }
 
-  pesos: number[] = Array.from({ length: 121 }, (_, i) => i + 30); // 30 - 150 kg
-alturas: number[] = Array.from({ length: 101 }, (_, i) => i + 100); // 100 - 200 cm
+  /**
+  *recupera apartir del email los datos de usuario
+  *almacenados en firestore
+  *usado en oninit de esta clase
+  * @return {*} 
+  * @memberof ProfilePage
+  */
+  async loadUserProfile():Promise<User> {
+    try {
+      // Obtener el usuario autenticado desde Firebase
+      const userFirebase = this.auth.getCurrentUser();
+      //obtener los datos de firestore usando el usuario de firebase
+      const user = await this.userService.obtenerPerfilUsuario(userFirebase!.email!);
 
-  //falta:
-  ///-metodo calcular edad desde fecha de nacimiento( en utils?)
-  //- metodo guardo en firebase,
-  //- obtener el user firebase y mostrar el email que es lo que tenemos
+      //construyo un profile con los datos y lo devuelvo
+      // btw creo que este paso es al pedo. podiamos retornar el user
+      
+      let currentProfile = {
+        UID: user?.UID || "",
+        mail: user?.mail || "",
+        vegetariano: user?.vegetariano,
+        nombre: user?.nombre ||"",
+        apellido: user?.apellido || "",
+        fecha_de_nacimiento: user?.fecha_de_nacimiento || undefined, 
+        sexo:user?.sexo || '',
+        celiaco: user?.celiaco,
+        vegano: user?.vegano,
+        peso: user?.peso || 0,
+        //weight: user?.weight || 0,   // Peso en kg (opcional)
+        altura: user?.altura || 0,  // Altura en cm (opcional)
+        edad: user?.edad || 0, //calculado desde la fecha de nacimiento//aun no implementado
+        hace_actividad_fisica_regular: user?.hace_actividad_fisica_regular,
+        recetas_favoritas: user?.recetas_favoritas,
+        calendar_event: user?.calendar_event,
+        events_array: user?.events_array
+      };
 
+      console.log('usuario cargado en el método: ',currentProfile)
+      return currentProfile!
+
+    } catch (error) {
+      console.error("Error al obtener los datos del usuario:", error);
+      this.showToast("Error al obtener los datos del usuario: " + error);
+      
+      return this.usuario
+    }
+  }
 
 
 }
