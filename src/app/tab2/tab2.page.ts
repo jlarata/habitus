@@ -86,11 +86,13 @@ export class Tab2Page implements AfterViewInit {
 
       // Obtener los datos desde Firestore directamente
       const user = await this.userService.obtenerPerfilUsuario(userFirebase!.email!);
-
+      //! -> le digo a TS que la variable nunca será null ni undefined, omite comprobacion
       console.log(user!)
       this.eventsArr = user!.events_array
       //console.log("Datos del usuario autenticado: ", userFirebase!.email)
-      //console.log("Datos del usuario cargados:", user);
+      console.log("Datos del usuario cargados:", user);
+
+      console.log("array eventos: ", this.eventsArr);
 
       console.log("al final de ngonInit el eventsArray tiene ", this.eventsArr.length, " tareas")
     } catch (error) {
@@ -378,7 +380,8 @@ export class Tab2Page implements AfterViewInit {
           </div>`;
     }
     this.eventsContainer.innerHTML = events;
-    this.saveEvents();
+    //no se si deberiaguardarlo en esta instancia
+    //this.saveEvents();
   }
 
   // Función que maneja la entrada del campo de hora.
@@ -488,6 +491,9 @@ export class Tab2Page implements AfterViewInit {
       activeDayEl.classList.add("event");  // Si no tiene la clase "event", se la agrega.
       // sirve para marcar visualmente en el calendario que ese día tiene al menos un evento
     }
+
+    //guardar en db?
+    this.saveEvents();
   }
 
   // Función para eliminar un evento al hacer clic en él
