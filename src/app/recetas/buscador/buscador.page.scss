@@ -1,32 +1,92 @@
+/* Fondo rosa claro en todo el contenido */
+.busqueda-content {
+  background: #F3E5F5;
+  min-height: 100vh;
+  padding: 16px;
+}
+
+/* Contenedor de filtros con checkboxes */
+.filtros-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Texto negro para las etiquetas de checkboxes */
+ion-checkbox::part(label) {
+  color: #000 !important;
+  font-weight: 500;
+}
+
+/* Centrar botones de acción */
+.botones-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+/* Estilo bonito al mensaje inicial */
+.mensaje-card {
+  background: #dba7f1;
+  border-radius: 10px;
+  padding: 16px;
+  text-align: center;
+  color: #000;
+  box-shadow: none;
+}
+
+
+/* === GLOBAL ESTILOS === */
+ion-content {
+  --background: #F3E5F5 !important;
+  background: #F3E5F5 !important;
+  background-image: none !important;
+  height: 100%;
+  min-height: 100vh;
+}
+
+/* === CHECKBOX estilos === */
+.checkbox-group {
+  display: flex;
+  flex-direction: row;
+  gap: 16px; /* espacio entre checkboxes */
+  flex-wrap: wrap; /* se acomodan si no hay espacio horizontal */
+  align-items: center;
+  justify-content: center; /* opcional: centrado en la pantalla */
+  margin-top: 16px;
+}
+
+ion-checkbox::part(label) {
+  color: #000;
+  font-weight: 500;
+}
+
 ion-checkbox {
-  --size: 32px;
-  --checkbox-background-checked: #6815ec;
+  --background: #fff; /* Fondo blanco para el checkbox */
+  --color: #000; /* Color del texto del checkbox */
+  --border-color: #dbcfed; /* Color del borde del checkbox */
+  --border-radius: 6px; /* Bordes redondeados */
+  --checkbox-background-checked: #f8c0f0; 
 }
 
 ion-checkbox::part(container) {
   border-radius: 6px;
-  border: 2px solid #6815ec;
+  border: 2px solid #dbcfed;
+  transition: all 0.3s ease;
 }
 
+
+
+.leftPageArrow,
 .rightPageArrow {
-  font-size: 64px;
-  color: rgba(0, 0, 0, 0.500);
-  background-color: rgba(255, 255, 255, 0);
+  font-size: 32px;
+  color: rgba(0, 0, 0, 0.5);
+  background-color: transparent;
 }
 
-.leftPageArrow {
-  font-size: 64px;
-  color: rgba(0, 0, 0, 0.500);
-  background-color: rgba(255, 255, 255, 0);
-}
 
-.rightPageArrowButton {
-  font-size: 64px;
-}
-
-.leftPageArrowButton {
-  font-size: 64px;
-}
 
 .paginationButtons {
   position: fixed;
@@ -34,13 +94,54 @@ ion-checkbox::part(container) {
   z-index: 10;
   display: flex;
   flex-direction: row;
-  //border: solid black 1px;
-  width: 99vw;
+  width: 100vw;
   justify-content: space-between;
-  
-  background-color: rgba($color: #ffffff00, $alpha: 0.0)
+  padding: 0 16px;
+  background-color: transparent;
 }
 
+
 .pagesButtons {
-  border: solid black 1px
+  display: flex;
+  justify-content: center;
+  margin-top: 12px;
+}
+
+.pagesButtons ion-button {
+  --background: #E91E63; /* Color de fondo del botón */
+  --color: rgb(0, 0, 0);
+  --border-radius: 10px;
+  --padding-start: 16px;
+  --padding-end: 16px;
+  --font-weight: bold;
+}
+
+
+
+ion-button {
+  --background: #E91E63;;
+  --color: white;
+  --border-radius: 10px;
+  --box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  --margin-top: 10px;
+  --transition: background-color 0.2s ease;
+  
+}
+
+ion-button:hover {
+  --background: #b92355;
+}
+
+
+
+ion-button[color="danger"] {
+  --background: #e57373;
+  --color: white;
+}
+
+ion-button[color="danger"]:hover {
+  --background: #d32f2f;
+}
+ion-label {
+  color: #000; 
 }
