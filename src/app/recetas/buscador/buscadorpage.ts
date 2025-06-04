@@ -39,11 +39,7 @@ export class BuscadorPage {
 
   constructor(public spoonacular: SpoonacularService,
   ) { }
-  ngOnInit() {
-    //le saco lo automático al método / this.ionViewDidLoad()
-  }
 
-  //private ionViewDidLoad() {
   buscarRecetas = () => {
 
     this.spoonacular.obtenerRecetasConInformacion(this.vegetarianIsChecked, this.glutenFreeIsChecked, this.veganIsChecked)
@@ -54,7 +50,7 @@ export class BuscadorPage {
           this.recetasPagesNumber = CalculationUtils.calcularPaginas(this.queryDeRecetas.totalResults!)
           this.busquedaDesplegada = !this.busquedaDesplegada
 
-          //para testear console.log(this.queryDeRecetas.results),
+          console.log(this.queryDeRecetas),
           this.queryDeRecetasChange.emit(this.queryDeRecetas)
         },
         (error) => { console.log(error); }
@@ -79,7 +75,7 @@ export class BuscadorPage {
     this.spoonacular.obtenerVariasRecetasPorID(recetasFavoritas!)
       .subscribe(
         (data: any) => {
-          //debug: console.log(data)
+          console.log(data)
           if (this.queryDeRecetas == undefined) {
             this.queryDeRecetas = new QueryDeRecetas;
           }
