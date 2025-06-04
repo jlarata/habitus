@@ -377,7 +377,7 @@ export class RecetasPage {
     pasos: Step[]
   ) {
     // formato para los ingredientes
-    const ingredientesContent = ingredientes.map(ing => `• ${ing.original}`);
+    const ingredientesContent = ingredientes.map(ing => `• ${ing.name}`);
 
     // formato para el paso a paso
     const pasosContent = pasos.map(step => `${step.number}. ${step.step}`);
