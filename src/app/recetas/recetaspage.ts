@@ -253,6 +253,7 @@ export class RecetasPage {
       
       this.showToast("Error al eliminar la receta de favoritos.");
     }
+    
   }
 
 }
