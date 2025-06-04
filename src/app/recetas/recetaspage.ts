@@ -55,9 +55,10 @@ export class RecetasPage {
   async ngOnInit() {
     this.userConRecetas = await this.loadUserProfile()
     console.log('el usuario tiene ', this.userConRecetas.recetas_favoritas?.length, ' recetas favoritas.')
-    if (this.userConRecetas.recetas_favoritas?.length != 0) {
+    /* comento esto porque no lo queremos automático. además con el nuevo método seguro lo cambiemos.
+     if (this.userConRecetas.recetas_favoritas?.length != 0) {
       this.recetasFavoritas = this.buscarRecetasFavoritas(this.userConRecetas)
-    }
+    } */
   }
 
   /**
@@ -185,25 +186,25 @@ export class RecetasPage {
     });
     toast.present();
   }
-    
+
   //bueno recibo el id como number pero lo convierto a string 
   //por que el array de favoritos es tipo string
   async agregarARecetasFavoritas(recetaID: number) {
-    
+
     // validar si receta ya está en favoritos
-    let idReceta:string = recetaID.toString();
+    let idReceta: string = recetaID.toString();
 
     if (this.userConRecetas.recetas_favoritas!.includes(idReceta)) {
       this.showToast("La receta ya está en favoritos.");
       return;
     }
 
-     this.userConRecetas.recetas_favoritas!.push(idReceta);
-    
+    this.userConRecetas.recetas_favoritas!.push(idReceta);
+
     //guardamos en firestore
     try {
-  
-      let idsRecetas  = {
+
+      let idsRecetas = {
         recetas_favoritas: this.userConRecetas.recetas_favoritas
       }
 
@@ -223,9 +224,9 @@ export class RecetasPage {
   }
 
   async eliminarDeRecetasFavoritas(recetaID: number) {
-    
+
     // validar si receta ya está en favoritos
-    let idReceta:string = recetaID.toString();
+    let idReceta: string = recetaID.toString();
 
     // valido por si no se esta guardando en firestore
     if (!this.userConRecetas.recetas_favoritas!.includes(idReceta)) {
@@ -235,10 +236,10 @@ export class RecetasPage {
 
     // filtramos y guardamos todas los IDs de recetas menos la que vamos a eliminar
     this.userConRecetas.recetas_favoritas = this.userConRecetas.recetas_favoritas!.filter(id => id !== idReceta);
-    
+
     //guardamos en firestore
     try {
-      let idsRecetas  = {
+      let idsRecetas = {
         recetas_favoritas: this.userConRecetas.recetas_favoritas
       }
 
@@ -252,7 +253,7 @@ export class RecetasPage {
 
     } catch (error) {
       console.error("Error al eliminar de favoritos:", error);
-      
+
       this.showToast("Error al eliminar la receta de favoritos.");
     }
 

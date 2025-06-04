@@ -89,17 +89,17 @@ export class Tab2Page implements AfterViewInit {
       // Obtener los datos desde Firestore directamente
       const user = await this.userService.obtenerPerfilUsuario(userFirebase!.email!);
       //! -> le digo a TS que la variable nunca será null ni undefined, omite comprobacion
-      console.log(user!)
+      //debug: console.log(user!)
       this.eventsArr = user!.events_array!
-      //console.log("Datos del usuario autenticado: ", userFirebase!.email)
-      console.log("Datos del usuario cargados:", user);
+      //debug: console.log("Datos del usuario autenticado: ", userFirebase!.email)
+      //debug: console.log("Datos del usuario cargados:", user);
 
-      console.log("array eventos: ", this.eventsArr);
+      //debug: console.log("array eventos: ", this.eventsArr);
 
       // ir a Hoy luego de obtener el array 
       this.goToday();
 
-      console.log("al final de ngonInit el eventsArray tiene ", this.eventsArr.length, " tareas")
+      //debug: console.log("al final de ngonInit el eventsArray tiene ", this.eventsArr.length, " tareas")
     } catch (error) {
 
       console.error("Error al obtener los datos del usuario:", error);
@@ -165,7 +165,7 @@ export class Tab2Page implements AfterViewInit {
     // elimina un evento
     this.eventsContainer.addEventListener("click", (e: MouseEvent) => this.onDeleteEvent(e));
 
-    console.log("al final de afterviewinit el eventsArray tiene ", this.eventsArr.length, " tareas")
+    //console.log("al final de afterviewinit el eventsArray tiene ", this.eventsArr.length, " tareas")
 
     this.goToday();
     
