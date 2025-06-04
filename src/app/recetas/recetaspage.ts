@@ -196,13 +196,16 @@ export class RecetasPage {
       return;
     }
 
-    this.userConRecetas.recetas_favoritas!.push(idReceta);
+     this.userConRecetas.recetas_favoritas!.push(idReceta);
     
     //guardamos en firestore
     try {
-      await this.userService.actualizarUsuario(this.userConRecetas.mail!, {
+  
+      let idsRecetas  = {
         recetas_favoritas: this.userConRecetas.recetas_favoritas
-      });
+      }
+
+      await this.userService.actualizarUsuario(this.userConRecetas.mail!, idsRecetas);
 
       this.showToast("Receta agregada a favoritos.");
       console.log("recetas favoritas actualizadas:", this.userConRecetas.recetas_favoritas);
@@ -233,9 +236,11 @@ export class RecetasPage {
     
     //guardamos en firestore
     try {
-      await this.userService.actualizarUsuario(this.userConRecetas.mail!, {
+      let idsRecetas  = {
         recetas_favoritas: this.userConRecetas.recetas_favoritas
-      });
+      }
+
+      await this.userService.actualizarUsuario(this.userConRecetas.mail!, idsRecetas);
 
       this.showToast("Receta eliminada de favoritos.");
       console.log("recetas favoritas actualizadas:", this.userConRecetas.recetas_favoritas);
