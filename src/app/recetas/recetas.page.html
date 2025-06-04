@@ -63,7 +63,7 @@
 <!--   en test: recetas favoritas  
  -->
   <div *ngIf="recetasFavoritas?.length != 0" class="divDeRecetas">
-    <h1>Recetas Favoritas: {{ recetasFavoritas?.length +1}}</h1>
+    <h1>Recetas Favoritas: {{ userConRecetas.recetas_favoritas!.length +1}}</h1>
     
     <ion-card-content *ngFor=" let receta of recetasFavoritas">
       <ion-card>
