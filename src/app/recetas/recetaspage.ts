@@ -113,9 +113,9 @@ export class RecetasPage {
 
   buscarRecetasFavoritas = (userConRecetas: UserParaRecetas) => {
 
-    let recetas: any = []
+    let recetas = this.spoonacular.obtenerVariasRecetasPorID(userConRecetas.recetas_favoritas!) 
 
-    for (let i = 0; i < userConRecetas.recetas_favoritas!.length; i++) {
+    /* for (let i = 0; i < userConRecetas.recetas_favoritas!.length; i++) {
       console.log('buscando receta ID N° ', userConRecetas.recetas_favoritas![i])
       this.spoonacular.obtenerRecetaSimplePorID(userConRecetas.recetas_favoritas![i])
         .subscribe(
@@ -124,7 +124,7 @@ export class RecetasPage {
           },
           (error) => { console.log(error); }
         )
-    }
+    } */
 
     console.log('resultado final: ', recetas)
     return recetas
