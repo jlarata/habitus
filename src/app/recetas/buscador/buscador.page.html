@@ -15,7 +15,8 @@
   <ion-button *ngIf="queryDeRecetas != undefined" (click)="blanquearRecetas()">borrar búsqueda</ion-button>
 </div> -->
     <ion-button class="AAA" *ngIf="queryDeRecetas == undefined" (click)="handleClick()">¡Buscar recetas!</ion-button>
-    <ion-button class="AAA" *ngIf="queryDeRecetas != undefined" (click)="blanquearRecetas()">Borrar recetas</ion-button>
+    <ion-button class="AAA" *ngIf="queryDeRecetas != undefined" (click)="blanquearRecetas()">Borrar búsqueda</ion-button>
+    <ion-button class="AAA" *ngIf="queryDeRecetas == undefined" (click)="buscaFavoritas(recetasFavoritas!)">Ver Recetas Favoritas</ion-button>
   </ion-buttons>
 </ion-content>
 

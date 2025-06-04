@@ -1,7 +1,7 @@
 
 <ion-content>
 
-  <app-buscador [(busquedaDesplegada)]="busquedaDesplegada" [(queryDeRecetas)]="queryDeRecetas"></app-buscador>
+  <app-buscador [(busquedaDesplegada)]="busquedaDesplegada" [(queryDeRecetas)]="queryDeRecetas" [recetasFavoritas]="userConRecetas.recetas_favoritas!"></app-buscador>
 
   <!-- el componente card que se despliega cuando pedís las instrucciones -->
   <ion-card-content *ngIf="isShowingMore">
@@ -63,7 +63,7 @@
 <!--   en test: recetas favoritas  
  -->
   <div *ngIf="userConRecetas.recetas_favoritas?.length != 0" class="divDeRecetas">
-    <h1>Recetas Favoritas: {{ userConRecetas.recetas_favoritas!.length +1}}</h1>
+    <h1>Recetas Favoritas: {{ userConRecetas.recetas_favoritas!.length}}</h1>
     
     <ion-card-content *ngFor=" let receta of recetasFavoritas">
       <ion-card>
