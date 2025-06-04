@@ -41,6 +41,8 @@ export class RecetasPage {
   IDReceta: string = '';
   recetasFavoritas: any;
 
+  mostrarAgendarReceta: boolean = false;
+
   constructor(
     public spoonacular: SpoonacularService,
     public usersService: UsersService,
@@ -253,7 +255,16 @@ export class RecetasPage {
       
       this.showToast("Error al eliminar la receta de favoritos.");
     }
-    
+
+  }
+
+  ///agendar la receta
+  //por ahora solo guarda favoritos-- ni eso tengo que pensar como pasarle lo que necesita
+  //para agendar la receta como evento
+  async agendarReceta() {
+
+    //this.agregarARecetasFavoritas(recetaID);
+
   }
 
 }
