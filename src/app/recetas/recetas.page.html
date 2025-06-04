@@ -1,10 +1,7 @@
 
 <ion-content>
-  <div class="title">
-    <h2>Recetas. Faltó ganas!</h2>
-  </div>
 
-  <app-buscador [(busquedaDesplegada)]="busquedaDesplegada" (buttonClicked)="onButtonClicked($event)"></app-buscador>
+  <app-buscador [(busquedaDesplegada)]="busquedaDesplegada" [(queryDeRecetas)]="queryDeRecetas"></app-buscador>
 
   <!-- el componente card que se despliega cuando pedís las instrucciones -->
   <ion-card-content *ngIf="isShowingMore">
@@ -61,7 +58,7 @@
     </ion-card-content>
   </div>
 
-  <ion-button *ngIf="queryDeRecetas != undefined" (click)="blanquearRecetas()">borrar búsqueda</ion-button>
+  <ion-button class="AAA" *ngIf="queryDeRecetas != undefined" (click)="blanquearRecetas()">borrar búsqueda</ion-button>
 
 <!--   en test: recetas favoritas  
  -->

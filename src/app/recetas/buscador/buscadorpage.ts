@@ -12,11 +12,12 @@ import { QueryDeRecetas } from '../../models/recetas';
 export class BuscadorPage {
 
   @Input() busquedaDesplegada?: boolean;
+  @Input() queryDeRecetas?: QueryDeRecetas;
+
   public vegetarianIsChecked = false;
   public glutenFreeIsChecked = false;
   public veganIsChecked = false;
-  queryDeRecetas?: QueryDeRecetas;
-
+  
   //busquedaDesplegada = false;
 
 
@@ -25,7 +26,8 @@ export class BuscadorPage {
   recetasPagesNumber?: number;
   currentPage = 1;
 
-  @Output() buttonClicked = new EventEmitter<QueryDeRecetas>();
+  //@Output() buttonClicked = new EventEmitter<QueryDeRecetas>();
+  @Output() queryDeRecetasChange = new EventEmitter<QueryDeRecetas>();
   @Output() busquedaDesplegadaChange = new EventEmitter<boolean>
 
 
@@ -52,7 +54,7 @@ export class BuscadorPage {
           this.busquedaDesplegada = !this.busquedaDesplegada
 
             //para testear console.log(this.queryDeRecetas.results),
-            this.buttonClicked.emit(this.queryDeRecetas)
+            this.queryDeRecetasChange.emit(this.queryDeRecetas)
         },
         (error) => { console.log(error); }
       )
@@ -65,7 +67,7 @@ export class BuscadorPage {
     this.queryDeRecetas = undefined;
     this.busquedaDesplegada = !this.busquedaDesplegada;
     this.busquedaDesplegadaChange.emit(!this.busquedaDesplegada)
-    this.buttonClicked.emit(this.queryDeRecetas)
+    this.queryDeRecetasChange.emit(this.queryDeRecetas)
     }
 
   calcularPaginas = (totalResults:number) => {
