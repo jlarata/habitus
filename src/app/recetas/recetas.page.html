@@ -6,13 +6,41 @@
 
   <app-buscador [(busquedaDesplegada)]="busquedaDesplegada" (buttonClicked)="onButtonClicked($event)"></app-buscador>
 
+  <ion-card-content *ngIf="isShowingMore">
+  <ion-card class="recetaEnDisplay">
+    <ion-card-header>
+      <ion-card-title>{{recetaSeleccionadaTitulo}}</ion-card-title>
+      <img alt="foto de receta" [src]="recetaSeleccionadaImagen">
+      <ion-card-subtitle>Instrucciones detalladas</ion-card-subtitle>
+    </ion-card-header>
+
+    <ion-list>
+      <ion-list-header>Ingredientes:</ion-list-header>
+      <ion-item *ngFor="let ingredient of recetaSeleccionadaIngredientes">
+        {{ingredient.original}}
+      </ion-item>
+    </ion-list>
+
+    <ion-list>
+      <ion-list-header>Paso a paso:</ion-list-header>
+      <ion-item *ngFor="let step of recetaSeleccionadaPasos">
+        {{step.number}}. {{step.step}}
+      </ion-item>
+    </ion-list>
+
+    <ion-button (click)="toggleRecipeSteps()">Volver</ion-button>
+  </ion-card>
+</ion-card-content>
+
+
+
   <!-- el componente card que se despliega cuando pedís las instrucciones -->
   <ion-card-content *ngIf="isShowingMore">
     <ion-card class="recetaEnDisplay">
       <ion-card-header>
         <ion-card-title>titulo</ion-card-title>
         <img alt="foto de receta" src="{{imagenEnDisplay}}">
-      
+
         <ion-card-subtitle>subtitulo</ion-card-subtitle>
 
 
@@ -54,17 +82,20 @@
         <ion-button (click)="buscarPorId(receta.id!, receta.image!)">Instrucciones paso a paso</ion-button>
         <ion-button (click)="agregarARecetasFavoritas(receta.id!)">Agregar a Favoritos 😍</ion-button>
         <ion-button (click)="mostrarAgendarReceta = true">Agendar Receta</ion-button>
+        <ion-button (click)="cargarDetallesReceta(receta.id!, receta.title!, receta.missedIngredients!)">
+          Descargar en PDF
+        </ion-button>
       </ion-card>
     </ion-card-content>
   </div>
 
   <ion-button *ngIf="queryDeRecetas != undefined" (click)="blanquearRecetas()">borrar búsqueda</ion-button>
 
-<!--   en test: recetas favoritas  
+<!--   en test: recetas favoritas
  -->
   <div *ngIf="recetasFavoritas?.length != 0" class="divDeRecetas">
     <h1>Recetas Favoritas: {{ recetasFavoritas?.length +1}}</h1>
-    
+
     <ion-card-content *ngFor=" let receta of recetasFavoritas">
       <ion-card>
         <ion-card-header>
@@ -86,6 +117,9 @@
           (click)="ocultaIngredientes()">Ocultar ingredientes</ion-button>
         <ion-button (click)="buscarPorId(receta.id!, receta.image!)">Instrucciones paso a paso</ion-button>
         <ion-button (click)="eliminarDeRecetasFavoritas(receta.id!)">Eliminar de favoritas🚮</ion-button>
+
+
+
       </ion-card>
     </ion-card-content>
   </div>
