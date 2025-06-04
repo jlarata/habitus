@@ -202,3 +202,15 @@ h1{
     padding: 10px;
   }
 }
+
+.calendarioContainer {
+  //lo puse asi para ver todo el calendario si no veia parcialmente
+  //hay que arreglarlo
+  position: absolute;
+  top: 70%;
+  left: 50%;
+  //position: fixed;
+  //top: 50%;
+  //left: 50%;
+  transform: translate(-50%, -50%);
+}

@@ -5,6 +5,7 @@ import { UserParaRecetas } from '../models/user.model';
 import { UsersService } from '../services/users.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { ToastController } from '@ionic/angular';
+import { CalendarEvent, EventDay } from '../models/calendar.model';
 
 
 @Component({
@@ -38,10 +39,15 @@ export class RecetasPage {
     calendar_event: {}
   }
 
-  IDReceta: string = '';
+  IDReceta: string = '';//esto lo puse yo? no veo que lo usemos
+
   recetasFavoritas: any;
 
   mostrarAgendarReceta: boolean = false;
+  //para agendar receta
+  horaEventoReceta:string = "";
+  fechaEventoReceta: string = '';
+  recetaParaAgendar:any;
 
   constructor(
     public spoonacular: SpoonacularService,
@@ -259,12 +265,58 @@ export class RecetasPage {
 
   }
 
+  ///obtener la receta de la card
+  // y poner en true mostrar agendar receta
+  abrirAgendarReceta(receta: any) {
+    this.recetaParaAgendar = receta;
+    this.fechaEventoReceta = new Date().toISOString(); // hoy como string
+    this.horaEventoReceta = '12:00'; // como para que se abra en una hora
+    this.mostrarAgendarReceta = true;
+
+    console.log("receta a agendar: " + this.recetaParaAgendar );
+    
+  }
+
+
   ///agendar la receta
   //por ahora solo guarda favoritos-- ni eso tengo que pensar como pasarle lo que necesita
   //para agendar la receta como evento
   async agendarReceta() {
+    //verificamos que selecciono fecha y hora
+    if (!this.fechaEventoReceta || !this.horaEventoReceta) {
+      this.showToast('Por favor selecciona fecha y hora');
+      return;
+    }
 
-    //this.agregarARecetasFavoritas(recetaID);
+    console.log("Fecha evento receta: ", this.fechaEventoReceta);
+    console.log("Hora evento receta: ", this.horaEventoReceta);
+
+     // Creamos el evento
+    const nuevoEvento: CalendarEvent = {
+      title: this.recetaParaAgendar.title,
+      time: this.horaEventoReceta
+    };
+
+    //pasamos la feha a date 
+    const fecha = new Date(this.fechaEventoReceta);
+
+    // Creamos dia del evento
+    const eventDay: EventDay = {
+      day: fecha.getDate(),
+      month: fecha.getMonth() + 1,
+      year: fecha.getFullYear(),
+      events: [nuevoEvento]
+    };
+
+    console.log("eventoReceta: ", eventDay);
+    
+
+    //agregamos receta a favoritos
+    this.agregarARecetasFavoritas(this.recetaParaAgendar?.id);
+
+    this.showToast('¡Receta agendada con éxito!');
+    this.mostrarAgendarReceta = false;
+
 
   }
 
