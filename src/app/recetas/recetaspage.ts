@@ -9,9 +9,10 @@ import * as pdfMake from 'pdfmake/build/pdfmake';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 import { TDocumentDefinitions, Content, ContentImage, Margins, ContentText, ContentUnorderedList, ContentOrderedList } from 'pdfmake/interfaces';
 
-
 // @ts-ignore
-pdfMake.vfs = pdfFonts.vfs; // para evitar problemas con la vercion de pdfmaker
+pdfMake.vfs = pdfFonts.vfs; // para evitar problemas con la versión de pdfmaker
+
+import { CalendarEvent, EventDay } from '../models/calendar.model';
 
 
 @Component({
@@ -45,10 +46,15 @@ export class RecetasPage {
     calendar_event: {}
   }
 
-  IDReceta: string = '';
+  IDReceta: string = '';//esto lo puse yo? no veo que lo usemos
+
   recetasFavoritas: any;
 
   mostrarAgendarReceta: boolean = false;
+  //para agendar receta
+  horaEventoReceta:string = "";
+  fechaEventoReceta: string = '';
+  recetaParaAgendar:any;
 
   //variables para guardar la información de la receta seleccionada
   recetaSeleccionadaTitulo?: string;
@@ -68,9 +74,10 @@ export class RecetasPage {
   async ngOnInit() {
     this.userConRecetas = await this.loadUserProfile()
     console.log('el usuario tiene ', this.userConRecetas.recetas_favoritas?.length, ' recetas favoritas.')
-    if (this.userConRecetas.recetas_favoritas?.length != 0) {
+    /* comento esto porque no lo queremos automático. además con el nuevo método seguro lo cambiemos.
+     if (this.userConRecetas.recetas_favoritas?.length != 0) {
       this.recetasFavoritas = this.buscarRecetasFavoritas(this.userConRecetas)
-    }
+    } */
   }
 
   /**
@@ -125,9 +132,9 @@ export class RecetasPage {
 
   buscarRecetasFavoritas = (userConRecetas: UserParaRecetas) => {
 
-    let recetas: any = []
+    let recetas = this.spoonacular.obtenerVariasRecetasPorID(userConRecetas.recetas_favoritas!) 
 
-    for (let i = 0; i < userConRecetas.recetas_favoritas!.length; i++) {
+    /* for (let i = 0; i < userConRecetas.recetas_favoritas!.length; i++) {
       console.log('buscando receta ID N° ', userConRecetas.recetas_favoritas![i])
       this.spoonacular.obtenerRecetaSimplePorID(userConRecetas.recetas_favoritas![i])
         .subscribe(
@@ -136,7 +143,7 @@ export class RecetasPage {
           },
           (error) => { console.log(error); }
         )
-    }
+    } */
 
     console.log('resultado final: ', recetas)
     return recetas
@@ -204,7 +211,7 @@ export class RecetasPage {
   async agregarARecetasFavoritas(recetaID: number) {
 
     // validar si receta ya está en favoritos
-    let idReceta:string = recetaID.toString();
+    let idReceta: string = recetaID.toString();
 
     if (this.userConRecetas.recetas_favoritas!.includes(idReceta)) {
       this.showToast("La receta ya está en favoritos.");
@@ -238,7 +245,7 @@ export class RecetasPage {
   async eliminarDeRecetasFavoritas(recetaID: number) {
 
     // validar si receta ya está en favoritos
-    let idReceta:string = recetaID.toString();
+    let idReceta: string = recetaID.toString();
 
     // valido por si no se esta guardando en firestore
     if (!this.userConRecetas.recetas_favoritas!.includes(idReceta)) {
@@ -251,7 +258,7 @@ export class RecetasPage {
 
     //guardamos en firestore
     try {
-      let idsRecetas  = {
+      let idsRecetas = {
         recetas_favoritas: this.userConRecetas.recetas_favoritas
       }
 
@@ -271,12 +278,58 @@ export class RecetasPage {
 
   }
 
+  ///obtener la receta de la card
+  // y poner en true mostrar agendar receta
+  abrirAgendarReceta(receta: any) {
+    this.recetaParaAgendar = receta;
+    this.fechaEventoReceta = new Date().toISOString(); // hoy como string
+    this.horaEventoReceta = '12:00'; // como para que se abra en una hora
+    this.mostrarAgendarReceta = true;
+
+    console.log("receta a agendar: " + this.recetaParaAgendar );
+    
+  }
+
+
   ///agendar la receta
   //por ahora solo guarda favoritos-- ni eso tengo que pensar como pasarle lo que necesita
   //para agendar la receta como evento
   async agendarReceta() {
+    //verificamos que selecciono fecha y hora
+    if (!this.fechaEventoReceta || !this.horaEventoReceta) {
+      this.showToast('Por favor selecciona fecha y hora');
+      return;
+    }
 
-    //this.agregarARecetasFavoritas(recetaID);
+    console.log("Fecha evento receta: ", this.fechaEventoReceta);
+    console.log("Hora evento receta: ", this.horaEventoReceta);
+
+     // Creamos el evento
+    const nuevoEvento: CalendarEvent = {
+      title: this.recetaParaAgendar.title,
+      time: this.horaEventoReceta
+    };
+
+    //pasamos la feha a date 
+    const fecha = new Date(this.fechaEventoReceta);
+
+    // Creamos dia del evento
+    const eventDay: EventDay = {
+      day: fecha.getDate(),
+      month: fecha.getMonth() + 1,
+      year: fecha.getFullYear(),
+      events: [nuevoEvento]
+    };
+
+    console.log("eventoReceta: ", eventDay);
+    
+
+    //agregamos receta a favoritos
+    this.agregarARecetasFavoritas(this.recetaParaAgendar?.id);
+
+    this.showToast('¡Receta agendada con éxito!');
+    this.mostrarAgendarReceta = false;
+
 
   }
 

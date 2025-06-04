@@ -1,9 +1,12 @@
 /* Fondo rosa claro en todo el contenido */
 .busqueda-content {
   background: #F3E5F5;
-  min-height: 100vh;
+  /* min-height: 350px;
+  height: 350px; */
   padding: 16px;
+  /* top: 35px; */
 }
+
 
 /* Contenedor de filtros con checkboxes */
 .filtros-container {
@@ -43,9 +46,21 @@ ion-content {
   --background: #F3E5F5 !important;
   background: #F3E5F5 !important;
   background-image: none !important;
-  height: 100%;
-  min-height: 100vh;
+  height: 40vh;
+  min-height: auto;
+  top: 7vh;
 }
+
+ion-buttons {
+  --background: #F3E5F5 !important;
+  background: #F3E5F5 !important;
+  background-image: none !important;
+  height: auto;
+  min-height: 25vh;
+  /* top: 40vh; */
+}
+
+
 
 /* === CHECKBOX estilos === */
 .checkbox-group {
@@ -144,4 +159,14 @@ ion-button[color="danger"]:hover {
 }
 ion-label {
   color: #000; 
+}
+
+.AAA {
+  --background: #E91E63;;
+  --color: white;
+  --border-radius: 10px;
+  --box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  --margin-top: 10px;
+  --transition: background-color 0.2s ease;
+  
 }
