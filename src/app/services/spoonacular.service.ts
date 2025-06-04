@@ -100,13 +100,19 @@ export class SpoonacularService {
 
   public obtenerRecetaSimplePorID(ID: string) {
     const url = `https://api.spoonacular.com/recipes/${ID}/information?apiKey=` + environment.spoonacularTest.apiKey
-    
+    return this.http.get(url
+      ,
+      { headers: this.headers }
+    )
+  }
 
+  public obtenerVariasRecetasPorID(ID: string[]) {
+
+    const url = `https://api.spoonacular.com/recipes/informationBulk?ids=${ID.join()}?apiKey=` + environment.spoonacularTest.apiKey
     return this.http.get(url
       ,
       { headers: this.headers }
     )
 
   }
-
 }
