@@ -51,15 +51,16 @@
         <ion-button *ngIf="queryDeRecetas?.results?.indexOf(receta) == recetaConIngredientes"
           (click)="ocultaIngredientes()">Ocultar ingredientes</ion-button>
         <ion-button (click)="buscarPorId(receta.id!, receta.image!)">Instrucciones paso a paso</ion-button>
+        <ion-button (click)="agregarARecetasFavoritas(receta.id!)">Agregar a Favoritos 😍</ion-button>
       </ion-card>
     </ion-card-content>
   </div>
 
   <ion-button *ngIf="queryDeRecetas != undefined" (click)="blanquearRecetas()">borrar búsqueda</ion-button>
 
-<!--   en test: recetas favoritas
+<!--   en test: recetas favoritas  
  -->
-  <!-- <div *ngIf="recetasFavoritas?.length != 0" class="divDeRecetas">
+  <div *ngIf="recetasFavoritas?.length != 0" class="divDeRecetas">
     <h1>Recetas Favoritas: {{ recetasFavoritas?.length +1}}</h1>
     
     <ion-card-content *ngFor=" let receta of recetasFavoritas">
@@ -82,9 +83,10 @@
         <ion-button *ngIf="queryDeRecetas?.results?.indexOf(receta) == recetaConIngredientes"
           (click)="ocultaIngredientes()">Ocultar ingredientes</ion-button>
         <ion-button (click)="buscarPorId(receta.id!, receta.image!)">Instrucciones paso a paso</ion-button>
+        <ion-button (click)="eliminarDeRecetasFavoritas(receta.id!)">Eliminar de favoritas🚮</ion-button>
       </ion-card>
     </ion-card-content>
-  </div> -->
+  </div>
 
 
 

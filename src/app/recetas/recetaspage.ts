@@ -123,9 +123,9 @@ export class RecetasPage {
         )
     }
 
-  console.log('resultado final: ', recetas)
-  return recetas
-}
+    console.log('resultado final: ', recetas)
+    return recetas
+  }
 
 
   /**
@@ -151,9 +151,9 @@ export class RecetasPage {
 
 
   /**
- * @function muestraIngredientes cambia una variable para que el DOM renderice una ventana
- * @param receta es un INDEX de la lista de recetas de la query. el DOM sabe cual es y lo envía
- */
+   * @function muestraIngredientes cambia una variable para que el DOM renderice una ventana
+   * @param receta es un INDEX de la lista de recetas de la query. el DOM sabe cual es y lo envía
+  */
   muestraIngredientes = (receta: number) => {
     this.recetaConIngredientes = receta
   }
@@ -163,18 +163,18 @@ export class RecetasPage {
   }
 
   /**
-* @function blanquearRecetas limpia la query, el DOM deja de mostrar las cards.
-*/
+  * @function blanquearRecetas limpia la query, el DOM deja de mostrar las cards.
+  */
   public blanquearRecetas() {
     this.queryDeRecetas = undefined;
     this.busquedaDesplegada = !this.busquedaDesplegada;
   }
 
   /**
-*mostrar alerta dtos guardados o error 
-*
-* @param {string} message
-*/
+  *mostrar alerta dtos guardados o error 
+  *
+  * @param {string} message
+  */
   async showToast(message: string) {
     const toast = await this.toastCtrl.create({
       message,
@@ -183,6 +183,73 @@ export class RecetasPage {
     });
     toast.present();
   }
+    
+  //bueno recibo el id como number pero lo convierto a string 
+  //por que el array de favoritos es tipo string
+  async agregarARecetasFavoritas(recetaID: number) {
+    
+    // validar si receta ya está en favoritos
+    let idReceta:string = recetaID.toString();
+
+    if (this.userConRecetas.recetas_favoritas!.includes(idReceta)) {
+      this.showToast("La receta ya está en favoritos.");
+      return;
+    }
+
+    this.userConRecetas.recetas_favoritas!.push(idReceta);
+    
+    //guardamos en firestore
+    try {
+      await this.userService.actualizarUsuario(this.userConRecetas.mail!, {
+        recetas_favoritas: this.userConRecetas.recetas_favoritas
+      });
+
+      this.showToast("Receta agregada a favoritos.");
+      console.log("recetas favoritas actualizadas:", this.userConRecetas.recetas_favoritas);
+
+      //actualizar en memoria
+      this.recetasFavoritas = this.buscarRecetasFavoritas(this.userConRecetas)
+
+    } catch (error) {
+      console.error("Error al guardar favoritos:", error);
+
+      this.showToast("Error al agregar la receta a favoritos.");
+    }
+  }
+
+  async eliminarDeRecetasFavoritas(recetaID: number) {
+    
+    // validar si receta ya está en favoritos
+    let idReceta:string = recetaID.toString();
+
+    // valido por si no se esta guardando en firestore
+    if (!this.userConRecetas.recetas_favoritas!.includes(idReceta)) {
+      this.showToast("Esta receta no está en favoritos.");
+      return;
+    }
+
+    // filtramos y guardamos todas los IDs de recetas menos la que vamos a eliminar
+    this.userConRecetas.recetas_favoritas = this.userConRecetas.recetas_favoritas!.filter(id => id !== idReceta);
+    
+    //guardamos en firestore
+    try {
+      await this.userService.actualizarUsuario(this.userConRecetas.mail!, {
+        recetas_favoritas: this.userConRecetas.recetas_favoritas
+      });
+
+      this.showToast("Receta eliminada de favoritos.");
+      console.log("recetas favoritas actualizadas:", this.userConRecetas.recetas_favoritas);
+
+      //actualizar en memoria
+      this.recetasFavoritas = this.buscarRecetasFavoritas(this.userConRecetas)
+
+    } catch (error) {
+      console.error("Error al eliminar de favoritos:", error);
+      
+      this.showToast("Error al eliminar la receta de favoritos.");
+    }
+  }
+
 }
 
 
