@@ -45,13 +45,10 @@ export class RecetasPage {
     recetas_favoritas: [],
     events_array: []
   }
-
-  IDReceta: string = '';//esto lo puse yo? no veo que lo usemos
-
   recetasFavoritas: any;
 
-  mostrarAgendarReceta: boolean = false;
   //para agendar receta
+  mostrarAgendarReceta: boolean = false;
   horaEventoReceta: string = "";
   fechaEventoReceta: string = '';
   recetaParaAgendar: any;
@@ -70,13 +67,18 @@ export class RecetasPage {
     private toastCtrl: ToastController,
     public platform: Platform
   ) {
+    //se suscribe al evento y cada ves que cambia eventos recarga el perfil usuario
     this.userService.eventos$.subscribe(eventos => {
       this.userConRecetas.events_array = eventos; 
       this.loadUserProfile();
     });
   }
 
-
+  /**
+   *al iniciar componente carga el perfil de usuario
+   *
+   * @memberof RecetasPage
+   */
   async ngOnInit() {
     this.userConRecetas = await this.loadUserProfile()
     //debug: console.log('el usuario tiene ', this.userConRecetas.recetas_favoritas?.length, ' recetas favoritas.')
@@ -104,41 +106,47 @@ export class RecetasPage {
   }
 
   
-/**
- *Obtener user desde firestore
- *
- * @return {*}  {Promise<UserParaRecetas>}
- * @memberof RecetasPage
- */
-async loadUserProfile(): Promise<UserParaRecetas> {
-    try {
-      // Obtener el usuario autenticado desde Firebase
-      const userFirebase = this.auth.getCurrentUser();
-      //obtener los datos de firestore usando el usuario de firebase
-      const user = await this.userService.obtenerPerfilUsuario(userFirebase!.email!);
+  /**
+   *Obtener user desde firestore
+  *
+  * @return {*}  {Promise<UserParaRecetas>}
+  * @memberof RecetasPage
+  */
+  async loadUserProfile(): Promise<UserParaRecetas> {
+      try {
+        // Obtener el usuario autenticado desde Firebase
+        const userFirebase = this.auth.getCurrentUser();
+        //obtener los datos de firestore usando el usuario de firebase
+        const user = await this.userService.obtenerPerfilUsuario(userFirebase!.email!);
 
-      //construyo un profile con los datos y lo devuelvo
-      // btw creo que este paso es al pedo. podiamos retornar el user
+        //construyo un profile con los datos y lo devuelvo
+        // btw creo que este paso es al pedo. podiamos retornar el user
 
-      let userConRecetas = {
-        mail: user?.mail,
-        vegetariano: user?.vegetariano,
-        celiaco: user?.celiaco,
-        vegano: user?.vegano,
-        recetas_favoritas: user?.recetas_favoritas,
-        events_array: user?.events_array
-      };
+        let userConRecetas = {
+          mail: user?.mail,
+          vegetariano: user?.vegetariano,
+          celiaco: user?.celiaco,
+          vegano: user?.vegano,
+          recetas_favoritas: user?.recetas_favoritas,
+          events_array: user?.events_array
+        };
 
-      return userConRecetas!
+        return userConRecetas!
 
-    } catch (error) {
-      console.error("Error al obtener los datos del usuario:", error);
-      this.showToast("Error al obtener los datos del usuario: " + error);
+      } catch (error) {
+        console.error("Error al obtener los datos del usuario:", error);
+        this.showToast("Error al obtener los datos del usuario: " + error);
 
-      return this.userConRecetas
-    }
+        return this.userConRecetas
+      }
   }
-
+  
+  /**
+   *obtiene las recetas en una busqueda por id del array de favoritos del usuario
+   *este metodo de busqueda acepta una lista de ids
+   * @param {UserParaRecetas} userConRecetas
+   * @memberof RecetasPage
+   */
   buscarRecetasFavoritas = (userConRecetas: UserParaRecetas) => {
 
     let recetas = this.spoonacular.obtenerVariasRecetasPorID(userConRecetas.recetas_favoritas!)
@@ -188,7 +196,12 @@ async loadUserProfile(): Promise<UserParaRecetas> {
   muestraIngredientes = (receta: number) => {
     this.recetaConIngredientes = receta
   }
-
+  
+  /**
+   *oculta los ingredientes
+   *
+   * @memberof RecetasPage
+   */
   ocultaIngredientes = () => {
     this.recetaConIngredientes = undefined;
   }
@@ -215,8 +228,16 @@ async loadUserProfile(): Promise<UserParaRecetas> {
     toast.present();
   }
 
-  //bueno recibo el id como number pero lo convierto a string
+  //recibo el id como number pero lo convierto a string
   //por que el array de favoritos es tipo string
+  /**
+   *obtengo el id de la receta y lo almaceno en firestore 
+   y actualiza la vista de favoritos del usuario
+   *
+   * @param {number} recetaID
+   * @return {*} 
+   * @memberof RecetasPage
+   */
   async agregarARecetasFavoritas(recetaID: number) {
 
     // validar si receta ya está en favoritos
@@ -242,7 +263,7 @@ async loadUserProfile(): Promise<UserParaRecetas> {
       console.log("recetas favoritas actualizadas:", this.userConRecetas.recetas_favoritas);
 
       //actualizar en memoria
-      this.recetasFavoritas = this.buscarRecetasFavoritas(this.userConRecetas)
+      //this.recetasFavoritas = this.buscarRecetasFavoritas(this.userConRecetas)
 
     } catch (error) {
       console.error("Error al guardar favoritos:", error);
@@ -250,7 +271,15 @@ async loadUserProfile(): Promise<UserParaRecetas> {
       this.showToast("Error al agregar la receta a favoritos.");
     }
   }
-
+  
+  /**
+   *obtengo id de receta y filtro todas las recetas menos el id enviado
+   *actualizo favoritos en firestore y vista
+   *
+   * @param {number} recetaID
+   * @return {*} 
+   * @memberof RecetasPage
+   */
   async eliminarDeRecetasFavoritas(recetaID: number) {
 
     // validar si receta ya está en favoritos
@@ -289,6 +318,14 @@ async loadUserProfile(): Promise<UserParaRecetas> {
 
   ///obtener la receta de la card
   // y poner en true mostrar agendar receta
+  /**
+   *obtengo la receta 
+   para agendar evento en calendario
+   *receta, fecha,hora y pongo en 
+   *true mostrar agendar que muestra el form para agendar receta
+   * @param {*} receta
+   * @memberof RecetasPage
+   */
   abrirAgendarReceta(receta: any) {
     this.recetaParaAgendar = receta;
     this.fechaEventoReceta = new Date().toISOString(); // hoy como string
@@ -301,8 +338,12 @@ async loadUserProfile(): Promise<UserParaRecetas> {
 
 
   ///agendar la receta
-  //por ahora solo guarda favoritos-- ni eso tengo que pensar como pasarle lo que necesita
-  //para agendar la receta como evento
+  /**
+   *valida si feche y hora no esta vacio, construye el objeto evento 
+   *guarda en el array y envia a firestore
+   * @return {*} 
+   * @memberof RecetasPage
+   */
   async agendarReceta() {
     //verificamos que selecciono fecha y hora
     if (!this.fechaEventoReceta || !this.horaEventoReceta) {
@@ -346,6 +387,7 @@ async loadUserProfile(): Promise<UserParaRecetas> {
   }
 
   // Guarda los eventos en firestore
+  //y agrega a favoritos
   async saveEvents() {
 
     try {
@@ -367,7 +409,14 @@ async loadUserProfile(): Promise<UserParaRecetas> {
 
   }
 
-
+  /**
+   *Recopila la data de la receta para generar el pdf
+   *
+   * @param {number} id
+   * @param {string} titulo
+   * @param {Ingredientes[]} ingredientes
+   * @memberof RecetasPage
+   */
   async cargarDetallesReceta(
     id: number,
     titulo: string,
@@ -405,7 +454,15 @@ async loadUserProfile(): Promise<UserParaRecetas> {
       this.showToast('Error al cargar las instrucciones o generar el PDF de la receta.');
     }
   }
-
+  
+  /**
+   *Metodo que genera el pdf 
+   *
+   * @param {string} titulo
+   * @param {Ingredientes[]} ingredientes
+   * @param {Step[]} pasos
+   * @memberof RecetasPage
+   */
   async generarPdf(
     titulo: string,
     ingredientes: Ingredientes[],
