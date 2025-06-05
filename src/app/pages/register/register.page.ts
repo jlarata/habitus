@@ -53,10 +53,9 @@ export class RegisterPage  {
         const userCredential = await this.authService.register(this.mail, this.password);
         ///obtener uid 
         let uid = userCredential.user.uid;
-        let mail = userCredential.user.mail;
+        let mail = userCredential.user.email;
         //log prueba
-        console.log("UID:", uid);
-        console.log("mail:", mail);
+        //console.log("iniciando usuario en database con, UID: ", uid, " y mail: ", mail);
         
         ///envio data adicional a firebase
         this.userService.crearDataUsuario(mail//,uid          

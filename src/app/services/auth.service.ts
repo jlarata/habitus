@@ -8,7 +8,6 @@ import { environment } from '../../environments/environment'
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import firebase from 'firebase/compat/app';
 import { UsersService } from './users.service';
-import { User } from '../models/user.model';
 
 
 
@@ -133,7 +132,7 @@ export class AuthService {
     //TODO ESTO ES la versión manual del método que quise crear. no funciona. Si nos queda tiempo lo revisamos.
 
     const url = 'https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=' + `${environment.firebase.apiKey}`;
-    console.log(url)
+    //debug: console.log(url)
 
     //cuerpo de la peticion
     const body = {
