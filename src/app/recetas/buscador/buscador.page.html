@@ -1,35 +1,48 @@
-
-  <!-- hipotesis: los ion content por defecto tienden a ocupar una página entera. 
-   tuve que meter mano al style de los ion-content para q no pasen cosas -->
-
-<ion-content
-style="z-index: 999;
-max-height: 25vh;">
-  <ion-buttons *ngIf="busquedaDesplegada == false" style="
-
-  display:flex;
-  flex-direction:column;
-  gap:2px;
-  ">
-    <ion-checkbox [(ngModel)]="vegetarianIsChecked">Solo Vegetarianas</ion-checkbox>
-    <ion-checkbox [(ngModel)]="glutenFreeIsChecked">Solo Gluten Free</ion-checkbox>
-    <ion-checkbox [(ngModel)]="veganIsChecked">Solo Vegan!</ion-checkbox>
-
-  </ion-buttons>
-
-  <ion-buttons *ngIf="queryDeRecetas != undefined" class="pagesButtons">
-    <ion-button>mostrando página 1 de {{recetasPagesNumber}}</ion-button>
-  </ion-buttons>
-
-  <ion-buttons *ngIf="queryDeRecetas != undefined" class="paginationButtons">
-    <ion-button class="leftPageArrowButton"><ion-icon class="leftPageArrow"
-        name="chevron-back-outline"></ion-icon></ion-button>
-
-    <ion-button class="rightPageArrowButton"><ion-icon class="leftPageArrow"
-        name="chevron-forward-outline"></ion-icon></ion-button>
-  </ion-buttons>
-
-    <ion-button *ngIf="queryDeRecetas == undefined" (click)="handleClick()">¡Buscar recetas!</ion-button>
+<ion-content class="busqueda-content">
+  <ion-buttons class="filtros-container">
+    <ion-card class="mensaje-card">
+      <ion-text>
+        <h2>Organizá tus recetas semanales y comé mejor cada día 🍲</h2>
+      </ion-text>
+    </ion-card>
+    <div class="checkbox-group">
+      <ion-checkbox [(ngModel)]="vegetarianIsChecked">Solo Vegetarianas</ion-checkbox>
+      <ion-checkbox [(ngModel)]="glutenFreeIsChecked">Solo Gluten Free</ion-checkbox>
+      <ion-checkbox [(ngModel)]="veganIsChecked">Solo Vegan!</ion-checkbox>
+    </div>
+    <!-- <div class="botones-container">
+  <ion-button *ngIf="queryDeRecetas == undefined" (click)="handleClick()">¡Buscar recetas!</ion-button>
   <ion-button *ngIf="queryDeRecetas != undefined" (click)="blanquearRecetas()">borrar búsqueda</ion-button>
+</div> -->
+    <ion-button class="AAA" *ngIf="queryDeRecetas == undefined" (click)="handleClick()">¡Buscar recetas!</ion-button>
+    <ion-button class="AAA" *ngIf="queryDeRecetas != undefined" (click)="blanquearRecetas()">borrar búsqueda</ion-button>
+    <ion-button class="AAA" *ngIf="queryDeRecetas == undefined" (click)="buscaFavoritas(recetasFavoritas!)">Ver Recetas Favoritas</ion-button>
+  </ion-buttons>
 </ion-content>
 
+<!-- <ion-content *ngIf="busquedaDesplegada == true" class="busqueda-content cierre">
+  <ion-button class="AAA" *ngIf="queryDeRecetas != undefined" (click)="blanquearRecetas()">borrar
+    búsqueda</ion-button>
+</ion-content> -->
+
+
+
+
+
+
+
+
+<!-- en vano avisar cuántas páginas son si no vamos a paginar
+  <ion-buttons *ngIf="queryDeRecetas != undefined" class="pagesButtons">
+    <ion-button>mostrando página 1 de {{recetasPagesNumber}}</ion-button>
+  </ion-buttons> -->
+
+<!-- estas flechas quedan horrible en mobile, me arrepiento de todo
+   <ion-buttons *ngIf="queryDeRecetas != undefined" class="paginationButtons">
+    <ion-button class="leftPageArrowButton">
+      <ion-icon class="leftPageArrow" name="chevron-back-outline"></ion-icon>
+    </ion-button>
+    <ion-button class="rightPageArrowButton">
+      <ion-icon class="leftPageArrow" name="chevron-forward-outline"></ion-icon>
+    </ion-button>
+  </ion-buttons> -->

@@ -55,7 +55,8 @@ export class UserParaRecetas {
     vegano?: boolean;
     celiaco?: boolean;
     recetas_favoritas?: string[];
-    calendar_event?: any; //esto tiene q ser un array de //eventuales objetos
+    //calendar_event?: any; //esto tiene q ser un array de //eventuales objetos
+    events_array?: EventDay[]
 }
 
 //esto era para editar usuario pero claramente los muchachos de FIRESTORAGE no estaban pensando

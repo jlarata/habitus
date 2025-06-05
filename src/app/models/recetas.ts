@@ -3,6 +3,7 @@ export class Ingredientes {
     extendedName?: string;
     image?: string;
     original?: string;
+    name?:string;
 }
 
 export class Receta {
@@ -12,6 +13,7 @@ export class Receta {
     title?: string;
     missedIngredientCount?: number;
     missedIngredients?: Ingredientes[]
+    extendedIngredients?: Ingredientes[]
 }
 
 export class Step {
