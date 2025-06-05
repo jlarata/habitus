@@ -2,7 +2,6 @@
 
   <app-buscador [(busquedaDesplegada)]="busquedaDesplegada" [(queryDeRecetas)]="queryDeRecetas"
     [recetasFavoritas]="userConRecetas.recetas_favoritas!"></app-buscador>
-
   <ion-card-content *ngIf="isShowingMore">
     <ion-card class="recetaEnDisplay">
       <ion-card-header>
@@ -129,8 +128,6 @@
   </div> -->
 
   <!--mostrar solo si se va a agendar receta-->
-  <!--solo template y metodo , falta toda lo demas-->
-  <!--se ve al final de la receta horible , tal vez hay que canbiarlo por un alert-->
   <div class="add-event-wrapper calendarioContainer" *ngIf="mostrarAgendarReceta">
     <div class="add-event-header">
       <div class="title">Agendar Receta</div>

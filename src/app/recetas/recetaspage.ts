@@ -69,7 +69,12 @@ export class RecetasPage {
     private userService: UsersService,
     private toastCtrl: ToastController,
     public platform: Platform
-  ) { }
+  ) {
+    this.userService.eventos$.subscribe(eventos => {
+      this.userConRecetas.events_array = eventos; 
+      this.loadUserProfile();
+    });
+  }
 
 
   async ngOnInit() {
@@ -98,7 +103,14 @@ export class RecetasPage {
 
   }
 
-  async loadUserProfile(): Promise<UserParaRecetas> {
+  
+/**
+ *Obtener user desde firestore
+ *
+ * @return {*}  {Promise<UserParaRecetas>}
+ * @memberof RecetasPage
+ */
+async loadUserProfile(): Promise<UserParaRecetas> {
     try {
       // Obtener el usuario autenticado desde Firebase
       const userFirebase = this.auth.getCurrentUser();
@@ -342,6 +354,10 @@ export class RecetasPage {
       await this.userService.saveEventsArray(userFirebase!.email!, this.userConRecetas.events_array!)
       //agregamos receta a favoritos
       await this.agregarARecetasFavoritas(this.recetaParaAgendar?.id);
+
+      //actualizar en memoria todo el perfil de usuario
+      this.userConRecetas = await this.loadUserProfile();
+      
       this.showToast('¡Receta agendada con éxito!');
     }
     catch (error) {

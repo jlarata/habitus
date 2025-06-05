@@ -1,8 +1,9 @@
-import { Component, AfterViewInit } from '@angular/core';
+import { Component, AfterViewInit, Input } from '@angular/core';
 import { ToastController, AlertController } from '@ionic/angular';
 import { AuthService } from '../services/auth.service';
 import { UsersService } from '../services/users.service';
 import { CalendarEvent, EventDay } from '../models/calendar.model';
+import { Subscription } from 'rxjs';
 
 
 
@@ -26,7 +27,7 @@ export class Tab2Page implements AfterViewInit {
 
   // array que contiene a los eventos del dia
   eventsArr: EventDay[] = [];
-
+  
   // Referencias a elementos del DOM
   calendar!: HTMLElement;
   date!: HTMLElement;
@@ -53,7 +54,11 @@ export class Tab2Page implements AfterViewInit {
     private userService: UsersService,
     private alertCtrl: AlertController
   ) {
-    
+    //// suscribimos a los eventos cada vez que se actualicen en Firestore
+     this.userService.eventos$.subscribe(eventos => {
+      this.eventsArr = eventos;
+      this.updateEvents(this.activeDay);
+    });
   }
 
   /*ngOnInit es una función especial de Angular que se ejecuta siempre que abrís un componente ANTES
@@ -167,7 +172,8 @@ export class Tab2Page implements AfterViewInit {
 
     //console.log("al final de afterviewinit el eventsArray tiene ", this.eventsArr.length, " tareas")
 
-    this.goToday();
+
+    
     
   }
 
@@ -487,7 +493,7 @@ export class Tab2Page implements AfterViewInit {
     this.addEventTo.value = "";
 
     // actualiza la vista de los eventos 
-    this.updateEvents(this.activeDay);
+   // this.updateEvents(this.activeDay);
 
     // Es decir, busca el día del calendario que está actualmente seleccionado.
     // y le añade la clase "event" para marcarlo como un día con eventos.
@@ -560,7 +566,7 @@ export class Tab2Page implements AfterViewInit {
       }
     });
 
-    this.updateEvents(this.activeDay);
+    //this.updateEvents(this.activeDay);
     //guardar en firestore
     this.saveEvents();
   }
