@@ -43,7 +43,7 @@ export class RecetasPage {
     vegano: false,
     celiaco: false,
     recetas_favoritas: [],
-    calendar_event: {}
+    events_array: []
   }
 
   IDReceta: string = '';//esto lo puse yo? no veo que lo usemos
@@ -117,7 +117,7 @@ export class RecetasPage {
         celiaco: user?.celiaco,
         vegano: user?.vegano,
         recetas_favoritas: user?.recetas_favoritas,
-        calendar_event: user?.calendar_event
+        events_array: user?.events_array
       };
 
       return userConRecetas!
@@ -283,7 +283,7 @@ export class RecetasPage {
   abrirAgendarReceta(receta: any) {
     this.recetaParaAgendar = receta;
     this.fechaEventoReceta = new Date().toISOString(); // hoy como string
-    this.horaEventoReceta = '12:00'; // como para que se abra en una hora
+    this.horaEventoReceta = '12:00'; // como para tener una hora
     this.mostrarAgendarReceta = true;
 
     console.log("receta a agendar: " + this.recetaParaAgendar );
@@ -320,16 +320,37 @@ export class RecetasPage {
       year: fecha.getFullYear(),
       events: [nuevoEvento]
     };
-
-    console.log("eventoReceta: ", eventDay);
     
+    console.log("eventoReceta: ", eventDay);
 
-    //agregamos receta a favoritos
-    this.agregarARecetasFavoritas(this.recetaParaAgendar?.id);
+    //agregammos evento al array de eventos
+    this.userConRecetas.events_array?.push(eventDay);
 
-    this.showToast('¡Receta agendada con éxito!');
+    console.log("eventos: ", this.userConRecetas.events_array);
+    
+    //guardamos en firebase y agregamos a favoritos
+    await this.saveEvents();
+
+    //ocultar div de agendar
     this.mostrarAgendarReceta = false;
+    
+  }
 
+  // Guarda los eventos en firestore
+  async saveEvents() {
+
+    try {
+      // Obtener el usuario autenticado desde Firebase
+      const userFirebase = this.auth.getCurrentUser();
+      await this.userService.saveEventsArray(userFirebase!.email!, this.userConRecetas.events_array!)
+      //agregamos receta a favoritos
+      await this.agregarARecetasFavoritas(this.recetaParaAgendar?.id);
+      this.showToast('¡Receta agendada con éxito!');
+    }
+    catch (error) {
+      console.error("Error al guardar los eventos del usuario:", error);
+      this.showToast("Error al guardar los eventos del usuario: " + error);
+    }
 
   }
 
