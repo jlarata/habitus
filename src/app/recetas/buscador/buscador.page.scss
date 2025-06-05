@@ -60,8 +60,6 @@ ion-buttons {
   /* top: 40vh; */
 }
 
-
-
 /* === CHECKBOX estilos === */
 .checkbox-group {
   display: flex;
@@ -161,12 +159,13 @@ ion-label {
   color: #000; 
 }
 
-.AAA {
-  --background: #E91E63;;
+.AAA{
+  --background: #E91E63;
   --color: white;
-  --border-radius: 10px;
+  --border-radius: 25px;
   --box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-  --margin-top: 10px;
-  --transition: background-color 0.2s ease;
-  
+  margin: 20px auto;
+  display: block;
+  width: fit-content;
+  padding: 10px 20px;
 }
