@@ -76,16 +76,19 @@ ion-button {
 ion-button:hover {
   filter: brightness(1.1);
 }
-.AAA {
+
+
+  .AAA {
   --background: #E91E63;
   --color: white;
-  --border-radius: 10px;
+  --border-radius: 25px;
   --box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
   margin: 20px auto;
   display: block;
   width: fit-content;
   padding: 10px 20px;
 }
+
 
 ion-icon[name="heart"],
 ion-icon[name="heart-outline"] {
