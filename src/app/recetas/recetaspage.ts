@@ -274,7 +274,7 @@ async loadUserProfile(): Promise<UserParaRecetas> {
       await this.userService.actualizarUsuario(this.userConRecetas.mail!, idsRecetas);
 
       this.showToast("Receta eliminada de favoritos.");
-      console.log("recetas favoritas actualizadas:", this.userConRecetas.recetas_favoritas);
+      //console.log("recetas favoritas actualizadas:", this.userConRecetas.recetas_favoritas);
 
       //actualizar en memoria
       this.recetasFavoritas = this.buscarRecetasFavoritas(this.userConRecetas)
@@ -295,7 +295,7 @@ async loadUserProfile(): Promise<UserParaRecetas> {
     this.horaEventoReceta = '12:00'; // como para tener una hora
     this.mostrarAgendarReceta = true;
 
-    console.log("receta a agendar: " + this.recetaParaAgendar);
+    //debug: console.log("receta a agendar: " + this.recetaParaAgendar);
 
   }
 
@@ -310,8 +310,8 @@ async loadUserProfile(): Promise<UserParaRecetas> {
       return;
     }
 
-    console.log("Fecha evento receta: ", this.fechaEventoReceta);
-    console.log("Hora evento receta: ", this.horaEventoReceta);
+    //debug: console.log("Fecha evento receta: ", this.fechaEventoReceta);
+    //debug: console.log("Hora evento receta: ", this.horaEventoReceta);
 
     // Creamos el evento
     const nuevoEvento: CalendarEvent = {
@@ -330,12 +330,12 @@ async loadUserProfile(): Promise<UserParaRecetas> {
       events: [nuevoEvento]
     };
 
-    console.log("eventoReceta: ", eventDay);
+    //debug: console.log("eventoReceta: ", eventDay);
 
     //agregammos evento al array de eventos
     this.userConRecetas.events_array?.push(eventDay);
 
-    console.log("eventos: ", this.userConRecetas.events_array);
+    //debug: console.log("eventos: ", this.userConRecetas.events_array);
 
     //guardamos en firebase y agregamos a favoritos
     await this.saveEvents();

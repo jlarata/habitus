@@ -51,8 +51,8 @@ export class SpoonacularService {
  */
   public async guardarRecetaPDF(receta:any, titulo:string) {
     const fileName = titulo+Date.now()+'.pdf';
-    this.showToast('se intentará guardar '+ fileName);
-    this.showToast('el contenido es este base64:'+receta)
+    //this.showToast('se intentará guardar '+ fileName);
+    //this.showToast('el contenido es este base64:'+receta)
     const savedFile = await Filesystem.writeFile({
       path: fileName,
       data: receta,
