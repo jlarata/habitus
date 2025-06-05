@@ -8,6 +8,7 @@ import { ToastController } from '@ionic/angular';
 import * as pdfMake from 'pdfmake/build/pdfmake';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 import { TDocumentDefinitions, Content, ContentImage, Margins, ContentText, ContentUnorderedList, ContentOrderedList } from 'pdfmake/interfaces';
+import { Platform } from '@ionic/angular';
 
 // @ts-ignore
 pdfMake.vfs = pdfFonts.vfs; // para evitar problemas con la versión de pdfmaker
@@ -24,7 +25,6 @@ import { CalendarEvent, EventDay } from '../models/calendar.model';
 
 
 export class RecetasPage {
-
   queryDeRecetas?: QueryDeRecetas = undefined;
 
   //para una visualización interactiva de los ingredientes.
@@ -52,9 +52,9 @@ export class RecetasPage {
 
   mostrarAgendarReceta: boolean = false;
   //para agendar receta
-  horaEventoReceta:string = "";
+  horaEventoReceta: string = "";
   fechaEventoReceta: string = '';
-  recetaParaAgendar:any;
+  recetaParaAgendar: any;
 
   //variables para guardar la información de la receta seleccionada
   recetaSeleccionadaTitulo?: string;
@@ -67,7 +67,8 @@ export class RecetasPage {
     public usersService: UsersService,
     private auth: AuthService,
     private userService: UsersService,
-    private toastCtrl: ToastController
+    private toastCtrl: ToastController,
+    public platform: Platform
   ) { }
 
 
@@ -128,7 +129,7 @@ export class RecetasPage {
 
   buscarRecetasFavoritas = (userConRecetas: UserParaRecetas) => {
 
-    let recetas = this.spoonacular.obtenerVariasRecetasPorID(userConRecetas.recetas_favoritas!) 
+    let recetas = this.spoonacular.obtenerVariasRecetasPorID(userConRecetas.recetas_favoritas!)
 
     /* for (let i = 0; i < userConRecetas.recetas_favoritas!.length; i++) {
       console.log('buscando receta ID N° ', userConRecetas.recetas_favoritas![i])
@@ -214,12 +215,12 @@ export class RecetasPage {
       return;
     }
 
-     this.userConRecetas.recetas_favoritas!.push(idReceta);
+    this.userConRecetas.recetas_favoritas!.push(idReceta);
 
     //guardamos en firestore
     try {
 
-      let idsRecetas  = {
+      let idsRecetas = {
         recetas_favoritas: this.userConRecetas.recetas_favoritas
       }
 
@@ -282,8 +283,8 @@ export class RecetasPage {
     this.horaEventoReceta = '12:00'; // como para tener una hora
     this.mostrarAgendarReceta = true;
 
-    console.log("receta a agendar: " + this.recetaParaAgendar );
-    
+    console.log("receta a agendar: " + this.recetaParaAgendar);
+
   }
 
 
@@ -300,7 +301,7 @@ export class RecetasPage {
     console.log("Fecha evento receta: ", this.fechaEventoReceta);
     console.log("Hora evento receta: ", this.horaEventoReceta);
 
-     // Creamos el evento
+    // Creamos el evento
     const nuevoEvento: CalendarEvent = {
       title: this.recetaParaAgendar.title,
       time: this.horaEventoReceta
@@ -316,7 +317,7 @@ export class RecetasPage {
       year: fecha.getFullYear(),
       events: [nuevoEvento]
     };
-    
+
     console.log("eventoReceta: ", eventDay);
 
     //agregammos evento al array de eventos
@@ -329,7 +330,7 @@ export class RecetasPage {
 
     //ocultar div de agendar
     this.mostrarAgendarReceta = false;
-    
+
   }
 
   // Guarda los eventos en firestore
@@ -360,7 +361,7 @@ export class RecetasPage {
 
     // guardar el titulo en una variable
     this.recetaSeleccionadaTitulo = titulo;
-    
+
     //guardar los ingredientes en una variable
     this.recetaSeleccionadaIngredientes = ingredientes;
 
@@ -400,39 +401,41 @@ export class RecetasPage {
     // formato para el paso a paso
     const pasosContent = pasos.map(step => `${step.number}. ${step.step}`);
 
-const docDefinition: TDocumentDefinitions = {
-  content: [
-    { text: titulo, style: 'header' } as ContentText,
-    { text: 'Ingredientes:', style: 'subheader', margin: [0, 10, 0, 5] } as ContentText,
-    { ul: ingredientesContent } as ContentUnorderedList,
-    { text: 'Instrucciones:', style: 'subheader', margin: [0, 15, 0, 5] } as ContentText,
-    { ol: pasosContent } as ContentOrderedList
-  ],
-  styles: {
-    header: {
-      fontSize: 24,
-      bold: true,
-      margin: [0, 0, 0, 10]
-    },
-    subheader: {
-      fontSize: 18,
-      bold: true,
-      margin: [0, 10, 0, 5]
-    },
+    const docDefinition: TDocumentDefinitions = {
+      content: [
+        { text: titulo, style: 'header' } as ContentText,
+        { text: 'Ingredientes:', style: 'subheader', margin: [0, 10, 0, 5] } as ContentText,
+        { ul: ingredientesContent } as ContentUnorderedList,
+        { text: 'Instrucciones:', style: 'subheader', margin: [0, 15, 0, 5] } as ContentText,
+        { ol: pasosContent } as ContentOrderedList
+      ],
+      styles: {
+        header: {
+          fontSize: 24,
+          bold: true,
+          margin: [0, 0, 0, 10]
+        },
+        subheader: {
+          fontSize: 18,
+          bold: true,
+          margin: [0, 10, 0, 5]
+        },
+      }
+    };
 
+    // crea elpdf
+    let recetaPDF = pdfMake.createPdf(docDefinition)
+
+    //si tiene Cordova o Capacitor
+    if (this.platform.is('hybrid')) {
+      recetaPDF.getBase64((data) => {
+        this.spoonacular.guardarRecetaPDF(data, titulo)
+      })
+    }
+     // si es una compu 
+    else {  
+      recetaPDF.download(`${titulo.replace(/ /g, '_')}_receta.pdf`);
+      this.showToast('PDF generado y descargado!');
+    }
   }
-};
-
-    // crea elpdf y lo descarga
-
-    pdfMake.createPdf(docDefinition).download(`${titulo.replace(/ /g, '_')}_receta.pdf`);
-
-    this.showToast('PDF generado y descargado!');
-  }
-
-
-
 }
-
-
-
