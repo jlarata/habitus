@@ -16,6 +16,7 @@ const db = getFirestore(app)
 
 
 export class UsersService {
+
   //armamos el observable para eventos
   private eventosSource = new BehaviorSubject<EventDay[]>([]);
   eventos$ = this.eventosSource.asObservable();
@@ -28,10 +29,9 @@ export class UsersService {
      *con datos preinicializados del usuario. 
      *usamos email como id de la colleccion
      * @param {string} mail
-     * @param {*} uid //POR AHORA NO LO USAMOS
      * @memberof UsersService
      */
-    public async crearDataUsuario(mail:string//, uid:any POR AHORA SACO ESTO SI NO LO USAMOS
+    public async crearDataUsuario(mail:string
         ) {
         try {
             const nuevoUsuario:User = {
@@ -51,10 +51,7 @@ export class UsersService {
                 events_array: [],
             };
 
-            //pone id random a la colleccion
-            //const docRef = await addDoc(collection(db, "users"),nuevoUsuario);
-
-            //enviamos el email para id de coleccion <- qué era esto? ya no sirve?
+            //enviamos el email para id de coleccion 
             const docRef = await setDoc(doc(db, "users", mail), nuevoUsuario);
 
             console.log("Usuario agregado exitosamente. " + docRef);
@@ -68,7 +65,7 @@ export class UsersService {
 
     /**
      *busca coleccion por id (email) que se le pasa por parametro
-     *retorna promesa datos en forma de la interface User o null si da error
+     *retorna promesa, datos en forma de la interface User o null si da error
      * @param {string} mail
      * @return {*}  {(Promise<User | null>)}
      * @memberof UsersService

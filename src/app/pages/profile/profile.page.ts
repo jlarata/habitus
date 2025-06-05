@@ -5,6 +5,7 @@ import { AuthService } from 'src/app/services/auth.service';
 import { UsersService } from 'src/app/services/users.service';
 import { ValidationUtils } from 'src/app/utils/validation';
 import { EventDay } from "../../models/calendar.model";
+import { CalculationUtils } from 'src/app/utils/calculations';
 
 
 
@@ -20,7 +21,6 @@ export class ProfilePage implements OnInit {
     UID: '',
     nombre: '',
     apellido: '',
-    calendar_event: {},
     celiaco: false,
     fecha_de_nacimiento: '',
     sexo: '',
@@ -30,9 +30,7 @@ export class ProfilePage implements OnInit {
     peso: 0,
     altura: 0,
     edad: 0,
-    hace_actividad_fisica_regular: '',
-    recetas_favoritas: [],
-    events_array: [],
+    hace_actividad_fisica_regular: ''
   }
 
   loading: HTMLIonLoadingElement | null = null;
@@ -55,13 +53,22 @@ export class ProfilePage implements OnInit {
     private userService:UsersService,
   ) 
   {}
-
+  
+  /**
+   *al iniciar carga los datos del usuario
+   *
+   * @memberof ProfilePage
+   */
   async ngOnInit() {
    this.usuario = await this.loadUserProfile();
-   console.log("Datos del usuario cargados:", this.usuario);
   }
 
-
+  /**
+   *Guarda los datos modificados desde el form
+   *
+   * @return {*} 
+   * @memberof ProfilePage
+   */
   async guardarPerfil() {
 
     // validar fecha y calcular edad
@@ -100,6 +107,12 @@ export class ProfilePage implements OnInit {
     await this.loading.dismiss();
   }
  
+  /**
+   *si hay ingreso de fecha valida que sea formato dd/mm/yyyy
+   *si es correcto , calcula la edad , si no lanza mensaje de error
+   * @return {*} 
+   * @memberof ProfilePage
+   */
   validateDate(){
 
     if (!this.usuario?.fecha_de_nacimiento) {
@@ -114,14 +127,20 @@ export class ProfilePage implements OnInit {
     }
 
     //si esta todo ok calculamos edad
-    this.usuario.edad = ValidationUtils.calculateAge(this.usuario.fecha_de_nacimiento);
+    this.usuario.edad = CalculationUtils.calculateAge(this.usuario.fecha_de_nacimiento);
 
 
     this.dateError = "";
 
   }
 
-  //elimine validaciones apellido para que sea opcional
+  
+  /**
+   *Si el usuario clickeo el campo valida que no lo deje vacio 
+   *que la longitud no sea de menos de 3 caracteres
+   * @return {*} 
+   * @memberof ProfilePage
+   */
   validateNombre() {
     if (!this.usuario?.nombre) {
 
@@ -182,13 +201,9 @@ export class ProfilePage implements OnInit {
         celiaco: user?.celiaco,
         vegano: user?.vegano,
         peso: user?.peso || 0,
-        //weight: user?.weight || 0,   // Peso en kg (opcional)
         altura: user?.altura || 0,  // Altura en cm (opcional)
-        edad: user?.edad || 0, //calculado desde la fecha de nacimiento//aun no implementado
+        edad: user?.edad || 0, //calculado desde la fecha de nacimiento
         hace_actividad_fisica_regular: user?.hace_actividad_fisica_regular,
-        recetas_favoritas: user?.recetas_favoritas,
-        calendar_event: user?.calendar_event,
-        events_array: user?.events_array
       };
 
       console.log('usuario cargado en el método: ',currentProfile)

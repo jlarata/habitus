@@ -43,12 +43,12 @@ export class SpoonacularService {
       { headers: this.headers }
     )
   };
-/**
- * 
- * @param receta es un docDefinition, un objeto que crea el pdfmake
- * @param titulo una string para sumar al título del archivo
- * datenow es para asegurar que si se baja dos veces la misma receta, no tenga el mismo nombre de archivo.
- */
+  /**
+   * 
+   * @param receta es un docDefinition, un objeto que crea el pdfmake
+   * @param titulo una string para sumar al título del archivo
+   * datenow es para asegurar que si se baja dos veces la misma receta, no tenga el mismo nombre de archivo.
+   */
   public async guardarRecetaPDF(receta:any, titulo:string) {
     const fileName = titulo+Date.now()+'.pdf';
     this.showToast('se intentará guardar '+ fileName);
@@ -65,7 +65,7 @@ export class SpoonacularService {
   /**
    * @function obtenerRecetasConInformacion
    * @returns el mismo objeto que obtenerRecetas() pero ahora los objetos del array results incluyen data como vegetarian, glutenfree, healthScore, summary
-   */
+  */
   public obtenerRecetasConInformacion(vegetarian?: boolean, glutenFree?: boolean, vegan?: boolean) {
 
     let veg = "";
@@ -137,7 +137,7 @@ export class SpoonacularService {
     )
   }
 
-    /**
+  /**
   *mostrar alerta dtos guardados o error
   *
   * @param {string} message
