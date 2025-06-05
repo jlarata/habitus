@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { SpoonacularService } from '../../services/spoonacular.service';
 import { QueryDeRecetas } from '../../models/recetas';
 import { CalculationUtils } from 'src/app/utils/calculations';
+import { ToastController } from '@ionic/angular';
 
 @Component({
   selector: 'app-buscador',
@@ -38,6 +39,7 @@ export class BuscadorPage {
   }
 
   constructor(public spoonacular: SpoonacularService,
+    private toastCtrl: ToastController
   ) { }
 
   buscarRecetas = () => {
@@ -47,11 +49,11 @@ export class BuscadorPage {
         (data) => {
           //console.log(data),
           this.queryDeRecetas = data,
-          this.recetasPagesNumber = CalculationUtils.calcularPaginas(this.queryDeRecetas.totalResults!)
+            this.recetasPagesNumber = CalculationUtils.calcularPaginas(this.queryDeRecetas.totalResults!)
           this.busquedaDesplegada = !this.busquedaDesplegada
 
           console.log(this.queryDeRecetas),
-          this.queryDeRecetasChange.emit(this.queryDeRecetas)
+            this.queryDeRecetasChange.emit(this.queryDeRecetas)
         },
         (error) => { console.log(error); }
       )
@@ -67,30 +69,46 @@ export class BuscadorPage {
     this.queryDeRecetasChange.emit(this.queryDeRecetas)
   }
 
-  
+
 
   buscaFavoritas = (recetasFavoritas: string[]) => {
     //debug: console.log("buscando las siguientes recetas: ", recetasFavoritas)
+    if (recetasFavoritas.length == 0) {
+      this.showToast("Aun no tienes recetas favoritas! \n Añade recetas favoritas navegando entre recetas y presionando el ícono del corazón ♥");
+    } else {
+      this.spoonacular.obtenerVariasRecetasPorID(recetasFavoritas!)
+        .subscribe(
+          (data: any) => {
+            console.log(data)
+            if (this.queryDeRecetas == undefined) {
+              this.queryDeRecetas = new QueryDeRecetas;
+            }
 
-    this.spoonacular.obtenerVariasRecetasPorID(recetasFavoritas!)
-      .subscribe(
-        (data: any) => {
-          console.log(data)
-          if (this.queryDeRecetas == undefined) {
-            this.queryDeRecetas = new QueryDeRecetas;
+            this.queryDeRecetas.number = recetasFavoritas.length,
+              this.queryDeRecetas!.offset = 0,
+              this.queryDeRecetas!.results = data,
+              this.queryDeRecetas!.totalResults = recetasFavoritas.length
+
+            this.recetasPagesNumber = CalculationUtils.calcularPaginas(this.queryDeRecetas!.totalResults!)
+            this.busquedaDesplegada = !this.busquedaDesplegada
+            this.queryDeRecetasChange.emit(this.queryDeRecetas)
           }
-          
-          this.queryDeRecetas.number = recetasFavoritas.length,
-          this.queryDeRecetas!.offset = 0,
-          this.queryDeRecetas!.results = data,
-          this.queryDeRecetas!.totalResults = recetasFavoritas.length
+        )
+    }
+  }
 
-          this.recetasPagesNumber = CalculationUtils.calcularPaginas(this.queryDeRecetas!.totalResults!)
-          this.busquedaDesplegada = !this.busquedaDesplegada
-          this.queryDeRecetasChange.emit(this.queryDeRecetas)
-        }
-      )
-    //debug: console.log(this.queryDeRecetas) 
+   /**
+  *mostrar alerta dtos guardados o error
+  *
+  * @param {string} message
+  */
+  async showToast(message: string) {
+    const toast = await this.toastCtrl.create({
+      message,
+      duration: 3000,
+      position: 'top'
+    });
+    toast.present();
   }
 }
 

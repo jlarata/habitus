@@ -77,7 +77,7 @@ export class UsersService {
     */
     public async obtenerPerfilUsuario(mail: string): Promise<User | null> {
         //voy a atrapar los errores desde profile.page.ts
-        console.log("probando para ", mail)
+        //debug: console.log("probando para ", mail)
         const docRef = doc(db, "users", mail); // referencia al doc por email
         const docSnap = await getDoc(docRef); // obtiene el documento desde Firestore
 

@@ -7,7 +7,7 @@ export class CalculationUtils {
 
         //this.totalResults = totalResults;
         recetasPagesNumber = Math.ceil(totalResults! / recetasPerPage);
-        console.log(`se requieren ${recetasPagesNumber} páginas`);
+        //debug: console.log(`se requieren ${recetasPagesNumber} páginas`);
 
         return recetasPagesNumber
     }

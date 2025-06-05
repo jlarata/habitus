@@ -73,11 +73,7 @@ export class RecetasPage {
 
   async ngOnInit() {
     this.userConRecetas = await this.loadUserProfile()
-    console.log('el usuario tiene ', this.userConRecetas.recetas_favoritas?.length, ' recetas favoritas.')
-    /* comento esto porque no lo queremos automático. además con el nuevo método seguro lo cambiemos.
-     if (this.userConRecetas.recetas_favoritas?.length != 0) {
-      this.recetasFavoritas = this.buscarRecetasFavoritas(this.userConRecetas)
-    } */
+    //debug: console.log('el usuario tiene ', this.userConRecetas.recetas_favoritas?.length, ' recetas favoritas.')
   }
 
   /**
