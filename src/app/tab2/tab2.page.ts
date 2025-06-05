@@ -572,7 +572,7 @@ export class Tab2Page implements AfterViewInit {
     try {
       // Obtener el usuario autenticado desde Firebase
       const userFirebase = this.auth.getCurrentUser();
-      this.userService.saveEventsArray(userFirebase!.email!, this.eventsArr)
+      await this.userService.saveEventsArray(userFirebase!.email!, this.eventsArr)
     }
     catch (error) {
       console.error("Error al guardar los eventos del usuario:", error);
