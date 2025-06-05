@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpClientModule } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
-
+import { Filesystem, Directory } from '@capacitor/filesystem';
+import { Platform } from '@ionic/angular';
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +14,13 @@ export class SpoonacularService {
   headers = new HttpHeaders()
     .set('Content-Type', 'application/json')
 
-  constructor(public http: HttpClient) { }
+  public platform:Platform;
+  
+  constructor(public http: HttpClient,
+    platform: Platform
+  ) { 
+    this.platform = platform
+  }
 
   /**
    * @function obtenerRecetas
@@ -33,6 +40,19 @@ export class SpoonacularService {
       { headers: this.headers }
     )
   };
+
+  public async guardarRecetaPDF(receta:any, titulo:string) {
+    const fileName = titulo+Date.now()+'.pdf';
+    const savedFile = await Filesystem.writeFile({
+      path: fileName,
+      data: receta,
+      directory: Directory.Data
+    });
+    return {
+      filepath: fileName
+    }
+  }
+
   /**
    * @function obtenerRecetasConInformacion
    * @returns el mismo objeto que obtenerRecetas() pero ahora los objetos del array results incluyen data como vegetarian, glutenfree, healthScore, summary
