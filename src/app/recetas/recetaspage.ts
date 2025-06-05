@@ -420,7 +420,6 @@ export class RecetasPage {
           bold: true,
           margin: [0, 10, 0, 5]
         },
-
       }
     };
 
@@ -429,19 +428,14 @@ export class RecetasPage {
 
     //si tiene Cordova o Capacitor
     if (this.platform.is('hybrid')) {
-      recetaPDF.open(); //<<- ahora estoy probando esto
-      const mensaje = await this.spoonacular.guardarRecetaPDF(recetaPDF, titulo)  
-      this.showToast(mensaje.filepath);  
-    } // si es una compu 
-    else {
+      recetaPDF.getBase64((data) => {
+        this.spoonacular.guardarRecetaPDF(data, titulo)
+      })
+    }
+     // si es una compu 
+    else {  
       recetaPDF.download(`${titulo.replace(/ /g, '_')}_receta.pdf`);
-    this.showToast('PDF generado y descargado!');
+      this.showToast('PDF generado y descargado!');
     }
   }
-
-
-
 }
-
-
-
