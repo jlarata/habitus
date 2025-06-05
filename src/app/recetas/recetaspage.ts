@@ -327,7 +327,7 @@ export class RecetasPage {
     this.userConRecetas.events_array?.push(eventDay);
 
     console.log("eventos: ", this.userConRecetas.events_array);
-    
+
     //guardamos en firebase y agregamos a favoritos
     await this.saveEvents();
 
@@ -364,6 +364,7 @@ export class RecetasPage {
 
     // guardar el titulo en una variable
     this.recetaSeleccionadaTitulo = titulo;
+    
     //guardar los ingredientes en una variable
     this.recetaSeleccionadaIngredientes = ingredientes;
 
