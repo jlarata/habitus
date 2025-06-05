@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpClientModule } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { Filesystem, Directory } from '@capacitor/filesystem';
-import { Platform } from '@ionic/angular';
+import { Platform, ToastController } from '@ionic/angular';
 
 @Injectable({
   providedIn: 'root'
@@ -15,11 +15,14 @@ export class SpoonacularService {
     .set('Content-Type', 'application/json')
 
   public platform:Platform;
+  public toastCtrl:ToastController
   
   constructor(public http: HttpClient,
-    platform: Platform
+    platform: Platform,
+    toastCtrl: ToastController,
   ) { 
-    this.platform = platform
+    this.platform = platform,
+    this.toastCtrl = toastCtrl
   }
 
   /**
@@ -43,11 +46,16 @@ export class SpoonacularService {
 
   public async guardarRecetaPDF(receta:any, titulo:string) {
     const fileName = titulo+Date.now()+'.pdf';
+    this.showToast('se intentará guardar '+ fileName);
+
     const savedFile = await Filesystem.writeFile({
       path: fileName,
       data: receta,
       directory: Directory.Data
     });
+
+    this.showToast('se ha guardado '+ savedFile);
+
     return {
       filepath: fileName
     }
@@ -126,5 +134,19 @@ export class SpoonacularService {
       ,
       { headers: this.headers }
     )
+  }
+
+    /**
+  *mostrar alerta dtos guardados o error
+  *
+  * @param {string} message
+  */
+  async showToast(message: string) {
+    const toast = await this.toastCtrl.create({
+      message,
+      duration: 3000,
+      position: 'top'
+    });
+    toast.present();
   }
 }

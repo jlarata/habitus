@@ -429,7 +429,8 @@ export class RecetasPage {
 
     //si tiene Cordova o Capacitor
     if (this.platform.is('hybrid')) {
-      const mensaje = await this.spoonacular.guardarRecetaPDF(recetaPDF, docDefinition.content.toString())  
+      recetaPDF.open(); //<<- ahora estoy probando esto
+      const mensaje = await this.spoonacular.guardarRecetaPDF(recetaPDF, titulo)  
       this.showToast(mensaje.filepath);  
     } // si es una compu 
     else {
