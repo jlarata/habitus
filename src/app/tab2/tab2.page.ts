@@ -261,15 +261,15 @@ export class Tab2Page implements AfterViewInit {
         this.getActiveDay(i);
         this.updateEvents(i); // Llama a función para actualizar eventos del día
         if (event) {
-          days += `<div class="day today active event">${i}</div>`;
+          days += `<div style="font-weight: bolder" class="day today active event">${i}</div>`;
         } else {
-          days += `<div class="day today active">${i}</div>`;
+          days += `<div style="font-weight: bolder" class="day today active">${i}</div>`;
         }
       } else {
         if (event) {
-          days += `<div class="day event">${i}</div>`;
+          days += `<div class="day today event">${i}</div>`;
         } else {
-          days += `<div class="day ">${i}</div>`;
+          days += `<div class="day today">${i}</div>`;
         }
       }
     }
@@ -378,10 +378,18 @@ export class Tab2Page implements AfterViewInit {
         const dayNumber = Number(target.innerHTML);
         this.getActiveDay(dayNumber); //
         this.updateEvents(dayNumber); // actualiza los eventos del día seleccionado 
-        this.activeDay = dayNumber; // nos permite saber que dia fue seleccionado 
+        this.activeDay = dayNumber; // nos permite saber que dia fue seleccionado
+        // pone fondo al día elegido. directamente intervine el atributo style
+        target.setAttribute('style', 'background-color: var(--primary-clr);')
+
 
         // asegura que solo un día esté marcado como "activo" a la vez
         days.forEach((dayEl: HTMLElement) => {
+          // si el día es cualquier otro que el clickeado...
+          if(dayEl != target){
+            // quitar el fondo (de nuevo: directo al atributo).
+            dayEl.removeAttribute('style');
+          }
           dayEl.classList.remove("active"); // elimina la clase "active" de todos los días
         });
 
@@ -588,7 +596,7 @@ export class Tab2Page implements AfterViewInit {
     // Es decir, busca el día del calendario que está actualmente seleccionado.
     // y le añade la clase "event" para marcarlo como un día con eventos.
     // Esto se hace para que el día seleccionado tenga un estilo diferente si tiene eventos.
-    const activeDayEl: HTMLElement | null = document.querySelector(".day.active");
+    let activeDayEl: HTMLElement | null = document.querySelector(".day.active");
     if (activeDayEl && !activeDayEl.classList.contains("event")) { // 
       activeDayEl.classList.add("event");  // Si no tiene la clase "event", se la agrega.
       // sirve para marcar visualmente en el calendario que ese día tiene al menos un evento
