@@ -217,3 +217,9 @@ h1{
   //left: 50%;
   transform: translate(-50%, -50%);
 }
+
+.ingredientes-paso-a-paso {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}

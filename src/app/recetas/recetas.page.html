@@ -10,15 +10,32 @@
         <ion-card-title>{{this.queryDeRecetaForDisplay?.name}}</ion-card-title>
         <img alt="foto de receta" src="{{imagenEnDisplay}}">
 
-        <ion-card-subtitle>Ingredientes:</ion-card-subtitle>
       </ion-card-header>
 
-      <ion-list>
-        <ion-list-header>Ingredientes:</ion-list-header>
-        <ion-item *ngFor="let ingredient of queryDeRecetaForDisplay?.ingredientes">
-          {{ingredient.name}}
-        </ion-item>
-      </ion-list>
+
+
+      <ion-card-subtitle>Ingredientes:</ion-card-subtitle>
+      <ion-item>
+        <div class="ingredientes-paso-a-paso">
+          <span *ngFor="let ingredient of queryDeRecetaForDisplay?.ingredientes">
+            <span
+              *ngIf="queryDeRecetaForDisplay?.ingredientes!.indexOf(ingredient) != queryDeRecetaForDisplay?.ingredientes!.length-1">
+              {{ingredient.name}},&nbsp;</span>
+          </span>
+          <span *ngFor="let ingredient of queryDeRecetaForDisplay?.ingredientes">
+            <span
+              *ngIf="queryDeRecetaForDisplay?.ingredientes!.indexOf(ingredient) == queryDeRecetaForDisplay?.ingredientes!.length-2">
+               {{ingredient.name}}&nbsp;</span>
+          </span>
+          <span *ngFor="let ingredient of queryDeRecetaForDisplay?.ingredientes">
+            <span
+              *ngIf="queryDeRecetaForDisplay?.ingredientes!.indexOf(ingredient) == queryDeRecetaForDisplay?.ingredientes!.length-1">
+              & {{ingredient.name}} </span>
+          </span>
+        </div>
+      </ion-item>
+
+
       <ion-card-subtitle>Paso a paso:</ion-card-subtitle>
 
       <ion-list *ngFor="let step of this.queryDeRecetaForDisplay?.steps!">
