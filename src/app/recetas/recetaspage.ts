@@ -174,15 +174,16 @@ export class RecetasPage {
    * @param image como esta nueva query por id no incluye imagen, el DOM se la manda así se puede
    * usar en la card que se despliega.
    */
-  buscarPorId = (id: number, image: string) => {
+  buscarPorId = (id: number, image: string, ingredientes: Ingredientes[]) => {
     this.imagenEnDisplay = image;
     this.spoonacular.obtenerRecetaPasoAPasoPorID(id.toString())
       .subscribe(
         (data: any) => {
           this.queryDeRecetaForDisplay = data[0]!;
+          this.queryDeRecetaForDisplay!.ingredientes = ingredientes
           //console.log(data)
           this.isShowingMore = !this.isShowingMore;
-
+          
         },
         (error) => { console.log(error); }
       )

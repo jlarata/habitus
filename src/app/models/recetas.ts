@@ -23,6 +23,7 @@ export class Step {
 
 export class QueryDeRecetaForDisplay {
     name? : string;
+    ingredientes?: Ingredientes[]; 
     steps?: Step[]
 }
 

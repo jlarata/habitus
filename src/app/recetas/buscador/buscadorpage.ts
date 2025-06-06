@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, input, Input, Output } from '@angular/core';
 import { SpoonacularService } from '../../services/spoonacular.service';
 import { QueryDeRecetas } from '../../models/recetas';
 import { CalculationUtils } from 'src/app/utils/calculations';
@@ -15,6 +15,7 @@ export class BuscadorPage {
   @Input() busquedaDesplegada?: boolean;
   @Input() queryDeRecetas?: QueryDeRecetas;
   @Input() recetasFavoritas?: string[];
+  
 
   public vegetarianIsChecked = false;
   public glutenFreeIsChecked = false;
