@@ -4,7 +4,6 @@ import { User } from 'src/app/models/user.model';
 import { AuthService } from 'src/app/services/auth.service';
 import { UsersService } from 'src/app/services/users.service';
 import { ValidationUtils } from 'src/app/utils/validation';
-import { EventDay } from "../../models/calendar.model";
 import { CalculationUtils } from 'src/app/utils/calculations';
 
 
@@ -38,6 +37,8 @@ export class ProfilePage implements OnInit {
   dateError:string= "";
   emailError: string= "";
   nombreError: string = '';
+
+  showSaveButton = false;
   
   //array tipo nuber 121 elementos genera valores de 30 hasta 150
   pesos: number[] = Array.from({ length: 121 }, (_, i) => i + 30); // 30 - 150 kg
@@ -61,6 +62,7 @@ export class ProfilePage implements OnInit {
    */
   async ngOnInit() {
    this.usuario = await this.loadUserProfile();
+
   }
 
   /**
@@ -102,6 +104,9 @@ export class ProfilePage implements OnInit {
     this.userService.actualizarUsuario(this.usuario.mail!, nueva_data_de_usuario)
     console.log("datos guardados!: " + this.usuario);
     this.showToast('Datos guardados!');
+
+    //false mostrar boton guardar
+    this.showSaveButton = false;
     
     //Ocultar loading después de completar el ""guardado""
     await this.loading.dismiss();
@@ -216,6 +221,5 @@ export class ProfilePage implements OnInit {
       return this.usuario
     }
   }
-
-
+  
 }
