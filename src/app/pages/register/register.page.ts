@@ -29,6 +29,13 @@ export class RegisterPage  {
 
   ) {}
 
+  /**Valida campos correo, coincidencia contraseña
+   *intenta registrar al usuario, si exito -> Logea y envia a calendario
+   *inicializa una coleccion con id mail de usuario en firebase
+   *error, lanza un mensaje con el error sea de form o firebase
+   * @return {*} 
+   * @memberof RegisterPage
+   */
   async register() {
     //vaciamos variables de errores anteriores
     this.emailError = '';
@@ -58,9 +65,7 @@ export class RegisterPage  {
         //console.log("iniciando usuario en database con, UID: ", uid, " y mail: ", mail);
         
         ///envio data adicional a firebase
-        this.userService.crearDataUsuario(mail//,uid          
-        );
-
+        this.userService.crearDataUsuario(mail);
 
         this.showToast('Registro exitoso.');
 
@@ -82,7 +87,13 @@ export class RegisterPage  {
     }
     
   }
-
+  
+  /**
+   *muestra alerts con el mensaje ingresado por parametro
+   *
+   * @param {string} message
+   * @memberof RegisterPage
+  */
   async showToast(message: string) {
     const toast = await this.toastCtrl.create({
       message,
@@ -143,7 +154,7 @@ export class RegisterPage  {
    *muestra por alerta el error correspondiente
    * @param {*} error
    * @memberof LoginPage
-   */
+  */
   manageErrorFirebase(error: any) {
     // para ver en la consola
     console.error("Error de Firebase:", error); 

@@ -10,6 +10,7 @@ import { AppComponent } from './app.component';
 import { HttpClientModule } from '@angular/common/http';
 import { SpoonacularService } from './services/spoonacular.service';
 import { ToolbarComponent } from './toolbar/toolbar.component';
+import { Tab2Page } from './tab2/tab2.page';
 
 @NgModule({
   declarations: [AppComponent, ToolbarComponent],
@@ -22,6 +23,7 @@ import { ToolbarComponent } from './toolbar/toolbar.component';
     //modulo de autenticación
     AngularFireAuthModule,
     HttpClientModule,
+    
     
   ],
   providers: [

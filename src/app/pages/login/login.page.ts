@@ -17,7 +17,7 @@ export class LoginPage {
   password = '';
   emailError = '';//captura error de email
   passwordError = '';//captura error de contraseña
-  isLoggedIn = false; // logueado por defecto false
+  isLoggedIn = false; // deslogueado por defecto false
   loading: HTMLIonLoadingElement | null = null;
   currentUser: any | null = null;
 
@@ -47,7 +47,6 @@ export class LoginPage {
         this.currentUser = user;
         this.isLoggedIn = true;
 
-        //console.log('hola, '+this.currentUser.multiFactor.user.email)
         // si user autenticado llevar a tabs
         this.router.navigate(['/tabs']);
 
@@ -176,7 +175,7 @@ export class LoginPage {
    *muestra por alerta el error correspondiente
    * @param {*} error
    * @memberof LoginPage
-   */
+  */
   manageErrorFirebase(error: any) {
     // para ver en la consola
     console.error("Error de Firebase:", error);
@@ -186,8 +185,6 @@ export class LoginPage {
       case 'auth/invalid-credential':
         this.showToast('Usuario o contraseña incorrecto. Inténtalo de nuevo.');
         break;
-      //registro
-      ////esta en register.ts
       default:
         //si no es ninguno de los anteriores
         this.showToast('Error al iniciar sesión: ' + error.message);
@@ -195,7 +192,7 @@ export class LoginPage {
   }
 
   /**
-   *Cierra sesion de usuario actual
+   *Cierra sesion de usuario actual y dirige a login
    *
    * @memberof LoginPage
    */
@@ -213,7 +210,13 @@ export class LoginPage {
       this.showToast('Error al cerrar sesión: ' + error.message);
     }
   }
-
+  
+  /**
+   *abre un alert que solicita se ingrese correo 
+   para recuperar contraseña con metodo de Firebase
+   *
+   * @memberof LoginPage
+   */
   async resetPassword() {
     const alert = await this.alertCtrl.create({
       header: 'Recuperacíon de contraseña',
@@ -221,7 +224,7 @@ export class LoginPage {
       message: 'Ingresa tu correo electrónico:',
       inputs: [
         {
-          cssClass: 'alert-input',
+          //cssClass: 'alert-input',
           name: 'email',
           type: 'email',
           placeholder: 'Tu correo electrónico',
@@ -231,11 +234,10 @@ export class LoginPage {
         {
           text: 'Cancelar',
           role: 'cancel',
-          cssClass: 'secondaryalert-button alert-button-cancel',
         },
         {
           text: 'Enviar',
-          cssClass: 'alert-button alert-button-confirm',//estilo boton enviar
+          
           handler: async (alertData) => {
             this.email = alertData.email;
             if (!this.email) {
@@ -249,7 +251,6 @@ export class LoginPage {
 
             const loading = await this.loadingCtrl.create({
               message: 'Enviando correo de recuperación...',
-              cssClass: 'custom-loading'
             });
             await loading.present();
             try {

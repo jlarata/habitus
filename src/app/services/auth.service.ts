@@ -124,15 +124,13 @@ export class AuthService {
 
   /**
    * Envía un correo electrónico para restablecer la contraseña al usuario.
+   * hecho con http apuntando al endpoint de reseteo contraseña de firebase
    * @param email 
-   * @returns observable en http
   */
   ///con http
   public resetPassword(email: string) {
-    //TODO ESTO ES la versión manual del método que quise crear. no funciona. Si nos queda tiempo lo revisamos.
 
     const url = 'https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=' + `${environment.firebase.apiKey}`;
-    //debug: console.log(url)
 
     //cuerpo de la peticion
     const body = {
@@ -147,15 +145,5 @@ export class AuthService {
     
   }
 
-  //con metodo de firebase
-  /**
-   * Envía un correo electrónico para restablecer la contraseña al usuario.
-   * @param email 
-   * @returns promesa o error
-  */
-  /*public resetPassword(email: string): Promise<void>
-  {
-    return this.afAuth.sendPasswordResetEmail(email);
-  }*/
 
 }

@@ -1,8 +1,9 @@
-import { Component, AfterViewInit } from '@angular/core';
+import { Component, AfterViewInit, Input } from '@angular/core';
 import { ToastController, AlertController } from '@ionic/angular';
 import { AuthService } from '../services/auth.service';
 import { UsersService } from '../services/users.service';
 import { CalendarEvent, EventDay } from '../models/calendar.model';
+import { Subscription } from 'rxjs';
 
 
 
@@ -26,7 +27,7 @@ export class Tab2Page implements AfterViewInit {
 
   // array que contiene a los eventos del dia
   eventsArr: EventDay[] = [];
-
+  
   // Referencias a elementos del DOM
   calendar!: HTMLElement;
   date!: HTMLElement;
@@ -46,19 +47,34 @@ export class Tab2Page implements AfterViewInit {
   addEventFrom!: HTMLInputElement;
   addEventTo!: HTMLInputElement;
   addEventSubmit!: HTMLElement;
-
+  
+  /**
+   * Crea una instancia del calendario.
+   * @param toastCtrl - Muestra notificaciones temporales
+   * @param auth - Gestiona la autenticación del usuario
+   * @param userService - Interactúa con los datos del usuario
+   * @param alertCtrl - Muestra alertas de confirmación
+  */
   constructor(
     private toastCtrl: ToastController,
     private auth: AuthService,
     private userService: UsersService,
     private alertCtrl: AlertController
   ) {
-    
+    //// suscribimos a los eventos cada vez que se actualicen en Firestore
+     this.userService.eventos$.subscribe(eventos => {
+      this.eventsArr = eventos;
+      this.updateEvents(this.activeDay);
+    });
   }
 
   /*ngOnInit es una función especial de Angular que se ejecuta siempre que abrís un componente ANTES
   de renderizar el DOM */
-
+  /**
+   *Carga perfil del usuario y obtiene los eventos al iniciar la app
+   *
+   * @memberof Tab2Page
+   */
   ngOnInit() {
     this.loadUserProfile();
     
@@ -79,8 +95,13 @@ export class Tab2Page implements AfterViewInit {
     });
     toast.present();
   }
+  
 
-
+  /**
+   * Obtiene los datos del usuario actual desde Firebase.
+   * - Carga sus eventos guardados
+   * - Posiciona el calendario en el mes/día actual
+   */
   async loadUserProfile() {
     try {
       // Obtener el usuario autenticado desde Firebase
@@ -107,6 +128,12 @@ export class Tab2Page implements AfterViewInit {
     }
   }
 
+  /**
+   * Configura el calendario después de cargar la vista:
+   * 1. Inicializa elementos HTML
+   * 2. Agrega listeners de eventos
+   * 3. Dibuja el calendario inicial
+  */
   ngAfterViewInit() {
 
     // Inicializa referencias después de que la vista se ha cargado
@@ -166,12 +193,32 @@ export class Tab2Page implements AfterViewInit {
     this.eventsContainer.addEventListener("click", (e: MouseEvent) => this.onDeleteEvent(e));
 
     //console.log("al final de afterviewinit el eventsArray tiene ", this.eventsArr.length, " tareas")
-
-    this.goToday();
     
   }
 
-
+   /**
+   * Dibuja el calendario completo del mes actual en la pantalla.
+   * Como un artista que pinta un nuevo calendario cada mes:
+   * 
+   * 1. Primero pinta los últimos días del mes anterior (si son visibles)
+   * 2. Luego pinta todos los días del mes actual
+   * 3. Finalmente pinta los primeros días del próximo mes (para completar la cuadrícula)
+   * 
+   * Además, marca con colores especiales:
+   * - El día actual (hoy) → Resaltado//NO FUNCIONA//
+   * - Días con eventos → Con un puntito//NO FUNCIONA//
+   * - Días de otros meses → Color más suave//NO FUNCIONA//
+   * 
+   * Ejemplo para Mayo 2025:
+   * 
+   *   Dom Lun Mar Mié Jue Vie Sáb
+   *                    1   2   3   <- Días de abril (mes anterior)
+   *    4   5   6   7   8   9  10   <- Mayo (días normales)
+   *   11  12  13 [14] 15  16  17   <- [14] sería hoy (resaltado) //NO FUNCIONA//
+   *   18  19  20  21• 22  23  24   <- • Día con evento //NO FUNCIONA//
+   *   25  26  27  28  29  30  31
+   *    1   2   3   4   5   6   7   <- Días de junio (próximo mes)
+  */
   initCalendar(): void {
     const firstDay: Date = new Date(this.year, this.month, 1); // Crea una fecha que representa el primer día del mes actual
     const lastDay: Date = new Date(this.year, this.month + 1, 0); // Crea una fecha que representa el primer día del mes actual.
@@ -235,6 +282,10 @@ export class Tab2Page implements AfterViewInit {
     this.addListner();
   }
 
+  /**
+   * Navega al mes anterior.
+   * Si es enero, cambia a diciembre del año anterior.
+  */
   // Retrocede al mes anterior
   prevMonth(): void {
     this.month--;
@@ -244,7 +295,11 @@ export class Tab2Page implements AfterViewInit {
     }
     this.initCalendar();
   }
-
+  
+  /**
+   * Navega al mes siguiente.
+   * Si es diciembre, cambia a enero del próximo año.
+   */
   // avanza al siguiente mes
   nextMonth(): void {
     this.month++;
@@ -264,7 +319,12 @@ export class Tab2Page implements AfterViewInit {
   }
 
   // Función para manejar la entrada de fecha del usuario (input)
-  // Esta función se activa cuando el usuario escribe en el campo de entrada de fechas
+  /**
+   * Valida y formatea la entrada de fecha (MM/AAAA).
+   * - Solo permite números y "/"
+   * - Agrega automáticamente la "/" después de 2 dígitos
+   * @param e - Evento de entrada del usuario
+  */
   onDateInput(e: Event): void {
     const inputEvent = e as InputEvent;
     this.dateInput.value = this.dateInput.value.replace(/[^0-9/]/g, "");
@@ -280,7 +340,12 @@ export class Tab2Page implements AfterViewInit {
       }
     }
   }
-
+  
+  /**
+   * Salta a un mes/año específico.
+   * El formato debe ser MM/AAAA (ej: "06/2025").
+   * Muestra error si el formato es inválido.
+  */
   // Función para ir a una fecha específica basada en la entrada del usuario
   gotoDate(): void {
     const dateArr: string[] = this.dateInput.value.split("/"); // Divide la cadena de fecha escrita en el input en 2 partes usando la barra ("/")
@@ -297,7 +362,12 @@ export class Tab2Page implements AfterViewInit {
     }
     this.showToast("Fecha incorrecta. Ejemplo: 12/2025");
   }
-
+  
+  /**
+   * Agrega interactividad a los días del calendario:
+   * - Selección al hacer clic
+   * - Navegación entre meses al clickear días fuera del mes actual
+  */
   // Función para agregar listeners a los días del calendario
   addListner(): void {
     const days: NodeListOf<HTMLElement> = document.querySelectorAll(".day"); // Selecciona todos los elementos con la clase "day"
@@ -349,6 +419,12 @@ export class Tab2Page implements AfterViewInit {
   }
 
   // Función para obtener el nombre del día y la fecha seleccionada en el calendario
+  /**
+   * Muestra el día seleccionado en la sección inferior.
+   * Formato: "<DíaSemana> <NúmeroDía> <Mes> <Año>"
+   * Ej: "Lun 17 Junio 2025"
+   * @param day - Día del mes seleccionado (1-31)
+  */
   getActiveDay(day: number): void {
     const dateObj: Date = new Date(this.year, this.month, day); // crea un objeto de fecha con el año, mes y día seleccionados 
     const diasSemana: string[] = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
@@ -358,6 +434,11 @@ export class Tab2Page implements AfterViewInit {
   }
 
   // Función para actualizar los eventos del día seleccionado.
+  /**
+   * Actualiza la lista de eventos del día seleccionado.
+   * Muestra "No hay eventos" si no hay actividades programadas.
+   * @param date - Día del mes a mostrar eventos (1-31)
+  */
   updateEvents(date: number): void {
     let events: string = "";
     this.eventsArr.forEach((event: EventDay) => { // recorre el arreglo de eventos para buscar los eventos del día seleccionado.
@@ -391,6 +472,12 @@ export class Tab2Page implements AfterViewInit {
   }
 
   // Función que maneja la entrada del campo de hora.
+  /**
+   * Valida y formatea campos de hora (HH:MM).
+   * - Solo permite números y ":"
+   * - Agrega automáticamente ":" después de 2 dígitos
+   * @param input - Campo de entrada de hora
+  */
   onTimeInput(input: HTMLInputElement): void {
     input.value = input.value.replace(/[^0-9:]/g, ""); // Elimina caracteres no numericos o ":"
     if (input.value.length === 2) { // Si el campo tiene 2 caracteres, agrega ":"
@@ -400,7 +487,16 @@ export class Tab2Page implements AfterViewInit {
       input.value = input.value.slice(0, 5);
     }
   }
+
+
   // funcion cuando se añade un evento
+  /**
+   * Agrega un nuevo evento al calendario:
+   * 1. Valida campos obligatorios
+   * 2. Verifica formato de horas
+   * 3. Evita duplicados (mismo título en mismo día)
+   * 4. Guarda en Firestore
+  */
   onAddEvent(): void {
     // Toma los valores de los campos de entrada de título y hora.
     const eventTitle: string = this.addEventTitle.value;
@@ -487,7 +583,7 @@ export class Tab2Page implements AfterViewInit {
     this.addEventTo.value = "";
 
     // actualiza la vista de los eventos 
-    this.updateEvents(this.activeDay);
+   // this.updateEvents(this.activeDay);
 
     // Es decir, busca el día del calendario que está actualmente seleccionado.
     // y le añade la clase "event" para marcarlo como un día con eventos.
@@ -504,6 +600,11 @@ export class Tab2Page implements AfterViewInit {
 
   // Función para eliminar un evento al hacer clic en él
   //se vuelve async por el alert controller
+   /**
+   * Muestra confirmación antes de eliminar un evento.
+   * Se activa al hacer clic en cualquier evento.
+   * @param e - Evento de clic del mouse
+   */
   async onDeleteEvent(e: MouseEvent) {
     const target = e.target as HTMLElement;
     const eventDiv = target.closest(".event") as HTMLElement | null;
@@ -538,6 +639,13 @@ export class Tab2Page implements AfterViewInit {
   /**
    * elimina el evento del array,actualiza la vista y guarda en firestore
   */
+ /**
+   * Elimina un evento del calendario:
+   * 1. Remueve el evento seleccionado
+   * 2. Si era el único evento del día, limpia el día
+   * 3. Actualiza Firestore
+   * @param eventTitle - Título del evento a eliminar
+   */
   deleteEvent(eventTitle: string) {
     this.eventsArr.forEach((event: EventDay) => {
       if (event.day === this.activeDay && event.month === this.month + 1 && event.year === this.year) {
@@ -560,13 +668,12 @@ export class Tab2Page implements AfterViewInit {
       }
     });
 
-    this.updateEvents(this.activeDay);
+    //this.updateEvents(this.activeDay);
     //guardar en firestore
     this.saveEvents();
   }
 
   // Guarda los eventos en firestore
-  // Esto permite que los eventos persistan incluso si el usuario recarga la página o cierra la aplicación.
   async saveEvents() {
 
     try {
@@ -582,6 +689,12 @@ export class Tab2Page implements AfterViewInit {
   }
 
   // Convierte la hora de 24 horas a 12 horas con formato AM/PM
+   /**
+   * Convierte formato de hora 24h → 12h (AM/PM).
+   * Ej: "14:30" → "02:30 PM"
+   * @param time - Hora en formato 24h (HH:MM)
+   * @returns Hora en formato 12h con AM/PM
+  */
   convertTime(time: string): string {
     let timeArr: string[] = time.split(":"); // Separa la hora y los minutos
     let timeHour: number = parseInt(timeArr[0], 10); // convierte la hora a num entero 
