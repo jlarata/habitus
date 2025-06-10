@@ -14,10 +14,26 @@
   <ion-button *ngIf="queryDeRecetas == undefined" (click)="handleClick()">¡Buscar recetas!</ion-button>
   <ion-button *ngIf="queryDeRecetas != undefined" (click)="blanquearRecetas()">borrar búsqueda</ion-button>
 </div> -->
+<div class="laBotonera">
+<div class="laBotoneraA">
     <ion-button class="AAA" *ngIf="queryDeRecetas == undefined" (click)="handleClick()">¡Buscar recetas!</ion-button>
     <ion-button class="AAA" *ngIf="queryDeRecetas != undefined" (click)="blanquearRecetas()">borrar búsqueda</ion-button>
     <ion-button class="AAA" *ngIf="queryDeRecetas == undefined" (click)="buscaFavoritas(recetasFavoritas!)">Ver Recetas Favoritas</ion-button>
-  </ion-buttons>
+  </div>
+  <div class="laBotoneraB">
+    <ion-button stye="color-blue">Receta...</ion-button>
+    <ion-input style="background-color: white; 
+  "></ion-input>
+    <select style="-webkit-appearance: none;
+    -moz-appearance: none;
+    text-indent: 1px;
+    text-overflow: '';">
+      <option>banana split desser</option>
+      <option>bananas en pijamas</option>
+      <option>bananasrama party</option>
+    </select>
+  </div>
+</div> </ion-buttons>
 </ion-content>
 
 <!-- <ion-content *ngIf="busquedaDesplegada == true" class="busqueda-content cierre">
